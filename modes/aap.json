@@ -13,7 +13,8 @@
     "tox": "https://w3id.org/tox/terms#",
     "bao": "http://www.bioassayontology.org/bao#",
     "ldac": "https://w3id.org/ldac/terms#",
-    "obo": "http://purl.obolibrary.org/obo/"
+    "obo": "http://purl.obolibrary.org/obo/",
+    "mesh": "http://purl.bioontology.org/ontology/MESH/"
   },
   "context": [],
   "conformsToUri": [
@@ -92,7 +93,7 @@
       "name": "Endpoint Readout Information",
       "help": "Measurement configuration and readout values.",
       "inputs": [
-        "https://w3id.org/ldac/terms#aop",
+        "http://purl.bioontology.org/ontology/MESH/D000073931",
         "https://w3id.org/ldac/terms#aopEvent",
         "http://www.bioassayontology.org/bao#BAO_0000697",
         "http://www.bioassayontology.org/bao#BAO_0002628",
@@ -121,6 +122,15 @@
         "inchikey"
       ]
     },
+    "AdverseOutcomePathway": {
+      "module": "aopwiki",
+      "fields": [
+        "@id",
+        "name",
+        "short_name",
+        "description"
+      ]
+    },
     "Organization": {
       "module": "ror"
     }
@@ -137,7 +147,8 @@
     "DOI",
     "URL",
     "TextArea",
-    "Text"
+    "Text",
+    "AdverseOutcomePathway"
   ],
   "classes": {
     "Dataset": {
@@ -257,13 +268,12 @@
           ]
         },
         {
-          "id": "https://w3id.org/tox/terms#aop",
-          "name": "tox:aop",
+          "id": "http://purl.bioontology.org/ontology/MESH/D000073931",
+          "name": "AdverseOutcomePathway",
           "help": "AOP reference or URL associated with this assay.",
           "multiple": true,
           "type": [
-            "URL",
-            "Text"
+            "AdverseOutcomePathway"
           ]
         },
         {
@@ -370,6 +380,57 @@
           "id": "https://w3id.org/tox/terms#endpointReadoutUnit",
           "name": "tox:endpointReadoutUnit",
           "help": "Unit for the endpoint readout.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/ldac/terms#aopEvent",
+          "name": "ldac:aopEvent",
+          "label": "AOP key event",
+          "help": "Key events from the referenced AOP that are evidenced by this dataset.",
+          "multiple": true,
+          "type": [
+            "AopEvent",
+            "URL"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0000697",
+          "name": "bao:BAO_0000697",
+          "label": "BAO endpoint",
+          "help": "BAO term describing the biological endpoint that is measured.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0002628",
+          "name": "bao:BAO_0002628",
+          "label": "BAO readout",
+          "help": "BAO term describing the readout or detection configuration.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0002001",
+          "name": "bao:BAO_0002001",
+          "label": "BAO response unit",
+          "help": "BAO term for the unit or scale of the readout.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0000077",
+          "name": "bao:BAO_0000077",
+          "label": "BAO assay format",
+          "help": "BAO term specifying the assay format/configuration for the endpoint.",
           "multiple": true,
           "type": [
             "Text"
@@ -675,7 +736,7 @@
       ]
     },
     "AdverseOutcomePathway": {
-      "id": "https://w3id.org/tox/terms#AOP",
+      "id": "http://purl.bioontology.org/ontology/MESH/D000073931",
       "inputs": [
         {
           "id": "http://schema.org/description",
@@ -696,7 +757,7 @@
           ]
         },
         {
-          "id": "https://schema.og/hasPart",
+          "id": "https://schema.org/hasPart",
           "name": "hasPart",
           "help": "Associated AOP events.",
           "multiple": true,

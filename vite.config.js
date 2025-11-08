@@ -84,6 +84,12 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: true,
         rewrite: path => path.replace(/^\/lookup\/pubchem/, '')
+      },
+      '/lookup/aopwiki': {
+        target: 'https://aopwiki.org',
+        changeOrigin: true,
+        secure: false,
+        rewrite: path => path.replace(/^\/lookup\/aopwiki/, '')
       }
     }
   },
