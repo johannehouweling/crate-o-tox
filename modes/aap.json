@@ -1,0 +1,733 @@
+{
+  "metadata": {
+    "name": "Toxicology Mode",
+    "description": "Streamlined metadata mode for assay annotation, aligned with the BioStudies submission template for (cell-based) toxicology data.",
+    "version": 0.1,
+    "author": "J.M. Houweling",
+    "license": "GNU Affero General Public License v3.0"
+  },
+  "contextPrefixes": {
+    "schema": "http://schema.org/",
+    "bioschemas": "https://bioschemas.org/",
+    "dct": "http://purl.org/dc/terms/",
+    "tox": "https://w3id.org/tox/terms#",
+    "bao": "http://www.bioassayontology.org/bao#",
+    "ldac": "https://w3id.org/ldac/terms#",
+    "obo": "http://purl.obolibrary.org/obo/"
+  },
+  "context": [],
+  "conformsToUri": [
+    "https://w3id.org/tox/profile#CellBasedToxicology",
+    "https://w3id.org/ldac/profile#Collection"
+  ],
+  "rootDataset": {
+    "type": [
+      "Dataset"
+    ]
+  },
+  "inputGroups": [
+    {
+      "name": "About",
+      "help": "Core description of the assay dataset and links used in BioStudies submissions.",
+      "inputs": [
+        "@id",
+        "@type",
+        "http://schema.org/name",
+        "http://schema.org/description",
+        "http://schema.org/datePublished",
+        "http://schema.org/license",
+        "https://w3id.org/ldac/terms#doi",
+        "http://schema.org/url",
+        "https://w3id.org/terms#caseStudy",
+        "https://w3id.org/terms#regulatoryQuestion",
+        "https://w3id.org/terms#workflowStep"
+      ]
+    },
+    {
+      "name": "People & Organisations",
+      "help": "Contributors, contacts, and funding information.",
+      "inputs": [
+        "http://schema.org/author",
+        "http://schema.org/funder",
+        "http://schema.org/affiliation"
+      ]
+    },
+    {
+      "name": "Structure",
+      "help": "Supporting documentation or derived materials.",
+      "inputs": [
+        "http://schema.org/hasPart",
+        "http://schema.org/isPartOf"
+      ]
+    },
+    {
+      "name": "Biological Model Information",
+      "help": "Details on the cell model used in the assay.",
+      "inputs": [
+        "http://www.bioassayontology.org/bao#BAO_0000551",
+        "http://purl.obolibrary.org/obo/UBERON_0000062",
+        "http://purl.obolibrary.org/obo/UBERON_0000479",
+        "https://bioschemas.org/BioSample"
+      ]
+    },
+    {
+      "name": "Chemical Information",
+      "help": "Test substances associated with this assay.",
+      "inputs": [
+        "https://bioschemas.org/ChemicalSubstance"
+      ]
+    },
+    {
+      "name": "Exposure Information",
+      "help": "Exposure regime applied.",
+      "inputs": [
+        "tox:exposureType",
+        "tox:exposureDuration",
+        "tox:exposureDurationUnit",
+        "tox:exposureInterval",
+        "tox:exposureIntervalUnit"
+      ]
+    },
+    {
+      "name": "Endpoint Readout Information",
+      "help": "Measurement configuration and readout values.",
+      "inputs": [
+        "https://w3id.org/ldac/terms#aop",
+        "https://w3id.org/ldac/terms#aopEvent",
+        "http://www.bioassayontology.org/bao#BAO_0000697",
+        "http://www.bioassayontology.org/bao#BAO_0002628",
+        "http://www.bioassayontology.org/bao#BAO_0002001",
+        "http://www.bioassayontology.org/bao#BAO_0000077"
+      ]
+    }
+  ],
+  "lookup": {
+    "CellLine": {
+      "module": "cellosaurus",
+      "fields": [
+        "@id",
+        "name",
+        "accession",
+        "species"
+      ]
+    },
+    "ChemicalSubstance": {
+      "module": "pubchem",
+      "fields": [
+        "@id",
+        "name",
+        "synonym",
+        "inchi",
+        "inchikey"
+      ]
+    },
+    "Organization": {
+      "module": "ror"
+    }
+  },
+  "enabledClasses": [
+    "Dataset",
+    "Person",
+    "Organization",
+    "ChemicalSubstance",
+    "CellLine",
+    "CreativeWork",
+    "PropertyValue",
+    "File",
+    "DOI",
+    "URL",
+    "TextArea",
+    "Text"
+  ],
+  "classes": {
+    "Dataset": {
+      "id": "http://schema.org/Dataset",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Title of this toxicology dataset.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Narrative description of the assay, matching the BioStudies study description.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/datePublished",
+          "name": "datePublished",
+          "help": "Release date for this dataset.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Date",
+            "DateTime"
+          ]
+        },
+        {
+          "id": "http://schema.org/license",
+          "name": "license",
+          "help": "License or terms of reuse, ideally a URL.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "https://w3id.org/ldac/terms#doi",
+          "name": "ldac:doi",
+          "label": "DOI",
+          "multiple": false,
+          "required": true,
+          "help": "A Digital Object Identifier, e.g. https://doi.org/10.1000/182.",
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifiers for this dataset (e.g. DOI, internal accession).",
+          "multiple": true,
+          "type": [
+            "PropertyValue",
+            "Text",
+            "URL" 
+          ]
+        },
+        {
+          "id": "http://schema.org/isBasedOn",
+          "name": "isBasedOn",
+          "help": "Protocols or documents this assay is based on.",
+          "multiple": true,
+          "type": [
+            "CreativeWork",
+            "URL",
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "URL",
+          "help": "Primary project portal link.",
+          "multiple": true,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#caseStudy",
+          "name": "Case Study",
+          "help": "Name or identifier of the case study.",
+          "multiple": false,
+          "type": [
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#regulatoryQuestion",
+          "name": "Regulatory Question",
+          "help": "Regulatory question addressed by this dataset.",
+          "multiple": false,
+          "type": [
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#workflowStep",
+          "name": "Workflow step",
+          "help": "Workflow step that this assay supports.",
+          "multiple": false,
+          "type": [
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#aop",
+          "name": "tox:aop",
+          "help": "AOP reference or URL associated with this assay.",
+          "multiple": true,
+          "type": [
+            "URL",
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#aopEvent",
+          "name": "tox:aopEvent",
+          "help": "Specific AOP event reference or URL.",
+          "multiple": true,
+          "type": [
+            "URL",
+            "Text"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0000551",
+          "name": "tox:organism",
+          "help": "Organism represented in the assay.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000062",
+          "name": "tox:organ",
+          "help": "Organ studied or modelled.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000479",
+          "name": "tox:tissue",
+          "help": "Tissue studied or modelled.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/BioSample",
+          "name": "biosample",
+          "help": "Cell line or cellular model used.",
+          "multiple": true,
+          "type": [
+            "CellLine"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#replicateCount",
+          "name": "tox:replicateCount",
+          "help": "Number of replicates per condition.",
+          "multiple": false,
+          "type": [
+            "Number"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#detectionInstrument",
+          "name": "tox:detectionInstrument",
+          "help": "Detection instrument used (e.g. plate reader model).",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#instrumentManufacturer",
+          "name": "tox:instrumentManufacturer",
+          "help": "Manufacturer of the detection instrument.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#measuredEntity",
+          "name": "tox:measuredEntity",
+          "help": "Measured entity or marker (e.g. ATP, LDH).",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#measuredEntityUnit",
+          "name": "tox:measuredEntityUnit",
+          "help": "Unit for the measured entity.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#endpointReadout",
+          "name": "tox:endpointReadout",
+          "help": "Endpoint readout name.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#endpointReadoutUnit",
+          "name": "tox:endpointReadoutUnit",
+          "help": "Unit for the endpoint readout.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/author",
+          "name": "author",
+          "help": "Authors associated with the dataset.",
+          "required": true,
+          "multiple": true,
+          "type": [
+            "Person"
+          ]
+        },
+        {
+          "id": "http://schema.org/funder",
+          "name": "funder",
+          "help": "Funding organisation(s).",
+          "multiple": true,
+          "type": [
+            "Organization"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#fundingGrantId",
+          "name": "tox:fundingGrantId",
+          "help": "Grant identifier linked to the funding reference.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/affiliation",
+          "name": "affiliation",
+          "help": "Affiliated organisations for the dataset team.",
+          "multiple": true,
+          "type": [
+            "Organization"
+          ]
+        },
+        {
+          "id":"http://schema.org/isPartOf",
+          "name":"isPartOf",
+          "help":"Larger collections or datasets that this dataset is part of.",
+          "multiple": true,
+          "type":[
+            "CreativeWork",
+            "File",
+            "URL",
+            "Dataset"
+          ]        
+        },
+        {
+          "id": "http://schema.org/hasPart",
+          "name": "hasPart",
+          "help": "Files or subordinate works that form part of this dataset package.",
+          "multiple": true,
+          "type": [
+            "CreativeWork",
+            "File",
+            "URL",
+            "Dataset"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/ChemicalSubstance",
+          "name": "Chemical",
+          "help": "Chemical substances tested in this assay.",
+          "multiple": true,
+          "type": [
+            "ChemicalSubstance"
+          ]
+        }
+      ]
+    },
+    "Person": {
+      "id": "http://schema.org/Person",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Full name of the contributor.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/email",
+          "name": "email",
+          "help": "Contact email address.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/roleName",
+          "name": "roleName",
+          "help": "Role performed by this contributor (e.g. Data Curator).",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/affiliation",
+          "name": "affiliation",
+          "help": "Organisation affiliation.",
+          "multiple": true,
+          "type": [
+            "Organization"
+          ]
+        }
+      ]
+    },
+    "Organization": {
+      "id": "http://schema.org/Organization",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Organisation name.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "URL",
+          "help": "Website for the organisation.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifier such as ROR ID.",
+          "multiple": true,
+          "type": [
+            "PropertyValue",
+            "URL",
+            "Text"
+          ]
+        }
+      ]
+    },
+    "CellLine": {
+      "id": "https://bioschemas.org/BioSample",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Cell line name.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C43530",
+          "name": "supplier",
+          "help": "Supplier or source of the cell line.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/species",
+          "name": "species",
+          "help": "Species of origin for the cell line.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        }
+      ]
+    },
+    "ChemicalSubstance": {
+      "id": "https://bioschemas.org/ChemicalSubstance",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Chemical name.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "URL",
+          "help": "Website for the chemical.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifier such as cas nr.",
+          "multiple": true,
+          "type": [
+            "PropertyValue",
+            "URL",
+            "Text"
+          ]
+        },
+        {
+          "id": "http://bioschemas.org/chemicalComposition",
+          "name": "chemicalcomposition",
+          "help": "Molecular formula of the chemical substance.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        }
+      ]
+    },
+    "PropertyValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Name of the property represented by this identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "Value corresponding to the property.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/unitText",
+          "name": "unitText",
+          "help": "Unit, if applicable.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        }
+      ]
+    },
+    "File": {
+      "id": "http://schema.org/MediaObject",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Name of the file.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/contentUrl",
+          "name": "contentUrl",
+          "help": "URL to download or access the file.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/encodingFormat",
+          "name": "encodingFormat",
+          "help": "MIME type of the file.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/contentSize",
+          "name": "contentSize",
+          "help": "File size including units.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        }
+      ]
+    },
+    "AdverseOutcomePathway": {
+      "id": "https://w3id.org/tox/terms#AOP",
+      "inputs": [
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Name of the Adverse Outcome Pathway (AOP).",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifier or URL for the AOP.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "https://schema.og/hasPart",
+          "name": "hasPart",
+          "help": "Associated AOP events.",
+          "multiple": true,
+          "type": [
+            "AopEvent"
+          ]
+        }
+      ]
+    },
+    "AopEvent": {
+      "id": "https://w3id.org/tox/terms#aopEvent",
+      "inputs": [
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Name of the AOP event.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifier or URL for the AOP event.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        }
+      ]
+    }
+  }
+}

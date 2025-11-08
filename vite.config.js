@@ -71,6 +71,22 @@ export default defineConfig(({ mode }) => ({
   },
   base: './',
   build: build[mode],
+  server: {
+    proxy: {
+      '/lookup/cellosaurus': {
+        target: 'https://api.cellosaurus.org',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/lookup\/cellosaurus/, '')
+      },
+      '/lookup/pubchem': {
+        target: 'https://pubchem.ncbi.nlm.nih.gov',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/lookup\/pubchem/, '')
+      }
+    }
+  },
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version)
   },

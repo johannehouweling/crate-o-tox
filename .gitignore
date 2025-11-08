@@ -6,6 +6,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.eslintcache
+.pnpm-store
+.turbo
+.cache
 
 node_modules
 .DS_Store
@@ -13,6 +17,14 @@ dist
 dist-ssr
 coverage
 *.local
+.env
+.env.*
+.env.local
+.env.*.local
+*.tsbuildinfo
+*.iml
+*.pid
+crate-o/
 
 /cypress/videos/
 /cypress/screenshots/
