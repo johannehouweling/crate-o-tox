@@ -122,6 +122,16 @@
         "inchikey"
       ]
     },
+    "Person": {
+      "module": "orcid",
+      "fields": [
+        "@id",
+        "name",
+        "givenName",
+        "familyName",
+        "affiliation"
+      ]
+    },
     "AdverseOutcomePathway": {
       "module": "aopwiki",
       "fields": [

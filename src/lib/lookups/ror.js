@@ -1,4 +1,4 @@
-const api = "https://api.ror.org/v2/organizations";
+  const api = "https://api.ror.org/v2/organizations";
 
 export default class Lookup {
   constructor(opt) {

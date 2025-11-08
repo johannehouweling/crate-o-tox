@@ -90,6 +90,15 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
         rewrite: path => path.replace(/^\/lookup\/aopwiki/, '')
+      },
+      '/lookup/orcid': {
+        target: 'https://pub.orcid.org',
+        changeOrigin: true,
+        secure: true,
+        headers: {
+          Accept: 'application/json'
+        },
+        rewrite: path => path.replace(/^\/lookup\/orcid/, '')
       }
     }
   },
