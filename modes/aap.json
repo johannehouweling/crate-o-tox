@@ -544,7 +544,9 @@
             "CreativeWork",
             "File",
             "URL",
-            "Dataset"
+            "Dataset",
+            "ScholarlyArticle",
+            "LabProtocol"
           ]
         },
         {
@@ -695,6 +697,47 @@
           "multiple": false,
           "type": [
             "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "Classify this file using controlled URIs (e.g. http://edamontology.org/data_2044 for RawData, http://edamontology.org/data_1669 for ProcessedData, http://purl.obolibrary.org/obo/OBI_0001466 for study-aggregated outputs, http://purl.obolibrary.org/obo/OBI_0001477 for SOPs).",
+          "multiple": true,
+          "type": [
+            "Select"
+          ],
+          "values": [
+            {
+              "@id": "http://edamontology.org/data_2044",
+              "@type": "DefinedTerm",
+              "name": "Raw experimental data",
+              "description": "Per-experiment raw measurements (e.g. instrument outputs)."
+            },
+            {
+              "@id": "http://edamontology.org/data_1669",
+              "@type": "DefinedTerm",
+              "name": "Processed data",
+              "description": "Per-experiment processed outputs (e.g. normalized values)."
+            },
+            {
+              "@id": "http://purl.obolibrary.org/obo/OBI_0001466",
+              "@type": "DefinedTerm",
+              "name": "Study aggregated processed data",
+              "description": "Study-wide aggregated or summarized processed data."
+            },
+            {
+              "@id": "http://purl.obolibrary.org/obo/OBI_0001477",
+              "@type": "DefinedTerm",
+              "name": "Standard operating procedure",
+              "description": "Standard operating procedures or protocols."
+            },
+            {
+              "@id": "https://w3id.org/tox/terms#MetadataFile",
+              "@type": "DefinedTerm",
+              "name": "Metadata",
+              "description": "Assay metadata templates or descriptive files."
+            }
           ]
         },
         {
