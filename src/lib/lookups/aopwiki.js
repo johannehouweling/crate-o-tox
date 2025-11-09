@@ -9,6 +9,15 @@ function stripHtml(html = "") {
   return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+function parseAopId(query = "") {
+  if (!query) return null;
+  const direct = query.match(/^\d+$/);
+  if (direct) return direct[0];
+  const prefixed = query.match(/aop[-_\s]*(\d+)/i);
+  if (prefixed) return prefixed[1];
+  return null;
+}
+
 export default class Lookup {
   constructor(opt = {}) {
     this.fields = opt.fields;
@@ -34,6 +43,17 @@ export default class Lookup {
 
     const q = normalized.toLowerCase();
     const documents = await this.ensureData();
+
+    const candidateId = parseAopId(normalized);
+    if (candidateId) {
+      const direct = documents.find(
+        (doc) => String(doc?.id) === candidateId
+      );
+      if (direct) {
+        const entry = this.pickFields(this.formatEntry(direct));
+        return entry ? [entry] : [];
+      }
+    }
 
     const matches = [];
     for (const doc of documents) {

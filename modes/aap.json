@@ -33,6 +33,7 @@
       "inputs": [
         "@id",
         "@type",
+        "http://schema.org/additionalType",
         "http://schema.org/name",
         "http://schema.org/description",
         "http://schema.org/datePublished",
@@ -82,11 +83,6 @@
       "name": "Exposure Information",
       "help": "Exposure regime applied.",
       "inputs": [
-        "tox:exposureType",
-        "tox:exposureDuration",
-        "tox:exposureDurationUnit",
-        "tox:exposureInterval",
-        "tox:exposureIntervalUnit"
       ]
     },
     {
@@ -109,7 +105,8 @@
         "@id",
         "name",
         "accession",
-        "species"
+        "species",
+        "sex"
       ]
     },
     "ChemicalSubstance": {
@@ -165,6 +162,15 @@
       "id": "http://schema.org/Dataset",
       "inputs": [
         {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "Additional type information for this dataset (e.g. 'Assay', Study', Investigation').",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Title of this toxicology dataset.",
@@ -207,8 +213,7 @@
         },
         {
           "id": "https://w3id.org/ldac/terms#doi",
-          "name": "ldac:doi",
-          "label": "DOI",
+          "name": "DOI",
           "multiple": false,
           "required": true,
           "help": "A Digital Object Identifier, e.g. https://doi.org/10.1000/182.",
@@ -280,7 +285,7 @@
         {
           "id": "http://purl.bioontology.org/ontology/MESH/D000073931",
           "name": "AdverseOutcomePathway",
-          "help": "AOP reference or URL associated with this assay.",
+          "help": "Look up AOP or AOP event on AOP-wiki by name or identifier.",
           "multiple": true,
           "type": [
             "AdverseOutcomePathway"
@@ -298,16 +303,16 @@
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0000551",
-          "name": "tox:organism",
+          "name": "Organism",
           "help": "Organism represented in the assay.",
-          "multiple": false,
+          "multiple": true,
           "type": [
             "Text"
           ]
         },
         {
           "id": "http://purl.obolibrary.org/obo/UBERON_0000062",
-          "name": "tox:organ",
+          "name": "Organ",
           "help": "Organ studied or modelled.",
           "multiple": true,
           "type": [
@@ -316,7 +321,7 @@
         },
         {
           "id": "http://purl.obolibrary.org/obo/UBERON_0000479",
-          "name": "tox:tissue",
+          "name": "Tissue",
           "help": "Tissue studied or modelled.",
           "multiple": true,
           "type": [
@@ -621,6 +626,24 @@
           "id": "http://schema.org/species",
           "name": "species",
           "help": "Species of origin for the cell line.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/additionalProperty",
+          "name": "cellType",
+          "help": "Cell type label provided by Cellosaurus.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/gender",
+          "name": "sex",
+          "help": "Sex of the donor the cell line was derived from.",
           "multiple": false,
           "type": [
             "Text"

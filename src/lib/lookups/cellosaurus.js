@@ -11,6 +11,19 @@ function primaryValue(list = [], preferredType = "primary") {
   return (preferred || list[0])?.value;
 }
 
+function firstLabel(node) {
+  if (!node) return undefined;
+  if (typeof node === "string") return node;
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      const label = firstLabel(item);
+      if (label) return label;
+    }
+    return undefined;
+  }
+  return node.label || node.value || node?.xref?.label || node?.xref?.value;
+}
+
 export default class Lookup {
   constructor(opt = {}) {
     this.fields = opt.fields;
@@ -54,6 +67,9 @@ export default class Lookup {
     const speciesList = (entry["species-list"] || [])
       .map((item) => item?.label || item?.accession || item?.value)
       .filter(Boolean);
+    const category = entry?.category;
+    const cellType = firstLabel(entry?.["cell-type"]);
+    const sex = entry?.sex;
 
     const entity = {
       "@id": accession ? `https://www.cellosaurus.org/${accession}` : undefined,
@@ -61,6 +77,9 @@ export default class Lookup {
       name,
       accession,
       species: speciesList,
+      category,
+      cellType,
+      sex,
     };
     return this.pickFields(entity);
   }
