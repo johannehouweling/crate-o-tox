@@ -90,7 +90,7 @@
       "help": "Measurement configuration and readout values.",
       "inputs": [
         "http://purl.bioontology.org/ontology/MESH/D000073931",
-        "https://w3id.org/ldac/terms#aopEvent",
+        "https://w3id.org/tox/terms#aopEvent",
         "http://www.bioassayontology.org/bao#BAO_0000697",
         "http://www.bioassayontology.org/bao#BAO_0002628",
         "http://www.bioassayontology.org/bao#BAO_0002001",
@@ -106,6 +106,8 @@
         "name",
         "accession",
         "species",
+        "category",
+        "cellType",
         "sex"
       ]
     },
@@ -138,6 +140,30 @@
         "description"
       ]
     },
+    "AopEvent": {
+      "module": "aopwikiEvents",
+      "fields": [
+        "@id",
+        "name",
+        "short_name",
+        "eventType",
+        "biologicalOrganization",
+        "identifier",
+        "url"
+      ]
+    },
+    "AopEventRelationship": {
+      "module": "aopwikiRelationships",
+      "fields": [
+        "@id",
+        "name",
+        "description",
+        "upstream_event",
+        "downstream_event",
+        "identifier",
+        "url"
+      ]
+    },
     "Organization": {
       "module": "ror"
     }
@@ -155,7 +181,9 @@
     "URL",
     "TextArea",
     "Text",
-    "AdverseOutcomePathway"
+    "AdverseOutcomePathway",
+    "AopEvent",
+    "AopEventRelationship"
   ],
   "classes": {
     "Dataset": {
@@ -285,7 +313,7 @@
         {
           "id": "http://purl.bioontology.org/ontology/MESH/D000073931",
           "name": "AdverseOutcomePathway",
-          "help": "Look up AOP or AOP event on AOP-wiki by name or identifier.",
+          "help": "Look up AOP on AOP-wiki by name or identifier.",
           "multiple": true,
           "type": [
             "AdverseOutcomePathway"
@@ -293,12 +321,11 @@
         },
         {
           "id": "https://w3id.org/tox/terms#aopEvent",
-          "name": "tox:aopEvent",
-          "help": "Specific AOP event reference or URL.",
+          "name": "AOPEvent",
+          "help": "Look up AOP event on AOP-wiki by name or identifier.",
           "multiple": true,
           "type": [
-            "URL",
-            "Text"
+            "AopEvent"
           ]
         },
         {
@@ -330,7 +357,7 @@
         },
         {
           "id": "https://bioschemas.org/BioSample",
-          "name": "biosample",
+          "name": "BioSample",
           "help": "Cell line or cellular model used.",
           "multiple": true,
           "type": [
@@ -401,14 +428,22 @@
           ]
         },
         {
-          "id": "https://w3id.org/ldac/terms#aopEvent",
-          "name": "ldac:aopEvent",
-          "label": "AOP key event",
+          "id": "https://w3id.org/tox/terms#aopEvent",
+          "name": "AOPEvent",
+          "label": "AOP event",
           "help": "Key events from the referenced AOP that are evidenced by this dataset.",
           "multiple": true,
           "type": [
-            "AopEvent",
-            "URL"
+            "AopEvent"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#keyEventRelationship",
+          "name": "Key event relationship",
+          "help": "Key event relationships from AOP-Wiki that are referenced in this dataset.",
+          "multiple": true,
+          "type": [
+            "AopEventRelationship"
           ]
         },
         {
@@ -600,101 +635,6 @@
         }
       ]
     },
-    "CellLine": {
-      "id": "https://bioschemas.org/BioSample",
-      "inputs": [
-        {
-          "id": "http://schema.org/name",
-          "name": "name",
-          "help": "Cell line name.",
-          "required": true,
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C43530",
-          "name": "supplier",
-          "help": "Supplier or source of the cell line.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/species",
-          "name": "species",
-          "help": "Species of origin for the cell line.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/additionalProperty",
-          "name": "cellType",
-          "help": "Cell type label provided by Cellosaurus.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/gender",
-          "name": "sex",
-          "help": "Sex of the donor the cell line was derived from.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        }
-      ]
-    },
-    "ChemicalSubstance": {
-      "id": "https://bioschemas.org/ChemicalSubstance",
-      "inputs": [
-        {
-          "id": "http://schema.org/name",
-          "name": "name",
-          "help": "Chemical name.",
-          "required": true,
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/url",
-          "name": "URL",
-          "help": "Website for the chemical.",
-          "multiple": false,
-          "type": [
-            "URL"
-          ]
-        },
-        {
-          "id": "http://schema.org/identifier",
-          "name": "identifier",
-          "help": "Identifier such as cas nr.",
-          "multiple": true,
-          "type": [
-            "PropertyValue",
-            "URL",
-            "Text"
-          ]
-        },
-        {
-          "id": "http://bioschemas.org/chemicalComposition",
-          "name": "chemicalcomposition",
-          "help": "Molecular formula of the chemical substance.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        }
-      ]
-    },
     "PropertyValue": {
       "id": "http://schema.org/PropertyValue",
       "inputs": [
@@ -804,9 +744,27 @@
       "id": "https://w3id.org/tox/terms#aopEvent",
       "inputs": [
         {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Preferred label for the AOP event.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/alternateName",
+          "name": "short_name",
+          "help": "Short label or abbreviation for the event.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
           "id": "http://schema.org/description",
           "name": "description",
-          "help": "Name of the AOP event.",
+          "help": "Narrative description or notes for the event.",
           "multiple": false,
           "type": [
             "Text"
@@ -819,6 +777,74 @@
           "multiple": false,
           "type": [
             "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/category",
+          "name": "eventType",
+          "help": "Indicates whether the event is a key event or molecular initiating event.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000062",
+          "name": "biologicalOrganization",
+          "help": "Biological level of organization associated with the event.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        }
+      ]
+    },
+    "AopEventRelationship": {
+      "id": "https://w3id.org/tox/terms#aopEventRelationship",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Label describing the upstream and downstream events.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Additional notes on the key event relationship.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifier or URL for the relationship.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/about",
+          "name": "upstream_event",
+          "help": "Name of the upstream key event.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/result",
+          "name": "downstream_event",
+          "help": "Name of the downstream key event.",
+          "multiple": false,
+          "type": [
+            "Text"
           ]
         }
       ]
