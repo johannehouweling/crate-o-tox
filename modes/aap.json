@@ -113,14 +113,15 @@
         "sex"
       ]
     },
-    "ChemicalSubstance": {
+  "ChemicalSubstance": {
       "module": "pubchem",
       "fields": [
         "@id",
         "name",
         "synonym",
         "inchi",
-        "inchikey"
+        "inchikey",
+        "cas"
       ]
     },
     "Person": {

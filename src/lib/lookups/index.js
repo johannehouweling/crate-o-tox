@@ -6,6 +6,7 @@ import aopwiki from './aopwiki.js'
 import aopwikiEvents from './aopwiki-events.js'
 import aopwikiRelationships from './aopwiki-relationships.js'
 import orcid from './orcid.js'
+import mimetypes from './mimetypes.js'
 
 export default {
   datapack,
@@ -15,5 +16,6 @@ export default {
   aopwiki,
   aopwikiEvents,
   aopwikiRelationships,
-  orcid
+  orcid,
+  mimetypes
 }

@@ -56,12 +56,13 @@ export default class Lookup {
   async fetchCompoundByName(name) {
     const propertyUrl = `${PUG_BASE}/name/${encodeURIComponent(
       name
-    )}/property/Title,InChI,InChIKey/JSON`;
+    )}/property/Title,InChI,InChIKey,CanonicalSMILES,MolecularFormula/JSON`;
     const propertyData = await safeJsonFetch(propertyUrl);
     const property = propertyData?.PropertyTable?.Properties?.[0];
     if (!property?.CID) return null;
 
     const synonyms = await this.fetchSynonyms(property.CID);
+    const cas = await this.fetchCas(property.CID);
     return {
       "@id": `https://pubchem.ncbi.nlm.nih.gov/compound/${property.CID}`,
       "@type": this.type,
@@ -69,6 +70,9 @@ export default class Lookup {
       synonym: synonyms,
       inchi: property.InChI,
       inchikey: property.InChIKey,
+      smiles: property.CanonicalSMILES,
+      formula: property.MolecularFormula,
+      cas,
       cid: property.CID
     };
   }
@@ -77,6 +81,13 @@ export default class Lookup {
     const url = `${PUG_BASE}/cid/${encodeURIComponent(cid)}/synonyms/JSON`;
     const payload = await safeJsonFetch(url);
     return payload?.InformationList?.Information?.[0]?.Synonym?.slice(0, 10) || [];
+  }
+
+  async fetchCas(cid) {
+    const url = `${PUG_BASE}/cid/${encodeURIComponent(cid)}/xrefs/RN/JSON`;
+    const payload = await safeJsonFetch(url);
+    const list = payload?.InformationList?.Information?.[0]?.RN || [];
+    return list;
   }
 
   pickFields(entity) {
