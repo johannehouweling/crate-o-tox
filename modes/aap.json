@@ -38,8 +38,10 @@
         "http://schema.org/description",
         "http://schema.org/datePublished",
         "http://schema.org/license",
-        "https://w3id.org/ldac/terms#doi",
-        "http://schema.org/url",
+        "http://schema.org/version",
+        "http://schema.org/dateModified",
+        "http://schema.org/citation",
+        "http://schema.org/identifier",
         "https://w3id.org/terms#caseStudy",
         "https://w3id.org/terms#regulatoryQuestion",
         "https://w3id.org/terms#workflowStep"
@@ -219,6 +221,25 @@
           ]
         },
         {
+          "id": "http://schema.org/version",
+          "name": "version",
+          "help": "Version string for this dataset or RO-Crate release.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/dateModified",
+          "name": "dateModified",
+          "help": "Last update timestamp for this dataset package.",
+          "multiple": false,
+          "type": [
+            "Date",
+            "DateTime"
+          ]
+        },
+        {
           "id": "http://schema.org/datePublished",
           "name": "datePublished",
           "help": "Release date for this dataset.",
@@ -240,40 +261,30 @@
           ]
         },
         {
-          "id": "https://w3id.org/ldac/terms#doi",
-          "name": "DOI",
-          "multiple": false,
-          "required": true,
-          "help": "A Digital Object Identifier, e.g. https://doi.org/10.1000/182.",
-          "type": [
-            "URL"
-          ]
-        },
-        {
           "id": "http://schema.org/identifier",
           "name": "identifier",
           "help": "Identifiers for this dataset (e.g. DOI, internal accession).",
-          "multiple": true,
+          "required": true,
           "type": [
-            "PropertyValue",
             "Text",
             "URL" 
           ]
         },
         {
-          "id": "http://schema.org/isBasedOn",
-          "name": "isBasedOn",
-          "help": "Protocols or documents this assay is based on.",
+          "id": "http://schema.org/citation",
+          "name": "citation",
+          "help": "Citations associated with this dataset (e.g. related publications).",
           "multiple": true,
           "type": [
             "CreativeWork",
             "URL",
-            "Text"
+            "Text",
+            "ScholarlyArticle"
           ]
         },
         {
           "id": "http://schema.org/url",
-          "name": "URL",
+          "name": "url",
           "help": "Primary project portal link.",
           "multiple": true,
           "type": [
