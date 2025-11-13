@@ -87,6 +87,7 @@ export class EditorState {
   /** cache of definition indexed by its type  */
   defByType;
   lookupPromises = {};
+  lookupTypeAliases = {};
   /** cache array of entities @type {import('vue').Ref<Set<object>>} */
   entities = ref({});
   metadataFileEntityId;
@@ -108,15 +109,37 @@ export class EditorState {
     this.profile = profile;
     this.meta = reactive({});
     this.defByType = {};
+    this.lookupTypeAliases = {};
+    for (const [className, classDef] of Object.entries(profile.classes || {})) {
+      const classId = classDef?.id;
+      if (classId) {
+        this.lookupTypeAliases[classId] = className;
+      }
+    }
     // set select options for @type lookup
     jsonldKeywords['@type'].props.options = profile.enabledClasses;
     // async load lookup modules
     for (const type in profile.lookup) {
       const l = profile.lookup[type];
-      const mod = l.module || "datapack";
-      this.lookupPromises[type] = import(/* @vite-ignore */mod).catch((e) => { }).
-        then(m => new (m?.default || lookupModules[mod])({ type, ...l })).
-        catch(e => { });
+      const mod = this.resolveLookupModuleId(l.module || 'datapack');
+      const InlineCtor = lookupModules[mod];
+      if (InlineCtor) {
+        this.lookupPromises[type] = Promise.resolve(new InlineCtor({ type, ...l }));
+        continue;
+      }
+      this.lookupPromises[type] = import(/* @vite-ignore */mod)
+        .catch(() => null)
+        .then((m) => {
+          const LookupCtor = m?.default || lookupModules[mod];
+          if (!LookupCtor) {
+            throw new Error(`Unknown lookup module: ${mod}`);
+          }
+          return new LookupCtor({ type, ...l });
+        })
+        .catch((e) => {
+          console.error(e);
+          return null;
+        });
     }
     return profile;
   }
@@ -269,11 +292,36 @@ export class EditorState {
     return c;
   }
 
+  resolveLookupKey(type) {
+    if (!type) return null;
+    if (this.lookupPromises[type]) return type;
+    if (Array.isArray(type)) {
+      for (const candidate of type) {
+        const resolved = this.resolveLookupKey(candidate);
+        if (resolved) return resolved;
+      }
+      return null;
+    }
+    const alias = this.lookupTypeAliases?.[type];
+    if (alias && this.lookupPromises[alias]) {
+      return alias;
+    }
+    return null;
+  }
+
   async remoteSearch(type, query) {
-    if (!this.lookupPromises[type]) return [];
-    const lookup = await this.lookupPromises[type];
-    //console.log(lookup);
+    const lookupKey = this.resolveLookupKey(type);
+    if (!lookupKey) return [];
+    const lookup = await this.lookupPromises[lookupKey];
     return lookup?.search({ query }) || [];
+  }
+
+  resolveLookupModuleId(moduleId) {
+    if (!moduleId) return 'datapack';
+    if (lookupModules[moduleId]) return moduleId;
+    const lowered = moduleId.toLowerCase?.();
+    if (lowered && lookupModules[lowered]) return lowered;
+    return moduleId;
   }
 
   isPrimitive(type) {

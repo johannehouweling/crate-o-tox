@@ -46,6 +46,32 @@ Crate-O uses [Mode Files](https://github.com/Language-Research-Technology/ro-cra
 
 There are [command line tools available](https://github.com/Language-Research-Technology/ro-crate-schema-tools) to create Mode Files from Schema.org style Schemas ([SoSS]s). In future we may also support [OWL] ontologies, SHACL specifications and other RDF approaches.
 
+# CompoundCloud proxy
+
+CompoundCloud now sits behind an anti-bot firewall. To keep chemical lookups working you can run the bundled proxy which forwards SPARQL and entity-data requests with a dedicated User-Agent (or any custom headers you configure). This proxy can be run locally for development or deployed alongside your production hosting.
+
+```bash
+# start the proxy (defaults to http://127.0.0.1:8788)
+npm run proxy:compoundcloud
+
+# run the app pointing Vite's dev proxy to the local service
+COMPOUND_PROXY_ORIGIN=http://127.0.0.1:8788 npm run dev
+
+# or run both together (proxy + dev server)
+npm run dev:proxy
+```
+
+When deploying the proxy, set `VITE_COMPOUND_CLOUD_BASE` to its public origin (for example `https://proxy.example.org`) so the compiled app uses it instead of the default CompoundCloud host. Additional environment variables supported by the proxy script:
+
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `COMPOUND_PROXY_TARGET` | Upstream origin to forward to | `https://compoundcloud.wikibase.cloud` |
+| `COMPOUND_PROXY_PORT` / `PORT` | Local listen port | `8788` |
+| `COMPOUND_PROXY_USER_AGENT` | User-Agent header sent upstream | `crate-o-compoundcloud-proxy (+https://github.com/Language-Research-Technology/crate-o)` |
+| `COMPOUND_PROXY_ALLOW_ORIGIN` | CORS allow-origin value | `*` |
+
+Once the proxy is deployed, configure your hosting platform so `/query/sparql` and `/wiki/Special:EntityData` requests hit it (or simply point `VITE_COMPOUND_CLOUD_BASE` at the proxy URL). This keeps CompoundCloud traffic under an IP and user-agent you control while the browser only ever talks to your proxy.
+
 # Roadmap / Backlog
 
 The following is an overview of the major goals / functions for Crate-O over 2023-2024 and when we expect to be working on the various aspects of the tool.

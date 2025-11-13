@@ -79,8 +79,14 @@ export default defineConfig(({ mode }) => ({
         secure: true,
         rewrite: path => path.replace(/^\/lookup\/cellosaurus/, '')
       },
+      '/lookup/compoundcloud': {
+        target: process.env.COMPOUND_PROXY_ORIGIN || 'https://compoundcloud.wikibase.cloud',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/lookup\/compoundcloud/, '')
+      },
       '/lookup/pubchem': {
-        target: 'https://pubchem.ncbi.nlm.nih.gov',
+        target: 'https://compoundcloud.wikibase.cloud',
         changeOrigin: true,
         secure: true,
         rewrite: path => path.replace(/^\/lookup\/pubchem/, '')
