@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "Toxicology Mode",
-    "description": "Streamlined metadata mode for assay annotation, aligned with the BioStudies submission template for (cell-based) toxicology data.",
+    "name": "Toxicology Mode - Assay",
+    "description": "Crate-o mode for annotation of cell-based toxicological research & methods, aligned with the BioStudies submission template for (cell-based) toxicology data.",
     "version": 0.1,
     "author": "J.M. Houweling",
     "license": "GNU Affero General Public License v3.0"
@@ -28,12 +28,14 @@
   },
   "inputGroups": [
     {
-      "name": "About",
-      "help": "Core description of the assay dataset and links used in BioStudies submissions.",
+      "name": "General information",
+      "metadataCategory": "datasetDescriptor",
+      "help": "This is general information about the dataset that describes the assay. A data descriptor (https://fairplus.github.io/Data-Maturity/docs/Glossary/#dataset-descriptor) is a data structure that contains any information that describes a dataset, i.e. it is a record representing the dataset’s metadata.",
       "inputs": [
         "@id",
         "@type",
         "http://schema.org/additionalType",
+        "http://www.bioassayontology.org/bao#BAO_0000015",
         "http://schema.org/name",
         "http://schema.org/description",
         "http://schema.org/datePublished",
@@ -44,11 +46,14 @@
         "http://schema.org/identifier",
         "https://w3id.org/terms#caseStudy",
         "https://w3id.org/terms#regulatoryQuestion",
-        "https://w3id.org/terms#workflowStep"
+        "https://w3id.org/terms#workflowStep",
+        "https://w3id.org/hasPart",
+        "https://w3id.org/isPartOf"
       ]
     },
     {
-      "name": "People & Organisations",
+      "name": "People, Funding & Organisations",
+      "metadataCategory": "contextualMetadata",
       "help": "Contributors, contacts, and funding information.",
       "inputs": [
         "http://schema.org/author",
@@ -58,15 +63,26 @@
     },
     {
       "name": "Structure",
-      "help": "Supporting documentation or derived materials.",
+      "metadataCategory": "datasetDescriptor",
+      "help": "How the parts of this RO-Crate relate",
       "inputs": [
         "http://schema.org/hasPart",
-        "http://schema.org/isPartOf"
+        "http://schema.org/isPartOf", 
+        "http://schema.org/as"
+      ]
+    },
+    {
+      "name": "Chemical Information",
+      "metadataCategory": "contextualMetadata",
+      "help": "Test substances associated with this assay.",
+      "inputs": [
+        "https://bioschemas.org/ChemicalSubstance"
       ]
     },
     {
       "name": "Biological Model Information",
-      "help": "Details on the cell model used in the assay.",
+      "metadataCategory": "contextualMetadata",
+      "help": "This group specifies the biological target (cells or organisms) exposed to the chemical(s).",
       "inputs": [
         "http://www.bioassayontology.org/bao#BAO_0000551",
         "http://purl.obolibrary.org/obo/UBERON_0000062",
@@ -75,28 +91,35 @@
       ]
     },
     {
-      "name": "Chemical Information",
-      "help": "Test substances associated with this assay.",
-      "inputs": [
-        "https://bioschemas.org/ChemicalSubstance"
-      ]
-    },
-    {
       "name": "Exposure Information",
-      "help": "Exposure regime applied.",
-      "inputs": [
-      ]
+      "metadataCategory": "contextualMetadata",
+      "help": "Specifications on how biological models are exposed to the chemical(s), e.g., details about the applied dose, route of exposure and type of application (e.g., as aerosol or dispersed)",
+      "inputs": []
     },
     {
       "name": "Endpoint Readout Information",
-      "help": "Measurement configuration and readout values.",
+      "metadataCategory": "contextualMetadata",
+      "help": "Specifies the test methods used to assess the chemical(s) impact on the biological model and contains most of the metadata, mainly instrument specifications",
       "inputs": [
         "http://purl.bioontology.org/ontology/MESH/D000073931",
         "https://w3id.org/tox/terms#aopEvent",
+        "http://www.bioassayontology.org/bao#BAO_0000179",
         "http://www.bioassayontology.org/bao#BAO_0000697",
         "http://www.bioassayontology.org/bao#BAO_0002628",
         "http://www.bioassayontology.org/bao#BAO_0002001",
-        "http://www.bioassayontology.org/bao#BAO_0000077"
+        "https://w3id.org/tox/terms#rawDataFile",
+        "https://w3id.org/tox/terms#analyzedDataFile",
+        "https://w3id.org/tox/terms#analysisSoftware"
+      ]
+    },
+    {
+      "name": "Analysis and Statistics",
+      "metadataCategory": "contextualMetadata",
+      "help": "Information about the data analysis methods and statistics, as well as the used software for data evaluation",
+      "inputs": [
+        "https://w3id.org/tox/terms#rawDataFile",
+        "https://w3id.org/tox/terms#analyzedDataFile",
+        "https://w3id.org/tox/terms#analysisSoftware"
       ]
     }
   ],
@@ -113,6 +136,18 @@
         "sex"
       ]
     },
+  "BioAssay": {
+      "module": "bioassaydb",
+      "fields": [
+        "@id",
+        "name",
+        "description",
+        "synonym",
+        "oboId",
+        "shortForm",
+        "curie"
+      ]
+    },
   "ChemicalSubstance": {
       "module": "compoundcloud",
       "fields": [
@@ -122,6 +157,54 @@
         "inchi",
         "inchikey",
         "cas"
+      ]
+    },
+    "Endpoint": {
+      "module": "bao",
+      "fields": [
+        "@id",
+        "name",
+        "description",
+        "synonym",
+        "oboId",
+        "shortForm",
+        "curie"
+      ]
+    },
+    "InstrumentManufacturer": {
+      "module": "bao",
+      "fields": [
+        "@id",
+        "name",
+        "description",
+        "synonym",
+        "oboId",
+        "shortForm",
+        "curie"
+      ]
+    },
+    "MeasuredEntity": {
+      "module": "bao",
+      "fields": [
+        "@id",
+        "name",
+        "description",
+        "synonym",
+        "oboId",
+        "shortForm",
+        "curie"
+      ]
+    },
+    "DetectionInstrument": {
+      "module": "bao",
+      "fields": [
+        "@id",
+        "name",
+        "description",
+        "synonym",
+        "oboId",
+        "shortForm",
+        "curie"
       ]
     },
     "Person": {
@@ -180,6 +263,7 @@
     "CreativeWork",
     "PropertyValue",
     "File",
+    "SoftwareApplication",
     "DOI",
     "URL",
     "TextArea",
@@ -195,10 +279,12 @@
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "Additional type information for this dataset (e.g. 'Assay', Study', Investigation').",
+          "help": "Additional type information for this dataset",
           "multiple": true,
           "type": [
-            "Text"
+            "BioAssay",
+            "Assay",
+            "Study"
           ]
         },
         {
@@ -224,7 +310,7 @@
         {
           "id": "http://schema.org/version",
           "name": "version",
-          "help": "Version string for this dataset or RO-Crate release.",
+          "help": "Version string for this dataset (RO-Crate) release.",
           "multiple": false,
           "type": [
             "Text"
@@ -293,6 +379,33 @@
           ]
         },
         {
+          "id": "https://w3id.org/tox/terms#rawDataFile",
+          "name": "tox:rawDataFile",
+          "help": "Raw experimental input files used for analysis.",
+          "multiple": true,
+          "type": [
+            "File"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#analyzedDataFile",
+          "name": "tox:analyzedDataFile",
+          "help": "Analyzed/processed files generated from the raw data.",
+          "multiple": true,
+          "type": [
+            "File"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#analysisSoftware",
+          "name": "tox:analysisSoftware",
+          "help": "Software used to process or analyze the data.",
+          "multiple": true,
+          "type": [
+            "SoftwareApplication"
+          ]
+        },
+        {
           "id": "https://w3id.org/tox/terms#caseStudy",
           "name": "Case Study",
           "help": "Name or identifier of the case study.",
@@ -333,7 +446,7 @@
         },
         {
           "id": "https://w3id.org/tox/terms#aopEvent",
-          "name": "AOPEvent",
+          "name": "AopEvent",
           "help": "Look up AOP event on AOP-wiki by name or identifier.",
           "multiple": true,
           "type": [
@@ -377,71 +490,8 @@
           ]
         },
         {
-          "id": "https://w3id.org/tox/terms#replicateCount",
-          "name": "tox:replicateCount",
-          "help": "Number of replicates per condition.",
-          "multiple": false,
-          "type": [
-            "Number"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#detectionInstrument",
-          "name": "tox:detectionInstrument",
-          "help": "Detection instrument used (e.g. plate reader model).",
-          "multiple": true,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#instrumentManufacturer",
-          "name": "tox:instrumentManufacturer",
-          "help": "Manufacturer of the detection instrument.",
-          "multiple": true,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#measuredEntity",
-          "name": "tox:measuredEntity",
-          "help": "Measured entity or marker (e.g. ATP, LDH).",
-          "multiple": true,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#measuredEntityUnit",
-          "name": "tox:measuredEntityUnit",
-          "help": "Unit for the measured entity.",
-          "multiple": true,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#endpointReadout",
-          "name": "tox:endpointReadout",
-          "help": "Endpoint readout name.",
-          "multiple": true,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#endpointReadoutUnit",
-          "name": "tox:endpointReadoutUnit",
-          "help": "Unit for the endpoint readout.",
-          "multiple": true,
-          "type": [
-            "Text"
-          ]
-        },
-        {
           "id": "https://w3id.org/tox/terms#aopEvent",
-          "name": "AOPEvent",
+          "name": "AopEvent",
           "label": "AOP event",
           "help": "Key events from the referenced AOP that are evidenced by this dataset.",
           "multiple": true,
@@ -459,43 +509,41 @@
           ]
         },
         {
-          "id": "http://www.bioassayontology.org/bao#BAO_0000697",
-          "name": "bao:BAO_0000697",
-          "label": "BAO endpoint",
-          "help": "BAO term describing the biological endpoint that is measured.",
+          "id": "http://www.bioassayontology.org/bao#BAO_0000179",
+          "name": "bao:BAO_0000179",
+          "label": "endpoint",
+          "help": "Biological endpoint that is measured.",
           "multiple": true,
           "type": [
-            "Text"
+            "Endpoint"
           ]
         },
-        {
-          "id": "http://www.bioassayontology.org/bao#BAO_0002628",
+        { "id": "http://www.bioassayontology.org/bao#BAO_0002628",
           "name": "bao:BAO_0002628",
-          "label": "BAO readout",
-          "help": "BAO term describing the readout or detection configuration.",
+          "label": "instrumentation manufacturer",
+          "help": "Manufacturer of the instrumentation used to generate dataset.",
           "multiple": true,
           "type": [
-            "Text"
+            "InstrumentManufacturer"
+          ]
+        },
+        { "id": "http://www.bioassayontology.org/bao#BAO_0000697",
+          "name": "bao:BAO_0000697",
+          "label": "detection instrument",
+          "help": "The names of equipment used for measurement/readout from an assay, e.g. FLIPR, ViewLux plate reader, PHERAstar, etc.",
+          "multiple": true,
+          "type": [
+            "DetectionInstrument"
           ]
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0002001",
           "name": "bao:BAO_0002001",
-          "label": "BAO response unit",
-          "help": "BAO term for the unit or scale of the readout.",
+          "label": "measured entity",
+          "help": "The role of a molecular entity of being the output of a biological reaction or process that is quantitated either directly (by the presence of a tag or probe) or indirectly in a coupled reaction.",
           "multiple": true,
           "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://www.bioassayontology.org/bao#BAO_0000077",
-          "name": "bao:BAO_0000077",
-          "label": "BAO assay format",
-          "help": "BAO term specifying the assay format/configuration for the endpoint.",
-          "multiple": true,
-          "type": [
-            "Text"
+            "MeasuredEntity"
           ]
         },
         {
@@ -506,6 +554,15 @@
           "multiple": true,
           "type": [
             "Person"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0000015",
+          "name": "BioAssayType",
+          "help": "Type of bioassay performed.",
+          "multiple": true,
+          "type": [
+            "BioAssay"
           ]
         },
         {
@@ -538,27 +595,26 @@
         {
           "id":"http://schema.org/isPartOf",
           "name":"isPartOf",
-          "help":"Larger collections or datasets that this dataset is part of.",
+          "help":"Larger collections of datasets(study) that this dataset(assay) is part of.",
           "multiple": true,
           "type":[
-            "CreativeWork",
-            "File",
-            "URL",
-            "Dataset"
+            "Collection"
           ]        
         },
         {
           "id": "http://schema.org/hasPart",
           "name": "hasPart",
-          "help": "Files or subordinate works that form part of this dataset package.",
+          "help": "Folder or File that form part of this dataset.",
           "multiple": true,
           "type": [
             "CreativeWork",
             "File",
             "URL",
             "Dataset",
+            "Assay",
             "ScholarlyArticle",
             "LabProtocol"
+
           ]
         },
         {
@@ -600,7 +656,23 @@
           "help": "Role performed by this contributor (e.g. Data Curator).",
           "multiple": true,
           "type": [
-            "Text"
+            "Select"
+          ],
+          "values": [
+            { "@id": "https://credit.niso.org/contributor-roles/conceptualization", "@type": "DefinedTerm", "name": "Conceptualization" },
+            { "@id": "https://credit.niso.org/contributor-roles/data-curation", "@type": "DefinedTerm", "name": "Data curation" },
+            { "@id": "https://credit.niso.org/contributor-roles/formal-analysis", "@type": "DefinedTerm", "name": "Formal analysis" },
+            { "@id": "https://credit.niso.org/contributor-roles/funding-acquisition", "@type": "DefinedTerm", "name": "Funding acquisition" },
+            { "@id": "https://credit.niso.org/contributor-roles/investigation", "@type": "DefinedTerm", "name": "Investigation" },
+            { "@id": "https://credit.niso.org/contributor-roles/methodology", "@type": "DefinedTerm", "name": "Methodology" },
+            { "@id": "https://credit.niso.org/contributor-roles/project-administration", "@type": "DefinedTerm", "name": "Project administration" },
+            { "@id": "https://credit.niso.org/contributor-roles/resources", "@type": "DefinedTerm", "name": "Resources" },
+            { "@id": "https://credit.niso.org/contributor-roles/software", "@type": "DefinedTerm", "name": "Software" },
+            { "@id": "https://credit.niso.org/contributor-roles/supervision", "@type": "DefinedTerm", "name": "Supervision" },
+            { "@id": "https://credit.niso.org/contributor-roles/validation", "@type": "DefinedTerm", "name": "Validation" },
+            { "@id": "https://credit.niso.org/contributor-roles/visualization", "@type": "DefinedTerm", "name": "Visualization" },
+            { "@id": "https://credit.niso.org/contributor-roles/writing---original-draft", "@type": "DefinedTerm", "name": "Writing \u2013 original draft" },
+            { "@id": "https://credit.niso.org/contributor-roles/writing---review-&-editing", "@type": "DefinedTerm", "name": "Writing \u2013 review & editing" }
           ]
         },
         {
@@ -610,6 +682,31 @@
           "multiple": true,
           "type": [
             "Organization"
+          ]
+        }
+      ]
+    },
+    "Collection": {
+      "id": "http://schema.org/Collection",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "e.g. name of the research project",
+          "required": false,
+          "multiple": false,
+          "type": [
+            "Text",
+            "FundingID"
+          ]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "",
+          "multiple": false,
+          "type": [
+            "URL"
           ]
         }
       ]
@@ -900,6 +997,47 @@
           "multiple": false,
           "type": [
             "Text"
+          ]
+        }
+      ]
+    },
+    "SoftwareApplication": {
+      "id": "http://schema.org/SoftwareApplication",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Name of the software.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/version",
+          "name": "version",
+          "help": "Software version string.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "Link to the software homepage or repository.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Short description of how the software is used in this analysis.",
+          "multiple": false,
+          "type": [
+            "TextArea"
           ]
         }
       ]

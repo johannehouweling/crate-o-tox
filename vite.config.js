@@ -85,6 +85,12 @@ export default defineConfig(({ mode }) => ({
         secure: true,
         rewrite: path => path.replace(/^\/lookup\/compoundcloud/, '')
       },
+      '/lookup/bao': {
+        target: 'https://www.ebi.ac.uk/ols4',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/lookup\/bao/, '')
+      },
       '/lookup/pubchem': {
         target: 'https://compoundcloud.wikibase.cloud',
         changeOrigin: true,
