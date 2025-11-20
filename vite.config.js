@@ -111,6 +111,12 @@ export default defineConfig(({ mode }) => ({
           Accept: 'application/json'
         },
         rewrite: path => path.replace(/^\/lookup\/orcid/, '')
+      },
+      '/lookup/crossref': {
+        target: 'https://api.crossref.org',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/lookup\/crossref/, '')
       }
     }
   },

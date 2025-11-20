@@ -9,6 +9,7 @@ import aopwikiEvents from './aopwiki-events.js'
 import aopwikiRelationships from './aopwiki-relationships.js'
 import orcid from './orcid.js'
 import mimetypes from './mimetypes.js'
+import crossref from './crossref.js'
 
 const lookups = {
   datapack,
@@ -22,7 +23,8 @@ const lookups = {
   aopwikiEvents,
   aopwikiRelationships,
   orcid,
-  mimetypes
+  mimetypes,
+  crossref
 };
 
 export default lookups

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "Cell Based Toxicology Assay mode",
-    "description": "Crate-o mode for annotation of cell-based toxicological research & methods",
+    "name": "Cell Based Toxicology LabProcess mode",
+    "description": "Crate-o mode capturing toxicology assays with explicit Bioschemas LabProcess workflow links",
     "version": 0.1,
     "author": "J.M. Houweling",
     "license": "GNU Affero General Public License v3.0"
@@ -15,7 +15,8 @@
     "ldac": "https://w3id.org/ldac/terms#",
     "obo": "http://purl.obolibrary.org/obo/",
     "mesh": "http://purl.bioontology.org/ontology/MESH/",
-    "ro": "https://w3id.org/ro/terms/"
+    "ro": "https://w3id.org/ro/terms/",
+    "vhp": "https://glossary.vhp4safety.nl/#"
   },
   "context": [],
   "conformsToUri": [
@@ -47,12 +48,18 @@
     },
     {
       "name": "People, Funding & Organisations",
-      "metadataCategory": "contextualMetadata",
       "help": "Contributors, contacts, and funding information.",
       "inputs": [
         "http://schema.org/author",
-        "http://schema.org/funder",
+        "http://schema.org/funding",
         "http://schema.org/affiliation"
+      ]
+    },
+    {
+      "name": "Project & Regulatory context",
+      "help": "Contributors, contacts, and funding information.",
+      "inputs": [    
+        "http://schema.org/additionalProperty"
       ]
     },
     {
@@ -61,10 +68,8 @@
       "help": "How the parts of this RO-Crate relate, including specific case study, regulatory question, and workflow steps.",
       "inputs": [
         "http://schema.org/hasPart",
-        "http://schema.org/isPartOf",
-        "https://glossary.vhp4safety.nl/#VHP0000150",
-        "https://glossary.vhp4safety.nl/#VHP0000151",
-        "https://glossary.vhp4safety.nl/#VHP0000152"
+        "https://bioschemas.org/processSequence",
+        "https://schema.org/about"
       ]
     },
     {
@@ -105,7 +110,7 @@
       "inputs": [
         "http://purl.bioontology.org/ontology/MESH/D000073931",
         "https://w3id.org/tox/terms#aopEvent",
-        "http://www.bioassayontology.org/bao#BAO_0002855"      
+        "http://www.bioassayontology.org/bao#BAO_0002855"
       ]
     },
     {
@@ -304,8 +309,12 @@
     "FundingID",
     "CaseStudy",
     "RegulatoryQuestion",
-    "WorkflowStep"
-
+    "WorkflowStep",
+    "LabProcess",
+    "Sample",
+    "ParameterValue",
+    "OntologyAnnotation",
+    "Grant"
   ],
   "classes": {
     "Dataset": {
@@ -314,7 +323,7 @@
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "Assay class/type for this dataset.",
+          "help": "Indicate whether this dataset describes multiple assays (study) or one single assay.",
           "required": true,
           "multiple": true,
           "type": [
@@ -323,12 +332,10 @@
           "values": [
             {
               "@id": "http://purl.obolibrary.org/obo/MMO_0000502",
-              "@type": "DefinedTerm",
               "name": "Assay"
             },
             {
               "@id": "https://w3id.org/tox/profile#CellBasedToxicology",
-              "@type": "DefinedTerm",
               "name": "Study"
             }
           ]
@@ -421,6 +428,14 @@
           "multiple": true,
           "type": [
             "URL"
+          ]
+        },
+        { "id": "http://schema.org/additionalProperty",
+          "name": "vhp context",
+          "help": "Contextual characteristics of this dataset. VHP specific.",
+          "multiple": true,
+          "type": [
+            "PropertyValue"
           ]
         },
         {
@@ -573,66 +588,6 @@
           ]
         },
         {
-          "id": "https://glossary.vhp4safety.nl/#VHP0000150",
-          "name": "Case Study",
-          "help": "Name or identifier of the case study.",
-          "multiple": false,
-          "type": [
-            "Text",
-            "URL"
-          ]
-        },
-        {
-          "id": "https://glossary.vhp4safety.nl/#VHP0000151",
-          "name": "Regulatory Question",
-          "help": "Regulatory question addressed by this dataset.",
-          "multiple": false,
-          "type": [
-            "Text",
-            "URL"
-          ]
-        },
-        {
-          "id": "https://glossary.vhp4safety.nl/#VHP0000152",
-          "name": "Workflow step",
-          "help": "Workflow step that this assay supports.",
-          "multiple": false,
-          "type": [
-            "Select",
-            "Text"
-          ],
-          "values": [
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000153",
-              "@type": "DefinedTerm",
-              "name": "Hazard/Chemical characteristics"
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000154",
-              "@type": "DefinedTerm",
-              "name": "External exposure"
-            },
-            { "@id": "http://purl.obolibrary.org/obo/NCIT_C90478",
-              "@type": "DefinedTerm",
-              "name": "Toxicokinetics" 
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000157",
-              "@type": "DefinedTerm",
-              "name": "Internal exposure"
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000156",
-              "@type": "DefinedTerm",
-              "name": "Toxicodynamics/AOP"
-            },
-            { "@id": "https://glossary.vhp4safety.nl/VHP0000158",
-              "@type": "DefinedTerm",
-              "name": "Adverse Outcome" 
-            }
-          ]
-        },
-        {
           "id": "https://bioschemas.org/LabProtocol",
           "name": "labProtocol",
           "help": "Link to a lab protocol relevant to this dataset.",
@@ -683,7 +638,8 @@
           "help": "Cell line or cellular model used.",
           "multiple": true,
           "type": [
-            "CellLine"
+            "CellLine",
+            "Sample"
           ]
         },
         {
@@ -725,21 +681,12 @@
           ]
         },
         {
-          "id": "http://schema.org/funder",
-          "name": "funder",
-          "help": "Funding organisation(s).",
+          "id": "http://schema.org/funding",
+          "name": "funding",
+          "help": "Funding.",
           "multiple": true,
           "type": [
-            "Organization"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#fundingGrantId",
-          "name": "tox:fundingGrantId",
-          "help": "Grant identifier linked to the funding reference.",
-          "multiple": true,
-          "type": [
-            "Text"
+            "Grant"
           ]
         },
         {
@@ -757,10 +704,7 @@
           "help": "Larger collections of datasets(study) that this dataset(assay) is part of.",
           "multiple": true,
           "type": [
-            "Collection",
-            "CaseStudy",
-            "RegulatoryQuestion",
-            "WorkflowStep"
+            "Collection"
           ]
         },
         {
@@ -770,21 +714,17 @@
           "multiple": true,
           "type": [
             "CreativeWork",
-            "File",
-            "URL",
-            "Dataset",
-            "Assay",
-            "ScholarlyArticle",
-            "LabProtocol"
+            "File"
           ]
         },
         {
-          "id": "https://w3id.org/tox/terms#hasChemical",
-          "name": "Chemical",
-          "help": "Chemical substances tested in this assay.",
+          "id": "https://bioschemas.org/processSequence",
+          "name": "Process sequence",
+          "help": "Ordered LabProcess references describing the assay workflow.",
           "multiple": true,
           "type": [
-            "ChemicalSubstance"
+            "LabProcess",
+            "Text"
           ]
         }
       ]
@@ -928,13 +868,66 @@
         }
       ]
     },
+    "PropertyValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Human-readable label for this property (e.g. 'Case study', 'Regulatory question', 'Workflow step').",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "Identifier of the property type (e.g. VHP glossary URI for case study, regulatory question, or workflow step).",
+          "multiple": false,
+          "type": [
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "Human-readable value (e.g. case study title, short regulatory question label, workflow step label).",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "Reference to the CaseStudy, RegulatoryQuestion, or WorkflowStep entity that this PropertyValue points to.",
+          "multiple": false,
+          "type": [
+            "CaseStudy",
+            "RegulatoryQuestion",
+            "WorkflowStep"
+          ]
+        },
+        {
+          "id": "http://schema.org/unitText",
+          "name": "unitText",
+          "help": "Unit, if applicable (often left empty for case study / regulatory links).",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        }
+      ]
+    },
     "CaseStudy": {
       "id": "https://glossary.vhp4safety.nl/#VHP0000150",
       "inputs": [
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "Case study title or identifier.",
+          "help": "Case study title",
           "multiple": false,
           "type": [
             "Text"
@@ -951,11 +944,12 @@
           ]
         },
         {
-          "id": "http://schema.org/url",
-          "name": "url",
-          "help": "Link to the description or documentation of this case study.",
-          "multiple": false,
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Description of the case study",
+          "multiple": true,
           "type": [
+            "Text",
             "URL"
           ]
         }
@@ -1000,51 +994,35 @@
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Workflow step that this dataset contributes to.",
-          "multiple": false,
+          "multiple": true,
           "type": [
-            "Select",
-            "Text"
+            "Select"
           ],
           "values": [
             {
               "@id": "https://glossary.vhp4safety.nl/VHP0000153",
-              "@type": "DefinedTerm",
               "name": "Hazard/Chemical characteristics"
             },
             {
               "@id": "https://glossary.vhp4safety.nl/VHP0000154",
-              "@type": "DefinedTerm",
               "name": "External exposure"
             },
             {
               "@id": "http://purl.obolibrary.org/obo/NCIT_C90478",
-              "@type": "DefinedTerm",
               "name": "Toxicokinetics"
             },
             {
               "@id": "https://glossary.vhp4safety.nl/VHP0000157",
-              "@type": "DefinedTerm",
               "name": "Internal exposure"
             },
             {
               "@id": "https://glossary.vhp4safety.nl/VHP0000156",
-              "@type": "DefinedTerm",
               "name": "Toxicodynamics/AOP"
             },
             {
               "@id": "https://glossary.vhp4safety.nl/VHP0000158",
-              "@type": "DefinedTerm",
               "name": "Adverse Outcome"
             }
-          ]
-        },
-        {
-          "id": "http://schema.org/description",
-          "name": "description",
-          "help": "Explain how this dataset informs the workflow step.",
-          "multiple": false,
-          "type": [
-            "TextArea"
           ]
         }
       ]
@@ -1084,38 +1062,6 @@
         }
       ]
     },
-    "PropertyValue": {
-      "id": "http://schema.org/PropertyValue",
-      "inputs": [
-        {
-          "id": "http://schema.org/name",
-          "name": "name",
-          "help": "Name of the property represented by this identifier.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/value",
-          "name": "value",
-          "help": "Value corresponding to the property.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/unitText",
-          "name": "unitText",
-          "help": "Unit, if applicable.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        }
-      ]
-    },
     "File": {
       "id": "http://schema.org/MediaObject",
       "inputs": [
@@ -1133,18 +1079,28 @@
           "name": "contentUrl",
           "help": "URL to download or access the file.",
           "multiple": false,
-          "type": [
-            "URL"
-          ]
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Longer description of the role of this file within the crate.",
+          "multiple": false,
+          "type": ["TextArea"]
+        },
+        {
+          "id": "http://purl.org/dc/terms/conformsTo",
+          "name": "conformsTo",
+          "help": "Profile or schema this file conforms to (e.g. ISA-Tab, VCF spec).",
+          "multiple": true,
+          "type": ["URL", "CreativeWork"]
         },
         {
           "id": "http://schema.org/encodingFormat",
           "name": "encodingFormat",
           "help": "MIME type of the file.",
           "multiple": false,
-          "type": [
-            "Text"
-          ]
+          "type": ["Text"]
         },
         {
           "id": "http://schema.org/additionalType",
@@ -1223,6 +1179,81 @@
           "id": "http://schema.org/intendedApplication",
           "name": "intendedApplication",
           "help": "Short description of the lab protocol.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/purpose",
+          "name": "protocolType",
+          "help": "Purpose or classification of this protocol.",
+          "multiple": true,
+          "type": [
+            "Select",
+            "OntologyAnnotation"
+          ],
+          "values": [
+            {
+              "@id": "https://w3id.org/tox/terms#Culturing",
+              "@type": "DefinedTerm",
+              "name": "Cell culturing"
+            },
+            {
+              "@id": "https://w3id.org/tox/terms#Exposure",
+              "@type": "DefinedTerm",
+              "name": "Chemical exposure"
+            },
+            {
+              "@id": "https://w3id.org/tox/terms#EndpointMeasurement",
+              "@type": "DefinedTerm",
+              "name": "Endpoint measurement"
+            }
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/components",
+          "name": "components",
+          "help": "Referenced reagents, equipment, or software required.",
+          "multiple": true,
+          "type": [
+            "ChemicalSubstance",
+            "DetectionInstrument",
+            "SoftwareApplication",
+            "Text"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/protocolParameters",
+          "name": "protocolParameters",
+          "help": "Defined parameters used repeatedly in this protocol.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "http://schema.org/version",
+          "name": "version",
+          "help": "Protocol version identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/comment",
+          "name": "comment",
+          "help": "Implementation notes or deviations.",
+          "multiple": true,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Detailed description of the protocol steps.",
           "multiple": false,
           "type": [
             "TextArea"
@@ -1519,11 +1550,11 @@
           "name": "detection instrument",
           "help": "detection instument used in this bioassay",
           "multiple": true,
-          "type": [ 
+          "type": [
             "DetectionInstrument"
           ]
         },
-        { 
+        {
           "id": "http://www.bioassayontology.org/bao#BAO_0002628",
           "name": "detection instrument manufacturer",
           "help": "The role of a company as a creator of detection instrumentation.",
@@ -1532,12 +1563,12 @@
             "Organization"
           ]
         },
-        { 
+        {
           "id": "http://www.bioassayontology.org/bao#BAO_0002663",
           "name": "assay kit",
           "help": "assay kit used in in this bioassay",
           "multiple": true,
-          "type":[
+          "type": [
             "AssayKit"
           ]
         },
@@ -1546,7 +1577,7 @@
           "name": "assay protocol",
           "help": "the methodology used to perform a particular bioassay",
           "multiple": true,
-          "type":[
+          "type": [
             "LabProtocol"
           ]
         },
@@ -1812,15 +1843,6 @@
           ]
         },
         {
-          "id": "http://schema.org/isPartOf",
-          "name": "journal",
-          "help": "Journal or collection this article appears in.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
           "id": "http://schema.org/issn",
           "name": "issn",
           "help": "Journal ISSN.",
@@ -1893,6 +1915,338 @@
           "type": [
             "URL"
           ]
+        }
+      ]
+    },
+    "ParameterValue": {
+      "id": "https://bioschemas.org/ParameterValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/category",
+          "name": "category",
+          "help": "Parameter category or label.",
+          "multiple": false,
+          "type": [
+            "OntologyAnnotation",
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "Identifier or name of the property measured.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/unitCode",
+          "name": "unitCode",
+          "help": "Unit code referencing a standard vocabulary.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/unitText",
+          "name": "unitText",
+          "help": "Human-readable unit.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "Value or reference for the parameter.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "Reference object for this value (e.g. protocol, file).",
+          "multiple": false,
+          "type": [
+            "CreativeWork",
+            "Text"
+          ]
+        }
+      ]
+    },
+    "OntologyAnnotation": {
+      "id": "http://schema.org/DefinedTerm",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "annotationValue",
+          "help": "Preferred label of the ontology term.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Optional description or scope notes.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/isPartOf",
+          "name": "termSource",
+          "help": "Identifier or URI of the vocabulary/ontology.",
+          "multiple": false,
+          "type": [
+            "URL",
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "termAccession",
+          "help": "Accession or curie for the term.",
+          "multiple": false,
+          "type": [
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/codeValue",
+          "name": "termCode",
+          "help": "Machine readable short code.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        }
+      ]
+    },
+    "Sample": {
+      "id": "https://bioschemas.org/Sample",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Sample or material name.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Summary of the sample characteristics.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/additionalProperty",
+          "name": "characteristics",
+          "help": "Biological/chemical characteristics expressed as parameter values.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/factors",
+          "name": "factors",
+          "help": "Experimental factors applied to this sample.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "http://schema.org/isBasedOn",
+          "name": "sourceMaterial",
+          "help": "Source material or reference from which this sample is derived.",
+          "multiple": false,
+          "type": [
+            "Sample",
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/isDerivedFrom",
+          "name": "derivesFrom",
+          "help": "Parent sample, if applicable.",
+          "multiple": true,
+          "type": [
+            "Sample"
+          ]
+        }
+      ]
+    },
+    "LabProcess": {
+      "id": "https://bioschemas.org/LabProcess",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Lab process name or label.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Process summary and goal.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/performer",
+          "name": "performer",
+          "help": "Person or organization performing the process.",
+          "multiple": true,
+          "type": [
+            "Person",
+            "Organization"
+          ]
+        },
+        {
+          "id": "http://schema.org/startTime",
+          "name": "startTime",
+          "help": "Process start time/date.",
+          "multiple": false,
+          "type": [
+            "Date",
+            "DateTime"
+          ]
+        },
+        {
+          "id": "http://schema.org/endTime",
+          "name": "endTime",
+          "help": "Process end time/date.",
+          "multiple": false,
+          "type": [
+            "Date",
+            "DateTime"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/executesProtocol",
+          "name": "executesProtocol",
+          "help": "Protocol executed by this process.",
+          "multiple": false,
+          "type": [
+            "LabProtocol"
+          ]
+        },
+        {
+          "id": "http://schema.org/input",
+          "name": "inputs",
+          "help": "Samples or materials entering the process.",
+          "multiple": true,
+          "type": [
+            "Sample",
+            "ChemicalSubstance",
+            "File"
+          ]
+        },
+        {
+          "id": "http://schema.org/output",
+          "name": "outputs",
+          "help": "Samples, intermediate materials, or data generated.",
+          "multiple": true,
+          "type": [
+            "Sample",
+            "File"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/parameterValues",
+          "name": "parameterValues",
+          "help": "Process-specific parameter values.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        }
+      ]
+    },
+    "Grant": {
+      "id": "https://schema.org/Grant",
+      "inputs": [
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifer",
+          "help": "Grant id",
+          "multiple": true,
+          "type": [
+            "URL",
+            "Text"
+          ]
+       },
+       {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Name of the grant e.g. name of the funding programme",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+       },
+       {
+        "id":"http://schema.org/funder",
+        "name": "funder",
+        "help": "Funding organisation",
+        "multiple": true,
+        "type": [
+          "Organization"
+        ]
+       }
+      ]
+    },
+    "PropertyValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Human-readable label for this property (e.g. 'Case study').",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "Identifier of the property type (e.g. VHP glossary URI for case study / workflow step / regulatory question).",
+          "multiple": false,
+          "type": ["Text", "URL"]
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "Human-readable value (e.g. case study title, step label).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "Reference to the CaseStudy / RegulatoryQuestion / WorkflowStep entity.",
+          "multiple": false,
+          "type": ["CaseStudy", "RegulatoryQuestion", "WorkflowStep"]
         }
       ]
     }

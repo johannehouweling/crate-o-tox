@@ -51,6 +51,7 @@
     "test": "cypress run --component --headless",
     "test:ui": "cypress run --component --browser chrome",
     "test:unit": "npm test -- --record --spec ",
+    "lint:modes": "node scripts/validate-modes.js",
     "cypress:open": "npx cypress open",
     "serve": "npm run build && npm run preview"
   },
