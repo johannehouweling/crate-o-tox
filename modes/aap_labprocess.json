@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "Cell Based Toxicology LabProcess mode",
-    "description": "Crate-o mode capturing toxicology assays with explicit Bioschemas LabProcess workflow links",
+    "description": "Crate-o mode capturing toxicology assays with explicit Bioschemas LabProcess workflow links. This mode organizes metadata into input groups that map to RO-Crate entities: Groups 1-4 capture Dataset-level metadata (admin, contributors, regulatory context, structure). Groups 5-6 define experimental materials (ChemicalSubstance, Sample entities). Groups 7-9 describe experimental steps that can be represented as LabProcess entities in a workflow sequence. Use Dataset.processSequence to link LabProcess instances chronologically, creating a machine-readable representation of your experimental workflow.",
     "version": 0.1,
     "author": "J.M. Houweling",
     "license": "GNU Affero General Public License v3.0"
@@ -83,16 +83,15 @@
     {
       "name": "Biological Model Information",
       "metadataCategory": "contextualMetadata",
-      "help": "This group specifies the biological target (cells or organisms) exposed to the chemical(s).",
+      "help": "This group specifies the biological target (cells or organisms) exposed to the chemical(s). Information entered here creates Sample entities that represent the actual biological materials used in your experiment. These Sample entities become inputs to your LabProcess workflow steps. For cell-based assays, link Samples to CellLine entities via 'sourceMaterial' to indicate their origin (e.g., Sample 'HepG2 cells, passage 12' isBasedOn CellLine 'HepG2').",
       "inputs": [
-        "https://w3id.org/tox/terms#hasBioSample",
-        "https://bioschemas.org/LabProtocol"
+        "https://w3id.org/tox/terms#hasBioSample"
       ]
     },
     {
       "name": "Exposure Information",
       "metadataCategory": "contextualMetadata",
-      "help": "Specifications on how biological models are exposed to the chemical(s), e.g., details about the applied dose, route of exposure and type of application (e.g., as aerosol or dispersed)",
+      "help": "Specifications on how biological models are exposed to the chemical(s), e.g., details about the applied dose, route of exposure and type of application (e.g., as aerosol or dispersed). Information entered here can be used to populate a LabProcess entity representing the 'Exposure' step in your experimental workflow. The dose, duration, route, and control parameters become ParameterValue entities linked to that LabProcess. Consider creating one or more LabProcess entities to capture this information with temporal and material flow context.",
       "inputs": [
         "https://w3id.org/tox/terms#exposureRoute",
         "https://w3id.org/tox/terms#exposureDuration",
@@ -106,7 +105,7 @@
     {
       "name": "Endpoint Readout Information",
       "metadataCategory": "contextualMetadata",
-      "help": "Specifies the test methods used to assess the chemical(s) impact on the biological model and contains most of the metadata, mainly instrument specifications",
+      "help": "Specifies the test methods used to assess the chemical(s) impact on the biological model and contains most of the metadata, mainly instrument specifications. Information entered here should be captured in one or more LabProcess entities representing 'Measurement' or 'Assay' steps in your workflow. Use the LabProcess fields 'bioassayType' to link to BioAssay Ontology terms (e.g., 'cell viability assay', 'MTT assay') and 'measuresAopEvent' to link to AOP-Wiki key events (e.g., 'cell death', 'oxidative stress'). This creates semantic connections between your experimental data and toxicological knowledge frameworks.",
       "inputs": [
         "http://purl.bioontology.org/ontology/MESH/D000073931",
         "https://w3id.org/tox/terms#aopEvent",
@@ -434,9 +433,7 @@
           "name": "vhp context",
           "help": "Contextual characteristics of this dataset. VHP specific.",
           "multiple": true,
-          "type": [
-            "PropertyValue"
-          ]
+          "type": ["CaseStudy", "RegulatoryQuestion", "WorkflowStep", "PropertyValue"]
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0000445",
@@ -633,8 +630,17 @@
           ]
         },
         {
+          "id": "https://w3id.org/tox/terms#hasChemical",
+          "name": "Test Chemical",
+          "help": "Chemical substances tested in this assay. Create ChemicalSubstance entities for each test compound, control, or vehicle used. These can be referenced as inputs in your LabProcess workflow steps.",
+          "multiple": true,
+          "type": [
+            "ChemicalSubstance"
+          ]
+        },
+        {
           "id": "https://w3id.org/tox/terms#hasBioSample",
-          "name": "BioSample",
+          "name": "Biological sample",
           "help": "Cell line or cellular model used.",
           "multiple": true,
           "type": [
@@ -720,7 +726,7 @@
         {
           "id": "https://bioschemas.org/processSequence",
           "name": "Process sequence",
-          "help": "Ordered LabProcess references describing the assay workflow.",
+          "help": "Ordered LabProcess references describing the assay workflow. Create LabProcess entities for key experimental steps (e.g., 'Cell Culture', 'Chemical Exposure', 'Endpoint Measurement', 'Data Analysis'). Each LabProcess should reference a LabProtocol (the method), specify inputs/outputs (Samples, ChemicalSubstances, Files), include parameterValues for this specific execution, and optionally link to bioassayType and measuresAopEvent for semantic enrichment. Link LabProcess instances here in chronological order to document your complete experimental workflow.",
           "multiple": true,
           "type": [
             "LabProcess",
@@ -1895,29 +1901,6 @@
         }
       ]
     },
-    "FundingID": {
-      "id": "https://w3id.org/tox/terms#FundingID",
-      "inputs": [
-        {
-          "id": "http://schema.org/identifier",
-          "name": "identifier",
-          "help": "Funding ID or grant number.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/url",
-          "name": "url",
-          "help": "Link to the funding record or grant page.",
-          "multiple": false,
-          "type": [
-            "URL"
-          ]
-        }
-      ]
-    },
     "ParameterValue": {
       "id": "https://bioschemas.org/ParameterValue",
       "inputs": [
@@ -2037,7 +2020,7 @@
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "Sample or material name.",
+          "help": "Sample name. This entity represents the actual biological material used in your experiment (e.g., 'HepG2 cells, passage 12, cultured in DMEM'). Samples flow through your LabProcess workflow as inputs and outputs. Use 'sourceMaterial' to link this sample to its origin (CellLine, ChemicalSubstance, or another Sample).",
           "multiple": false,
           "type": [
             "Text"
@@ -2073,10 +2056,12 @@
         {
           "id": "http://schema.org/isBasedOn",
           "name": "sourceMaterial",
-          "help": "Source material or reference from which this sample is derived.",
+          "help": "Source material or reference from which this sample is derived. For chemical samples, link to the ChemicalSubstance entity. For biological samples, link to another Sample or CellLine.",
           "multiple": false,
           "type": [
             "Sample",
+            "ChemicalSubstance",
+            "CellLine",
             "Text",
             "URL"
           ]
@@ -2153,6 +2138,24 @@
           ]
         },
         {
+          "id": "http://www.bioassayontology.org/bao#BAO_0000015",
+          "name": "bioassayType",
+          "help": "Type of bioassay being performed in this process (e.g., cell viability assay, gene expression assay).",
+          "multiple": false,
+          "type": [
+            "BioAssay"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#measuresAopEvent",
+          "name": "measuresAopEvent",
+          "help": "AOP key event(s) that this process measures or contributes evidence for (e.g., oxidative stress, DNA damage, cell proliferation).",
+          "multiple": true,
+          "type": [
+            "AopEvent"
+          ]
+        },
+        {
           "id": "http://schema.org/input",
           "name": "inputs",
           "help": "Samples or materials entering the process.",
@@ -2215,39 +2218,6 @@
           "Organization"
         ]
        }
-      ]
-    },
-    "PropertyValue": {
-      "id": "http://schema.org/PropertyValue",
-      "inputs": [
-        {
-          "id": "http://schema.org/name",
-          "name": "name",
-          "help": "Human-readable label for this property (e.g. 'Case study').",
-          "multiple": false,
-          "type": ["Text"]
-        },
-        {
-          "id": "http://schema.org/propertyID",
-          "name": "propertyID",
-          "help": "Identifier of the property type (e.g. VHP glossary URI for case study / workflow step / regulatory question).",
-          "multiple": false,
-          "type": ["Text", "URL"]
-        },
-        {
-          "id": "http://schema.org/value",
-          "name": "value",
-          "help": "Human-readable value (e.g. case study title, step label).",
-          "multiple": false,
-          "type": ["Text"]
-        },
-        {
-          "id": "http://schema.org/valueReference",
-          "name": "valueReference",
-          "help": "Reference to the CaseStudy / RegulatoryQuestion / WorkflowStep entity.",
-          "multiple": false,
-          "type": ["CaseStudy", "RegulatoryQuestion", "WorkflowStep"]
-        }
       ]
     }
   }
