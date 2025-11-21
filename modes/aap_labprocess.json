@@ -94,13 +94,13 @@
       "metadataCategory": "contextualMetadata",
       "help": "Specifications on how biological models are exposed to the chemical(s), e.g., details about the applied dose, route of exposure and type of application (e.g., as aerosol or dispersed). Information entered here can be used to populate a LabProcess entity representing the 'Exposure' step in your experimental workflow. The dose, duration, route, and control parameters become ParameterValue entities linked to that LabProcess. Consider creating one or more LabProcess entities to capture this information with temporal and material flow context.",
       "inputs": [
-        "https://w3id.org/tox/terms#exposureRoute",
         "https://w3id.org/tox/terms#exposureDuration",
-        "https://w3id.org/tox/terms#exposureConcentration",
+        "https://w3id.org/tox/terms#exposureConcentrationrange",
         "https://w3id.org/tox/terms#exposureFrequency",
         "https://w3id.org/tox/terms#vehicle",
         "https://w3id.org/tox/terms#controlDescription",
-        "https://w3id.org/tox/terms#replicateCount"
+        "https://w3id.org/tox/terms#biologicalreplicateCount",
+        "https://w3id.org/tox/terms#biologicalreplicateCount"
       ]
     },
     {
@@ -110,17 +110,16 @@
       "inputs": [
         "http://purl.bioontology.org/ontology/MESH/D000073931",
         "https://w3id.org/tox/terms#aopEvent",
-        "http://www.bioassayontology.org/bao#BAO_0002855"
-      ]
+        "http://www.bioassayontology.org/bao#BAO_0002854"
+      ]  
     },
     {
       "name": "Analysis and Statistics",
       "metadataCategory": "contextualMetadata",
       "help": "Information about the data analysis methods and statistics, as well as the used software for data evaluation",
       "inputs": [
-        "http://edamontology.org/data_2044",
-        "http://edamontology.org/data_1669",
-        "https://w3id.org/tox/terms#analysisScript",
+        "http://schema.org/SoftwareApplication",
+        "http://schema.org/SoftwareSourceCode",
         "https://w3id.org/ro/terms/workflow",
         "https://w3id.org/tox/terms#workflowMetadata",
         "https://w3id.org/ro/terms/run",
@@ -723,7 +722,7 @@
           ]
         },
         {
-          "id": "http://www.bioassayontology.org/bao#BAO_0002855",
+          "id": "http://www.bioassayontology.org/bao#BAO_0002854",
           "name": "BioAssay",
           "help": "Categorization of the general class of bioassay (enyzme activity, gene expression...)",
           "multiple": true,
@@ -1492,20 +1491,28 @@
         {
           "id": "http://schema.org/description",
           "name": "description",
-          "help": "Notes on purity, supplier, or batch.",
+          "help": "Notes on chemical selection and role.",
           "multiple": false,
           "type": [
             "TextArea"
           ]
         },
         {
-          "id": "http://schema.org/identifier",
-          "name": "identifier",
-          "help": "CAS, PubChem, or other identifiers.",
+          "id": "http://schema.org/provider",
+          "name": "supplier",
+          "help": "Link to Supplier entities describing where this chemical was sourced.",
           "multiple": true,
           "type": [
-            "Text",
-            "URL"
+            "Supplier"
+          ]
+        },
+        {
+          "id": "http://schema.org/additionalProperty",
+          "name": "additionalProperty",
+          "help": "Use PropertyValue entries to describe supplier/source information or catalog numbers for this chemical.",
+          "multiple": true,
+          "type": [
+            "PropertyValue"
           ]
         },
         {
@@ -1645,6 +1652,48 @@
               "@type": "DefinedTerm",
               "name": "Vehicle/solvent control"
             }
+          ]
+        }
+      ]
+    },
+    "Supplier": {
+      "id": "http://schema.org/Organization",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Supplier or vendor name.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/address",
+          "name": "address",
+          "help": "Free-text description of supplier location.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "Website or catalog page for the supplier.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifier such as ROR, vendor ID, or catalog namespace for the supplier.",
+          "multiple": true,
+          "type": [
+            "Text",
+            "URL"
           ]
         }
       ]
@@ -2076,7 +2125,7 @@
       ]
     },
     "ParameterValue": {
-      "id": "https://bioschemas.org/ParameterValue",
+      "id": "https://bioschemas.org/PropertyValue",
       "inputs": [
         {
           "id": "http://schema.org/category",
@@ -2212,7 +2261,7 @@
         {
           "id": "http://schema.org/additionalProperty",
           "name": "characteristics",
-          "help": "Biological/chemical characteristics expressed as parameter values.",
+          "help": "Biological/chemical characteristics of the sample",
           "multiple": true,
           "type": [
             "ParameterValue"
@@ -2227,11 +2276,19 @@
             "ParameterValue"
           ]
         },
+        { 
+          "id": "http://bioschemas.org/isControl",
+          "name": "isControl",
+          "help": "Indicates whether the sample is being used as a normal control, may be in combination with another sample.",
+          "type": [
+            "Boolean"
+          ]
+        },
         {
           "id": "http://schema.org/isBasedOn",
           "name": "sourceMaterial",
           "help": "Source material or reference from which this sample is derived. For chemical samples, link to the ChemicalSubstance entity. For biological samples, link to another Sample or CellLine.",
-          "multiple": false,
+          "multiple": true,
           "type": [
             "Sample",
             "ChemicalSubstance",
@@ -2257,10 +2314,29 @@
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "Lab process name or label.",
+          "help": "Select a common workflow step name or enter a custom label. Recommended 4-step workflow: (1) Sample Preparation: culture/seed cells; inputs=CellLine, outputs=Sample, parameterValues=cell_density/passage_number/culture_medium. (2) Treatment: chemical exposure; inputs=Sample+ChemicalSubstance, outputs=Sample, parameterValues=exposure_duration/concentration/vehicle/replicates. (3) Endpoint Measurement: measure readout; inputs=Sample, outputs=File, parameterValues=substrate/measurement_type/instrument, IMPORTANT: add bioassayType and measuresAopEvent. (4) Data Analysis: process data; inputs=File, outputs=File, parameterValues=normalization_method/software.",
           "multiple": false,
           "type": [
+            "Select",
             "Text"
+          ],
+          "values": [
+            {
+              "@id": "#labprocess-sample-preparation",
+              "name": "Sample Preparation"
+            },
+            {
+              "@id": "#labprocess-treatment",
+              "name": "Treatment"
+            },
+            {
+              "@id": "#labprocess-endpoint-measurement",
+              "name": "Endpoint Measurement"
+            },
+            {
+              "@id": "#labprocess-data-analysis",
+              "name": "Data Analysis"
+            }
           ]
         },
         {
@@ -2283,23 +2359,15 @@
           ]
         },
         {
-          "id": "http://schema.org/startTime",
-          "name": "startTime",
-          "help": "Process start time/date.",
-          "multiple": false,
+          "id": "http://schema.org/input",
+          "name": "inputs",
+          "help": "Samples or materials entering the process.",
+          "multiple": true,
           "type": [
-            "Date",
-            "DateTime"
-          ]
-        },
-        {
-          "id": "http://schema.org/endTime",
-          "name": "endTime",
-          "help": "Process end time/date.",
-          "multiple": false,
-          "type": [
-            "Date",
-            "DateTime"
+            "Sample",
+            "CellLine",
+            "ChemicalSubstance",
+            "File"
           ]
         },
         {
@@ -2309,6 +2377,16 @@
           "multiple": false,
           "type": [
             "LabProtocol"
+          ]
+        },
+        {
+          "id": "http://schema.org/output",
+          "name": "outputs",
+          "help": "Samples, intermediate materials, or data generated.",
+          "multiple": true,
+          "type": [
+            "Sample",
+            "File"
           ]
         },
         {
@@ -2327,27 +2405,6 @@
           "multiple": true,
           "type": [
             "AopEvent"
-          ]
-        },
-        {
-          "id": "http://schema.org/input",
-          "name": "inputs",
-          "help": "Samples or materials entering the process.",
-          "multiple": true,
-          "type": [
-            "Sample",
-            "ChemicalSubstance",
-            "File"
-          ]
-        },
-        {
-          "id": "http://schema.org/output",
-          "name": "outputs",
-          "help": "Samples, intermediate materials, or data generated.",
-          "multiple": true,
-          "type": [
-            "Sample",
-            "File"
           ]
         },
         {

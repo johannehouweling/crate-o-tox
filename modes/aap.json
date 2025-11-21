@@ -1438,6 +1438,24 @@
           ]
         },
         {
+          "id": "http://schema.org/provider",
+          "name": "supplier",
+          "help": "Link to one or more Supplier entities describing where this chemical was sourced.",
+          "multiple": true,
+          "type": [
+            "Supplier"
+          ]
+        },
+        {
+          "id": "http://schema.org/additionalProperty",
+          "name": "additionalProperty",
+          "help": "Use PropertyValue entries to capture supplier details (name, catalog numbers) or other provenance attributes for this chemical.",
+          "multiple": true,
+          "type": [
+            "PropertyValue"
+          ]
+        },
+        {
           "id": "http://schema.org/smiles",
           "name": "smiles",
           "help": "SMILES string describing the molecule.",
@@ -1574,6 +1592,48 @@
               "@type": "DefinedTerm",
               "name": "Vehicle/solvent control"
             }
+          ]
+        }
+      ]
+    },
+    "Supplier": {
+      "id": "http://schema.org/Organization",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Supplier or vendor name.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/address",
+          "name": "address",
+          "help": "Free-text description of supplier location.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "Website or catalog page for the supplier.",
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Supplier identifier such as ROR, internal vendor ID, or catalog number namespace.",
+          "multiple": true,
+          "type": [
+            "Text",
+            "URL"
           ]
         }
       ]
