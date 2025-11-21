@@ -288,6 +288,13 @@
         "datePublished",
         "creditText"
       ]
+    },
+    "Substrate": {
+      "module": "bao",
+      "fields": [
+        "@id",
+        "name"
+      ]
     }
   },
   "enabledClasses": [
@@ -310,6 +317,7 @@
     "AopEventRelationship",
     "BioAssay",
     "Endpoint",
+    "Substrate",
     "InstrumentManufacturer",
     "DetectionInstrument",
     "MeasuredEntity",
@@ -321,6 +329,10 @@
     "RegulatoryQuestion",
     "WorkflowStep",
     "LabProcess",
+    "SamplePreparationProcess",
+    "TreatmentProcess",
+    "EndpointMeasurementProcess",
+    "DataAnalysisProcess",
     "Sample",
     "ParameterValue",
     "OntologyAnnotation",
@@ -1775,24 +1787,6 @@
           ]
         },
         {
-          "id": "http://www.bioassayontology.org/bao#BAO_0002865",
-          "name": "detection instrument",
-          "help": "detection instument used in this bioassay",
-          "multiple": true,
-          "type": [
-            "DetectionInstrument"
-          ]
-        },
-        {
-          "id": "http://www.bioassayontology.org/bao#BAO_0002628",
-          "name": "detection instrument manufacturer",
-          "help": "The role of a company as a creator of detection instrumentation.",
-          "multiple": true,
-          "type": [
-            "Organization"
-          ]
-        },
-        {
           "id": "http://www.bioassayontology.org/bao#BAO_0002663",
           "name": "assay kit",
           "help": "assay kit used in in this bioassay",
@@ -1807,16 +1801,37 @@
           "help": "the methodology used to perform a particular bioassay",
           "multiple": true,
           "type": [
-            "LabProtocol"
+            "LabProtocol",
+            "URL",
+            "ScholarlyArticle"
           ]
         },
         {
-          "id": "http://www.bioassayontology.org/bao#BAO_0000208",
-          "name": "endpoint",
-          "help": "The endpoint is a quantitive or qualitative interpretable standardized representation of a perturbation (a change from a defined reference state of a closed model system) that is measured by the bioassay. An endpoint consists of a series of data points, one for each perturbing agent (screened entity) tested the assay.",
+          "id": "https://w3id.org/tox/terms#substrate",
+          "name": "substrate",
+          "help": "ParameterValue describing the substrate/reagent (e.g., MTT, T3).",
           "multiple": true,
           "type": [
-            "Endpoint"
+            "Substrate",
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#incubationTime",
+          "name": "incubation_time",
+          "help": "ParameterValue for incubation time with substrate or reagent.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0002865",
+          "name": "detection instrument",
+          "help": "detection instument used in this bioassay",
+          "multiple": true,
+          "type": [
+            "DetectionInstrument"
           ]
         },
         {
@@ -1826,6 +1841,15 @@
           "multiple": true,
           "type": [
             "MeasuredEntity"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0000208",
+          "name": "endpoint",
+          "help": "The endpoint is a quantitive or qualitative interpretable standardized representation of a perturbation (a change from a defined reference state of a closed model system) that is measured by the bioassay. An endpoint consists of a series of data points, one for each perturbing agent (screened entity) tested the assay.",
+          "multiple": true,
+          "type": [
+            "Endpoint"
           ]
         }
       ]
@@ -2147,9 +2171,9 @@
           ]
         },
         {
-          "id": "http://schema.org/unitCode",
-          "name": "unitCode",
-          "help": "Unit code referencing a standard vocabulary.",
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "Value or reference for the parameter.",
           "multiple": false,
           "type": [
             "Text"
@@ -2165,22 +2189,14 @@
           ]
         },
         {
-          "id": "http://schema.org/value",
-          "name": "value",
-          "help": "Value or reference for the parameter.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
           "id": "http://schema.org/valueReference",
           "name": "valueReference",
           "help": "Reference object for this value (e.g. protocol, file).",
           "multiple": false,
           "type": [
             "CreativeWork",
-            "Text"
+            "Text",
+            "Sample"
           ]
         }
       ]
@@ -2317,26 +2333,7 @@
           "help": "Select a common workflow step name or enter a custom label. Recommended 4-step workflow: (1) Sample Preparation: culture/seed cells; inputs=CellLine, outputs=Sample, parameterValues=cell_density/passage_number/culture_medium. (2) Treatment: chemical exposure; inputs=Sample+ChemicalSubstance, outputs=Sample, parameterValues=exposure_duration/concentration/vehicle/replicates. (3) Endpoint Measurement: measure readout; inputs=Sample, outputs=File, parameterValues=substrate/measurement_type/instrument, IMPORTANT: add bioassayType and measuresAopEvent. (4) Data Analysis: process data; inputs=File, outputs=File, parameterValues=normalization_method/software.",
           "multiple": false,
           "type": [
-            "Select",
             "Text"
-          ],
-          "values": [
-            {
-              "@id": "#labprocess-sample-preparation",
-              "name": "Sample Preparation"
-            },
-            {
-              "@id": "#labprocess-treatment",
-              "name": "Treatment"
-            },
-            {
-              "@id": "#labprocess-endpoint-measurement",
-              "name": "Endpoint Measurement"
-            },
-            {
-              "@id": "#labprocess-data-analysis",
-              "name": "Data Analysis"
-            }
           ]
         },
         {
@@ -2411,6 +2408,419 @@
           "id": "https://bioschemas.org/parameterValues",
           "name": "parameterValues",
           "help": "Process-specific parameter values.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        }
+      ]
+    },
+    "SamplePreparationProcess": {
+      "id": "https://bioschemas.org/LabProcess",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Sample preparation workflow step name (e.g., 'Cell seeding, day 0').",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Briefly describe the cell prep or seeding operation.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/performer",
+          "name": "performer",
+          "help": "Person or lab executing the preparation.",
+          "multiple": true,
+          "type": [
+            "Person",
+            "Organization"
+          ]
+        },
+        {
+          "id": "http://schema.org/input",
+          "name": "inputs",
+          "help": "Starting materials (CellLine records or precursor Samples).",
+          "multiple": true,
+          "type": [
+            "CellLine",
+            "Sample"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/executesProtocol",
+          "name": "executesProtocol",
+          "help": "Seeding or culture protocol applied.",
+          "multiple": false,
+          "type": [
+            "LabProtocol"
+          ]
+        },
+        {
+          "id": "http://schema.org/output",
+          "name": "outputs",
+          "help": "Prepared Samples (e.g., cells seeded in 96-well plate).",
+          "multiple": true,
+          "type": [
+            "Sample",
+            "File"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#cellDensity",
+          "name": "cell_density",
+          "help": "ParameterValue recording cell density at seeding.",
+          "multiple": true,
+          "type": [
+            "ParameterValue",
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#passageNumber",
+          "name": "passage_number",
+          "help": "ParameterValue for passage number of the culture.",
+          "multiple": true,
+          "type": [
+            "ParameterValue",
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#seedingVolume",
+          "name": "seeding_volume",
+          "help": "ParameterValue capturing the volume used for seeding.",
+          "multiple": true,
+          "type": [
+            "ParameterValue",
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#cultureMedium",
+          "name": "culture_medium",
+          "help": "ParameterValue describing the culture medium / supplements.",
+          "multiple": true,
+          "type": [
+            "ParameterValue",
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#incubationTime",
+          "name": "incubation_time",
+          "help": "ParameterValue detailing incubation time prior to treatment.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#plateFormat",
+          "name": "plate_format",
+          "help": "ParameterValue indicating plate size/format (e.g., 96-well).",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        }
+      ]
+    },
+    "TreatmentProcess": {
+      "id": "https://bioschemas.org/LabProcess",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Treatment/exposure step name.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Describe exposure setup and intent.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/performer",
+          "name": "performer",
+          "help": "Person or organization executing the exposure.",
+          "multiple": true,
+          "type": [
+            "Person",
+            "Organization"
+          ]
+        },
+        {
+          "id": "http://schema.org/input",
+          "name": "inputs",
+          "help": "Samples (cells) and ChemicalSubstances entering the process.",
+          "multiple": true,
+          "type": [
+            "Sample",
+            "ChemicalSubstance"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/executesProtocol",
+          "name": "executesProtocol",
+          "help": "Exposure protocol followed for dosing.",
+          "multiple": false,
+          "type": [
+            "LabProtocol"
+          ]
+        },
+        {
+          "id": "http://schema.org/output",
+          "name": "outputs",
+          "help": "Treated Samples after exposure.",
+          "multiple": true,
+          "type": [
+            "Sample"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#exposureDuration",
+          "name": "exposure_duration",
+          "help": "ParameterValue describing exposure duration.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#concentration",
+          "name": "concentration",
+          "help": "ParameterValue recording nominal/measured concentrations.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#temperature",
+          "name": "temperature",
+          "help": "ParameterValue for exposure temperature.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#vehicle",
+          "name": "vehicle",
+          "help": "ParameterValue describing the vehicle/solvent and its concentration.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#biologicalReplicates",
+          "name": "biological_replicates",
+          "help": "ParameterValue indicating count/definition of biological replicates.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#technicalReplicates",
+          "name": "technical_replicates",
+          "help": "ParameterValue capturing technical replicate setup.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        }
+      ]
+    },
+    "EndpointMeasurementProcess": {
+      "id": "https://bioschemas.org/LabProcess",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Endpoint measurement step name.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "What readout is captured and why.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/performer",
+          "name": "performer",
+          "help": "Person/organization running the assay readout.",
+          "multiple": true,
+          "type": [
+            "Person",
+            "Organization"
+          ]
+        },
+        {
+          "id": "http://schema.org/input",
+          "name": "inputs",
+          "help": "Treated Samples provided to the readout.",
+          "multiple": true,
+          "type": [
+            "Sample"
+          ]
+        },
+        {
+          "id": "http://schema.org/output",
+          "name": "outputs",
+          "help": "Files or Samples generated (e.g., raw data files).",
+          "multiple": true,
+          "type": [
+            "File",
+            "Sample"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/executesProtocol",
+          "name": "executesProtocol",
+          "help": "Measurement protocol executed.",
+          "multiple": false,
+          "type": [
+            "LabProtocol",
+            "URL"
+          ]
+        },
+        {
+          "id": "http://www.bioassayontology.org/bao#BAO_0000015",
+          "name": "bioassayType",
+          "help": "BioAssay Ontology classification (e.g., uptake assay, viability assay).",
+          "multiple": false,
+          "type": [
+            "BioAssay"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#measuresAopEvent",
+          "name": "measuresAopEvent",
+          "help": "AOP key events measured or supported by this readout.",
+          "multiple": true,
+          "type": [
+            "AopEvent"
+          ]
+        }
+      ]
+    },
+    "DataAnalysisProcess": {
+      "id": "https://bioschemas.org/LabProcess",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Data analysis step name (e.g., 'Normalization and statistics').",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "Summary of the analysis workflow, scripts, or software.",
+          "multiple": false,
+          "type": [
+            "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/performer",
+          "name": "performer",
+          "help": "Analyst or tool executing the processing.",
+          "multiple": true,
+          "type": [
+            "Person",
+            "Organization"
+          ]
+        },
+        {
+          "id": "http://schema.org/input",
+          "name": "inputs",
+          "help": "Raw data files or upstream result files entering analysis.",
+          "multiple": true,
+          "type": [
+            "File"
+          ]
+        },
+        {
+          "id": "http://schema.org/output",
+          "name": "outputs",
+          "help": "Processed data files, figures, or tables produced.",
+          "multiple": true,
+          "type": [
+            "File"
+          ]
+        },
+        {
+          "id": "https://bioschemas.org/executesProtocol",
+          "name": "executesProtocol",
+          "help": "Analysis protocol, pipeline, or software workflow executed.",
+          "multiple": false,
+          "type": [
+            "LabProtocol",
+            "SoftwareApplication",
+            "ComputationalWorkflow"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#normalizationMethod",
+          "name": "normalization_method",
+          "help": "ParameterValue describing normalization / data processing approach.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#positiveControlReference",
+          "name": "positive_control_reference",
+          "help": "ParameterValue referencing positive control material or value.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#statisticalAnalysis",
+          "name": "statistical_analysis",
+          "help": "ParameterValue capturing the statistical tests or models applied.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#analysisSoftware",
+          "name": "software",
+          "help": "ParameterValue referencing software packages, scripts, or versions.",
           "multiple": true,
           "type": [
             "ParameterValue"
