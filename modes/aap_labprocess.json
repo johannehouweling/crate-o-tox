@@ -57,8 +57,9 @@
     },
     {
       "name": "Project & Regulatory context",
-      "help": "Contributors, contacts, and funding information.",
-      "inputs": [    
+      "help": "Select the VHP4Safety workflow steps that this dataset contributes to, or provide case study and regulatory question context.",
+      "inputs": [
+        "https://glossary.vhp4safety.nl/#VHP0000152",
         "http://schema.org/additionalProperty"
       ]
     },
@@ -160,7 +161,18 @@
         "synonym",
         "inchi",
         "inchikey",
-        "cas"
+        "smiles",
+        "formula",
+        "mass",
+        "subclassOf",
+        "cas",
+        "pubchemCid",
+        "dsstoxId",
+        "chemblId",
+        "keggId",
+        "chebiId",
+        "echaInfocardId",
+        "ecNumber"
       ]
     },
     "Endpoint": {
@@ -412,7 +424,7 @@
         {
           "id": "http://schema.org/citation",
           "name": "citation",
-          "help": "Citations associated with this dataset (e.g. related publications).",
+          "help": "Citations associated with this dataset (e.g. related publications). Enter a DOI.",
           "multiple": true,
           "type": [
             "CreativeWork",
@@ -429,11 +441,44 @@
             "URL"
           ]
         },
+        {
+          "id": "https://glossary.vhp4safety.nl/#VHP0000152",
+          "name": "Workflow Step",
+          "help": "Select which VHP4Safety workflow step(s) this dataset contributes to (e.g., Toxicokinetics, Toxicodynamics/AOP, Adverse Outcome).",
+          "multiple": true,
+          "type": ["Select"],
+          "values": [
+            {
+              "@id": "https://glossary.vhp4safety.nl/VHP0000153",
+              "name": "Hazard/Chemical characteristics"
+            },
+            {
+              "@id": "https://glossary.vhp4safety.nl/VHP0000154",
+              "name": "External exposure"
+            },
+            {
+              "@id": "https://glossary.vhp4safety.nl/#VHP0000155",
+              "name": "Toxicokinetics"
+            },
+            {
+              "@id": "https://glossary.vhp4safety.nl/VHP0000157",
+              "name": "Internal exposure"
+            },
+            {
+              "@id": "https://glossary.vhp4safety.nl/VHP0000156",
+              "name": "Toxicodynamics/AOP"
+            },
+            {
+              "@id": "https://glossary.vhp4safety.nl/VHP0000158",
+              "name": "Adverse Outcome"
+            }
+          ]
+        },
         { "id": "http://schema.org/additionalProperty",
           "name": "vhp context",
-          "help": "Contextual characteristics of this dataset. VHP specific.",
+          "help": "Additional contextual metadata (e.g., case study, regulatory question). For workflow steps, use the direct 'Workflow Step' field above.",
           "multiple": true,
-          "type": ["CaseStudy", "RegulatoryQuestion", "WorkflowStep", "PropertyValue"]
+          "type": ["CaseStudy", "RegulatoryQuestion", "PropertyValue"]
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0000445",
@@ -632,7 +677,7 @@
         {
           "id": "https://w3id.org/tox/terms#hasChemical",
           "name": "Test Chemical",
-          "help": "Chemical substances tested in this assay. Create ChemicalSubstance entities for each test compound, control, or vehicle used. These can be referenced as inputs in your LabProcess workflow steps.",
+          "help": "Chemicals tested in this assay. Use the ChemicalSubstance lookup to find a compound by name, CAS number, or other identifier, then add entries for each test chemical, control, or vehicle. You can later select these as inputs in your LabProcess workflow steps.",
           "multiple": true,
           "type": [
             "ChemicalSubstance"
@@ -1014,7 +1059,7 @@
               "name": "External exposure"
             },
             {
-              "@id": "http://purl.obolibrary.org/obo/NCIT_C90478",
+              "@id": "https://glossary.vhp4safety.nl/#VHP0000155",
               "name": "Toxicokinetics"
             },
             {
@@ -1464,6 +1509,114 @@
           ]
         },
         {
+          "id": "http://schema.org/smiles",
+          "name": "smiles",
+          "help": "SMILES string describing the molecule.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/molecularFormula",
+          "name": "formula",
+          "help": "Chemical formula as returned by CompoundCloud.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/molecularWeight",
+          "name": "mass",
+          "help": "Molecular mass (g/mol).",
+          "multiple": false,
+          "type": [
+            "Number"
+          ]
+        },
+        {
+          "id": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+          "name": "subclassOf",
+          "help": "Higher level chemical class or family.",
+          "multiple": true,
+          "type": [
+            "ChemicalSubstance"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#casNumber",
+          "name": "cas",
+          "help": "CAS Registry Numbers for this substance.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#pubchemCid",
+          "name": "pubchemCid",
+          "help": "PubChem Compound identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#dsstoxId",
+          "name": "dsstoxId",
+          "help": "EPA DSSTOX identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#chemblId",
+          "name": "chemblId",
+          "help": "ChEMBL identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#keggId",
+          "name": "keggId",
+          "help": "KEGG compound identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#chebiId",
+          "name": "chebiId",
+          "help": "ChEBI identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#echaInfocardId",
+          "name": "echaInfocardId",
+          "help": "ECHA Substance Infocard ID.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#ecNumber",
+          "name": "ecNumber",
+          "help": "EC/EINECS number.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
           "id": "http://www.bioassayontology.org/bao#BAO_0003102",
           "name": "hasRole",
           "help": "Role played by this chemical within the assay (test, control, vehicle, etc).",
@@ -1502,7 +1655,7 @@
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "Cell line or biological model name.",
+          "help": "Cell line or biological model name. Use Cellosaurus lookup for catalogued lines (e.g., HepG2), or manually enter for distributed but non-catalogued lines (e.g., lab-specific stable transfectants from research institutions). For your specific experimental preparations, create Sample entities that link to this CellLine.",
           "multiple": false,
           "type": [
             "Text"
@@ -1515,7 +1668,28 @@
           "multiple": false,
           "type": [
             "Organization",
+            "Person",
             "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/isBasedOn",
+          "name": "derivesFrom",
+          "help": "Reference cell line or source material on which this cell line entry is based.",
+          "multiple": false,
+          "type": [
+            "CellLine"
+          ]
+        },
+        {
+          "id": "http://schema.org/citation",
+          "name": "citation",
+          "help": "Citations associated with this cell line (e.g. vendor datasheet, Cellosaurus entry, or primary publication).",
+          "multiple": true,
+          "type": [
+            "CreativeWork",
+            "URL",
+            "ScholarlyArticle"
           ]
         }
       ]
@@ -2015,7 +2189,7 @@
       ]
     },
     "Sample": {
-      "id": "https://bioschemas.org/Sample",
+      "id": "https://bioschemas.org/biosample",
       "inputs": [
         {
           "id": "http://schema.org/name",
@@ -2067,7 +2241,7 @@
           ]
         },
         {
-          "id": "http://schema.org/isDerivedFrom",
+          "id": "http://schema.org/isBasedOn",
           "name": "derivesFrom",
           "help": "Parent sample, if applicable.",
           "multiple": true,

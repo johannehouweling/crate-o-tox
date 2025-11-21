@@ -12,7 +12,7 @@ const MAX_SYNONYMS = 20;
 const PROPERTY_MAP = {
   inchi: 'P9',
   inchikey: 'P10',
-  smiles: 'P12',
+  smiles: ['P7', 'P12'],
   formula: 'P3',
   mass: 'P2',
   cas: 'P23',
@@ -23,7 +23,8 @@ const PROPERTY_MAP = {
   chemblId: 'P41',
   ecNumber: 'P43',
   echaInfocardId: 'P44',
-  aopWikiStressorId: 'P36'
+  aopWikiStressorId: 'P36',
+  subclassOf: 'P8'
 };
 
 async function safeJsonFetch(url, options = {}) {
@@ -98,11 +99,26 @@ function getBindingValue(binding, key) {
   return binding?.[key]?.value ?? null;
 }
 
+function normalizePropertyIds(propertyId) {
+  if (!propertyId) return [];
+  return Array.isArray(propertyId) ? propertyId.filter(Boolean) : [propertyId];
+}
+
 function getClaimValues(claims = {}, propertyId) {
-  if (!claims?.[propertyId]) return [];
-  return claims[propertyId]
-    .map((statement) => statement?.mainsnak?.datavalue?.value)
-    .filter((value) => value !== undefined && value !== null);
+  const propertyIds = normalizePropertyIds(propertyId);
+  if (!propertyIds.length) return [];
+  const values = [];
+  for (const id of propertyIds) {
+    const statements = claims?.[id];
+    if (!statements?.length) continue;
+    for (const statement of statements) {
+      const value = statement?.mainsnak?.datavalue?.value;
+      if (value !== undefined && value !== null) {
+        values.push(value);
+      }
+    }
+  }
+  return values;
 }
 
 function getFirstStringClaim(claims, propertyId) {
@@ -117,6 +133,20 @@ function getQuantityClaim(claims, propertyId) {
   if (!value) return null;
   const parsed = Number(value.amount);
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getEntityClaims(claims, propertyId) {
+  return getClaimValues(claims, propertyId)
+    .map((entry) => {
+      const id = entry?.id;
+      if (!id) return null;
+      return {
+        '@id': `${ENTITY_BASE}/${id}`,
+        '@type': ['ChemicalSubstance'],
+        name: [id]
+      };
+    })
+    .filter(Boolean);
 }
 
 function uniqueStrings(values = []) {
@@ -250,6 +280,7 @@ export default class Lookup {
       echaInfocardId: getFirstStringClaim(claims, PROPERTY_MAP.echaInfocardId),
       aopWikiStressorId: getFirstStringClaim(claims, PROPERTY_MAP.aopWikiStressorId),
       mass: getQuantityClaim(claims, PROPERTY_MAP.mass),
+      subclassOf: getEntityClaims(claims, PROPERTY_MAP.subclassOf),
       wikibaseId: entity.id
     };
   }

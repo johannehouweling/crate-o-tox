@@ -156,7 +156,18 @@
         "synonym",
         "inchi",
         "inchikey",
-        "cas"
+        "smiles",
+        "formula",
+        "mass",
+        "subclassOf",
+        "cas",
+        "pubchemCid",
+        "dsstoxId",
+        "chemblId",
+        "keggId",
+        "chebiId",
+        "echaInfocardId",
+        "ecNumber"
       ]
     },
     "Endpoint": {
@@ -1424,6 +1435,114 @@
           "type": [
             "Text",
             "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/smiles",
+          "name": "smiles",
+          "help": "SMILES string describing the molecule.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/molecularFormula",
+          "name": "formula",
+          "help": "Chemical formula as returned by CompoundCloud.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "http://schema.org/molecularWeight",
+          "name": "mass",
+          "help": "Molecular mass (g/mol).",
+          "multiple": false,
+          "type": [
+            "Number"
+          ]
+        },
+        {
+          "id": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+          "name": "subclassOf",
+          "help": "Higher level chemical class or family.",
+          "multiple": true,
+          "type": [
+            "ChemicalSubstance"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#casNumber",
+          "name": "cas",
+          "help": "CAS Registry Numbers for this substance.",
+          "multiple": true,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#pubchemCid",
+          "name": "pubchemCid",
+          "help": "PubChem Compound identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#dsstoxId",
+          "name": "dsstoxId",
+          "help": "EPA DSSTOX identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#chemblId",
+          "name": "chemblId",
+          "help": "ChEMBL identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#keggId",
+          "name": "keggId",
+          "help": "KEGG compound identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#chebiId",
+          "name": "chebiId",
+          "help": "ChEBI identifier.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#echaInfocardId",
+          "name": "echaInfocardId",
+          "help": "ECHA Substance Infocard ID.",
+          "multiple": false,
+          "type": [
+            "Text"
+          ]
+        },
+        {
+          "id": "https://w3id.org/tox/terms#ecNumber",
+          "name": "ecNumber",
+          "help": "EC/EINECS number.",
+          "multiple": false,
+          "type": [
+            "Text"
           ]
         },
         {
