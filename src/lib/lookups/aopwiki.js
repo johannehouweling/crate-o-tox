@@ -4,6 +4,9 @@ const API_BASE = import.meta.env?.DEV
 const AOPS_ENDPOINT = `${API_BASE}/aops.json`;
 const MIN_QUERY_LENGTH = 2;
 
+const EVENT_URL = (id) => `https://aopwiki.org/events/${id}`;
+const AOP_URL = (id) => `https://aopwiki.org/aops/${id}`;
+
 function stripHtml(html = "") {
   if (!html) return "";
   return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
@@ -23,6 +26,7 @@ export default class Lookup {
     this.fields = opt.fields;
     this.type = opt.type || "AdverseOutcomePathway";
     this.cachePromise = null;
+    this.detailCache = new Map();
   }
 
   async ensureData() {
@@ -35,6 +39,21 @@ export default class Lookup {
         .then((data) => (Array.isArray(data) ? data : []));
     }
     return this.cachePromise;
+  }
+
+  async loadDetail(id, url) {
+    if (!id) return null;
+    const key = String(id);
+    if (this.detailCache.has(key)) {
+      return this.detailCache.get(key);
+    }
+    const detailPromise = fetch(url || `${API_BASE}/aops/${key}.json`, {
+      headers: { Accept: "application/json" }
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .catch(() => null);
+    this.detailCache.set(key, detailPromise);
+    return detailPromise;
   }
 
   async search({ query, limit = 10 }) {
@@ -50,7 +69,7 @@ export default class Lookup {
         (doc) => String(doc?.id) === candidateId
       );
       if (direct) {
-        const entry = this.pickFields(this.formatEntry(direct));
+        const entry = this.pickFields(await this.formatEntry(direct));
         return entry ? [entry] : [];
       }
     }
@@ -66,21 +85,67 @@ export default class Lookup {
         .filter(Boolean)
         .map((value) => value.toLowerCase());
       if (haystack.some((value) => value.includes(q))) {
-        matches.push(this.formatEntry(doc));
+        matches.push(doc);
       }
     }
-    return matches.map((entry) => this.pickFields(entry)).filter(Boolean);
+    const formatted = await Promise.all(matches.map((doc) => this.formatEntry(doc)));
+    return formatted.map((entry) => this.pickFields(entry)).filter(Boolean);
   }
 
-  formatEntry(doc) {
+  async formatEntry(doc) {
     if (!doc?.id) return null;
-    const idUrl = `https://aopwiki.org/aops/${doc.id}`;
+    const detail = await this.loadDetail(doc.id, doc.url);
+    const idUrl = AOP_URL(doc.id);
+    const title = doc.title?.trim();
+    const altTitle = doc.short_name?.trim();
+    const label = altTitle || title;
+
+    const mapEvents = (events = []) =>
+      events
+        .map((item) => ({
+          "@id": item?.event_id ? EVENT_URL(item.event_id) : undefined,
+          name: item?.event?.trim?.(),
+          eventType: item?.event_type
+        }))
+        .filter((e) => e["@id"] || e.name);
+
+    const mapRelationships = (rels = []) =>
+      rels
+        .map((rel) => {
+          const upstream = rel?.upstream_event?.trim?.();
+          const downstream = rel?.downstream_event?.trim?.();
+          const label = upstream && downstream
+            ? `${upstream} → ${downstream}`
+            : rel?.relation ? `Relationship ${rel.relation}` : undefined;
+          return {
+            "@id": rel?.relation ? `https://aopwiki.org/relationships/${rel.relation}` : undefined,
+            name: label,
+            upstream_event: upstream,
+            downstream_event: downstream
+          };
+        })
+        .filter((rel) => rel["@id"] || rel.name);
+
     return {
       "@id": idUrl,
       "@type": this.type,
-      name: doc.title?.trim() || doc.short_name?.trim(),
-      short_name: doc.short_name?.trim(),
+      name: title || label,
+      label,
+      title,
+      short_name: altTitle,
+      alternative: altTitle && title && altTitle !== title ? altTitle : undefined,
+      identifier: idUrl,
+      page: idUrl,
+      source: detail?.source,
+      created: detail?.created_at,
+      modified: detail?.updated_at,
+      creator: detail?.corresponding_author?.id,
+      abstract: stripHtml(doc.abstract),
       description: stripHtml(doc.abstract),
+      has_molecular_initiating_event: mapEvents(detail?.aop_mies),
+      has_key_event: mapEvents(detail?.aop_kes),
+      has_adverse_outcome: mapEvents(detail?.aop_aos),
+      has_key_event_relationship: mapRelationships(detail?.relationships),
       url: doc.url?.replace(/\.json$/, "") || idUrl
     };
   }
