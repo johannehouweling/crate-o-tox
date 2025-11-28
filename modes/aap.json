@@ -241,8 +241,23 @@
       "fields": [
         "@id",
         "name",
+        "label",
+        "title",
         "short_name",
-        "description"
+        "alternative",
+        "identifier",
+        "page",
+        "source",
+        "creator",
+        "created",
+        "modified",
+        "abstract",
+        "description",
+        "has_molecular_initiating_event",
+        "has_key_event",
+        "has_adverse_outcome",
+        "has_key_event_relationship",
+        "url"
       ]
     },
     "AopEvent": {

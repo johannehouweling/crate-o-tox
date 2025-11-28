@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Cell Based Toxicology LabProcess mode",
-    "description": "Crate-o mode capturing toxicology assays with explicit Bioschemas LabProcess workflow links. This mode organizes metadata into input groups that map to RO-Crate entities: Groups 1-4 capture Dataset-level metadata (admin, contributors, regulatory context, structure). Groups 5-6 define experimental materials (ChemicalSubstance, Sample entities). Groups 7-9 describe experimental steps that can be represented as LabProcess entities in a workflow sequence. Use Dataset.processSequence to link LabProcess instances chronologically, creating a machine-readable representation of your experimental workflow.",
-    "version": 0.1,
+    "description": "Crate-o mode capturing toxicology assays with explicit Bioschemas LabProcess workflow links. RECOMMENDED WORKFLOW: (1) Add test chemicals via 'Chemical Information' group. (2) Add cell lines and create Sample entities via 'Biological Model Information'. (3) Create 4 LabProcess entities representing your workflow: Sample Preparation (seed cells) → Treatment (chemical exposure) → Endpoint Measurement (assay readout) → Data Analysis (curve fitting). (4) Link LabProcess entities in Dataset.processSequence. Each LabProcess should specify inputs/outputs (tracking Sample/File flow), executesProtocol (link to methods), and parameterValues (specific experimental conditions). Use the 41 parameter templates provided to quickly add common parameters!",
+    "version": 0.2,
     "author": "J.M. Houweling",
     "license": "GNU Affero General Public License v3.0"
   },
@@ -16,22 +16,24 @@
     "obo": "http://purl.obolibrary.org/obo/",
     "mesh": "http://purl.bioontology.org/ontology/MESH/",
     "ro": "https://w3id.org/ro/terms/",
-    "vhp": "https://glossary.vhp4safety.nl/#"
+    "vhp": "https://glossary.vhp4safety.nl/#",
+    "isa": "https://w3id.org/isa/"
   },
   "context": [],
   "conformsToUri": [
     "https://w3id.org/tox/profile#CellBasedToxicology",
-    "https://w3id.org/ldac/profile#Collection"
+    "https://w3id.org/ldac/profile#Collection",
+    "https://w3id.org/isa/ro-crate"
   ],
   "rootDataset": {
     "type": [
       "Dataset"
     ]
   },
-  "inputGroups": [
+"inputGroups": [
     {
-      "name": "General information",
-      "help": "This is general information about the dataset that describes the assay. A data descriptor (https://fairplus.github.io/Data-Maturity/docs/Glossary/#dataset-descriptor) is a data structure that contains any information that describes a dataset, i.e. it is a record representing the dataset\u2019s metadata.",
+      "name": "General & Structure",
+      "help": "Core dataset metadata and how this crate is structured.",
       "inputs": [
         "@id",
         "@type",
@@ -39,11 +41,14 @@
         "http://schema.org/name",
         "http://schema.org/description",
         "http://schema.org/datePublished",
+        "http://schema.org/dateModified",
         "http://schema.org/license",
         "http://schema.org/version",
-        "http://schema.org/dateModified",
         "http://schema.org/citation",
-        "http://schema.org/identifier"
+        "http://schema.org/identifier",
+        "http://schema.org/hasPart",
+        "https://schema.org/about",
+        "http://schema.org/additionalProperty"
       ]
     },
     {
@@ -53,24 +58,6 @@
         "http://schema.org/author",
         "http://schema.org/funding",
         "http://schema.org/affiliation"
-      ]
-    },
-    {
-      "name": "Project & Regulatory context",
-      "help": "Select the VHP4Safety workflow steps that this dataset contributes to, or provide case study and regulatory question context.",
-      "inputs": [
-        "https://glossary.vhp4safety.nl/#VHP0000152",
-        "http://schema.org/additionalProperty"
-      ]
-    },
-    {
-      "name": "Structure",
-      "metadataCategory": "datasetDescriptor",
-      "help": "How the parts of this RO-Crate relate, including specific case study, regulatory question, and workflow steps.",
-      "inputs": [
-        "http://schema.org/hasPart",
-        "https://bioschemas.org/processSequence",
-        "https://schema.org/about"
       ]
     },
     {
@@ -84,33 +71,27 @@
     {
       "name": "Biological Model Information",
       "metadataCategory": "contextualMetadata",
-      "help": "This group specifies the biological target (cells or organisms) exposed to the chemical(s). Information entered here creates Sample entities that represent the actual biological materials used in your experiment. These Sample entities become inputs to your LabProcess workflow steps. For cell-based assays, link Samples to CellLine entities via 'sourceMaterial' to indicate their origin (e.g., Sample 'HepG2 cells, passage 12' isBasedOn CellLine 'HepG2').",
+      "help": "Biological models and derived samples exposed to the chemical(s).",
       "inputs": [
         "https://w3id.org/tox/terms#hasBioSample"
       ]
     },
     {
-      "name": "Exposure Information",
+      "name": "Endpoint readout information",
       "metadataCategory": "contextualMetadata",
-      "help": "Specifications on how biological models are exposed to the chemical(s), e.g., details about the applied dose, route of exposure and type of application (e.g., as aerosol or dispersed). Information entered here can be used to populate a LabProcess entity representing the 'Exposure' step in your experimental workflow. The dose, duration, route, and control parameters become ParameterValue entities linked to that LabProcess. Consider creating one or more LabProcess entities to capture this information with temporal and material flow context.",
-      "inputs": [
-        "https://w3id.org/tox/terms#exposureDuration",
-        "https://w3id.org/tox/terms#exposureConcentrationrange",
-        "https://w3id.org/tox/terms#exposureFrequency",
-        "https://w3id.org/tox/terms#vehicle",
-        "https://w3id.org/tox/terms#controlDescription",
-        "https://w3id.org/tox/terms#biologicalreplicateCount",
-        "https://w3id.org/tox/terms#biologicalreplicateCount"
-      ]
-    },
-    {
-      "name": "Endpoint Readout Information",
-      "metadataCategory": "contextualMetadata",
-      "help": "Specifies the test methods used to assess the chemical(s) impact on the biological model and contains most of the metadata, mainly instrument specifications. Information entered here should be captured in one or more LabProcess entities representing 'Measurement' or 'Assay' steps in your workflow. Use the LabProcess fields 'bioassayType' to link to BioAssay Ontology terms (e.g., 'cell viability assay', 'MTT assay') and 'measuresAopEvent' to link to AOP-Wiki key events (e.g., 'cell death', 'oxidative stress'). This creates semantic connections between your experimental data and toxicological knowledge frameworks.",
+      "help": "blabla",
       "inputs": [
         "http://purl.bioontology.org/ontology/MESH/D000073931",
         "https://w3id.org/tox/terms#aopEvent",
         "http://www.bioassayontology.org/bao#BAO_0002854"
+      ]
+    },
+    {
+      "name": "Workflow & Processes",
+      "metadataCategory": "contextualMetadata",
+      "help": "Key exposure and measurement details to capture as LabProcess steps.",
+      "inputs": [
+        "https://bioschemas.org/processSequence"
       ]  
     },
     {
@@ -119,11 +100,7 @@
       "help": "Information about the data analysis methods and statistics, as well as the used software for data evaluation",
       "inputs": [
         "http://schema.org/SoftwareApplication",
-        "http://schema.org/SoftwareSourceCode",
-        "https://w3id.org/ro/terms/workflow",
-        "https://w3id.org/tox/terms#workflowMetadata",
-        "https://w3id.org/ro/terms/run",
-        "https://w3id.org/tox/terms#runMetadata"
+        "http://schema.org/SoftwareSourceCode"
       ]
     }
   ],
@@ -245,7 +222,17 @@
       "fields": [
         "@id",
         "name",
+        "label",
+        "title",
         "short_name",
+        "alternative",
+        "identifier",
+        "page",
+        "source",
+        "creator",
+        "created",
+        "modified",
+        "abstract",
         "description"
       ]
     },
@@ -297,6 +284,303 @@
       ]
     }
   },
+  "parameterTemplates": {
+    "Sample Preparation": [
+      {
+        "propertyID": "cell_density",
+        "name": "Cell Density",
+        "unitText": "cells/well",
+        "category": "experimental_condition",
+        "description": "Number of cells seeded per well"
+      },
+      {
+        "propertyID": "passage_number",
+        "name": "Passage Number",
+        "unitText": "",
+        "category": "sample_characteristic",
+        "description": "Passage number of the cell culture"
+      },
+      {
+        "propertyID": "culture_medium",
+        "name": "Culture Medium",
+        "unitText": "",
+        "category": "reagent",
+        "description": "Culture medium composition and supplements"
+      },
+      {
+        "propertyID": "seeding_volume",
+        "name": "Seeding Volume",
+        "unitText": "μL",
+        "category": "experimental_condition",
+        "description": "Volume of cell suspension added per well"
+      },
+      {
+        "propertyID": "plate_format",
+        "name": "Plate Format",
+        "unitText": "",
+        "category": "experimental_condition",
+        "description": "Plate type and well configuration (e.g., 96-well, 384-well)"
+      },
+      {
+        "propertyID": "incubation_time",
+        "name": "Pre-incubation Time",
+        "unitText": "hours",
+        "category": "experimental_condition",
+        "description": "Time cells were incubated before treatment"
+      },
+      {
+        "propertyID": "incubation_temperature",
+        "name": "Incubation Temperature",
+        "unitText": "°C",
+        "category": "experimental_condition",
+        "description": "Temperature during pre-incubation"
+      },
+      {
+        "propertyID": "co2_concentration",
+        "name": "CO₂ Concentration",
+        "unitText": "%",
+        "category": "experimental_condition",
+        "description": "CO₂ saturation during incubation"
+      }
+    ],
+    "Treatment": [
+      {
+        "propertyID": "substrate",
+        "name": "Substrate",
+        "unitText": "",
+        "category": "reagent",
+        "description": "Primary substrate or assay reagent (e.g., T3, MTT)"
+      },
+      {
+        "propertyID": "substrate_concentration",
+        "name": "Substrate Concentration",
+        "unitText": "μM",
+        "category": "experimental_condition",
+        "description": "Concentration of the primary substrate"
+      },
+      {
+        "propertyID": "test_chemical_concentration",
+        "name": "Test Chemical Concentration",
+        "unitText": "μM",
+        "category": "experimental_condition",
+        "description": "Concentration range or specific concentration of test chemical"
+      },
+      {
+        "propertyID": "exposure_duration",
+        "name": "Exposure Duration",
+        "unitText": "minutes",
+        "category": "experimental_condition",
+        "description": "Duration of chemical exposure"
+      },
+      {
+        "propertyID": "temperature",
+        "name": "Temperature",
+        "unitText": "°C",
+        "category": "experimental_condition",
+        "description": "Temperature during exposure"
+      },
+      {
+        "propertyID": "vehicle",
+        "name": "Vehicle",
+        "unitText": "%",
+        "category": "reagent",
+        "description": "Vehicle/solvent used and its final concentration"
+      },
+      {
+        "propertyID": "biological_replicates",
+        "name": "Biological Replicates",
+        "unitText": "",
+        "category": "study_design",
+        "description": "Number of independent biological experiments"
+      },
+      {
+        "propertyID": "technical_replicates",
+        "name": "Technical Replicates",
+        "unitText": "",
+        "category": "study_design",
+        "description": "Number of technical replicates per condition"
+      },
+      {
+        "propertyID": "positive_control",
+        "name": "Positive Control",
+        "unitText": "",
+        "category": "control",
+        "description": "Identity and concentration of positive control"
+      },
+      {
+        "propertyID": "negative_control",
+        "name": "Negative Control",
+        "unitText": "",
+        "category": "control",
+        "description": "Identity of negative control (e.g., vehicle only)"
+      }
+    ],
+    "Endpoint Measurement": [
+      {
+        "propertyID": "detection_method",
+        "name": "Detection Method",
+        "unitText": "",
+        "category": "method",
+        "description": "Detection or readout method (e.g., Sandell-Kolthoff reaction, fluorescence)"
+      },
+      {
+        "propertyID": "substrate",
+        "name": "Substrate",
+        "unitText": "",
+        "category": "reagent",
+        "description": "Substrate or reagent for detection (e.g., T3, MTT, resazurin)"
+      },
+      {
+        "propertyID": "substrate_incubation_time",
+        "name": "Substrate Incubation Time",
+        "unitText": "minutes",
+        "category": "experimental_condition",
+        "description": "Incubation time with detection substrate"
+      },
+      {
+        "propertyID": "measurement_type",
+        "name": "Measurement Type",
+        "unitText": "",
+        "category": "method",
+        "description": "Type of measurement (Absorbance, Fluorescence, Luminescence)"
+      },
+      {
+        "propertyID": "wavelength",
+        "name": "Wavelength",
+        "unitText": "nm",
+        "category": "instrument_setting",
+        "description": "Measurement wavelength"
+      },
+      {
+        "propertyID": "excitation_wavelength",
+        "name": "Excitation Wavelength",
+        "unitText": "nm",
+        "category": "instrument_setting",
+        "description": "Excitation wavelength for fluorescence measurements"
+      },
+      {
+        "propertyID": "emission_wavelength",
+        "name": "Emission Wavelength",
+        "unitText": "nm",
+        "category": "instrument_setting",
+        "description": "Emission wavelength for fluorescence measurements"
+      },
+      {
+        "propertyID": "measurement_interval",
+        "name": "Measurement Interval",
+        "unitText": "seconds",
+        "category": "instrument_setting",
+        "description": "Time between successive measurements"
+      },
+      {
+        "propertyID": "measurement_duration",
+        "name": "Measurement Duration",
+        "unitText": "minutes",
+        "category": "instrument_setting",
+        "description": "Total duration of kinetic measurements"
+      },
+      {
+        "propertyID": "instrument_model",
+        "name": "Instrument Model",
+        "unitText": "",
+        "category": "instrument",
+        "description": "Model and manufacturer of detection instrument"
+      },
+      {
+        "propertyID": "digestion_method",
+        "name": "Digestion Method",
+        "unitText": "",
+        "category": "method",
+        "description": "Method for sample digestion if applicable (e.g., UV-light, APS)"
+      },
+      {
+        "propertyID": "digestion_duration",
+        "name": "Digestion Duration",
+        "unitText": "minutes",
+        "category": "experimental_condition",
+        "description": "Duration of digestion step"
+      }
+    ],
+    "Data Analysis": [
+      {
+        "propertyID": "analysis_software",
+        "name": "Analysis Software",
+        "unitText": "",
+        "category": "software",
+        "description": "Software used for data analysis (e.g., GraphPad Prism, R, Python)"
+      },
+      {
+        "propertyID": "software_version",
+        "name": "Software Version",
+        "unitText": "",
+        "category": "software",
+        "description": "Version number of analysis software"
+      },
+      {
+        "propertyID": "regression_model",
+        "name": "Regression Model",
+        "unitText": "",
+        "category": "method",
+        "description": "Mathematical model used for curve fitting (e.g., first-order kinetic, four-parameter logistic)"
+      },
+      {
+        "propertyID": "effect_metric",
+        "name": "Effect Metric",
+        "unitText": "",
+        "category": "analysis_parameter",
+        "description": "Primary effect metric calculated (e.g., BMC20, IC50, EC50)"
+      },
+      {
+        "propertyID": "benchmark_response",
+        "name": "Benchmark Response Level",
+        "unitText": "%",
+        "category": "analysis_parameter",
+        "description": "Benchmark response level for BMC calculation"
+      },
+      {
+        "propertyID": "normalization_method",
+        "name": "Normalization Method",
+        "unitText": "",
+        "category": "method",
+        "description": "Method for normalizing data (e.g., to vehicle control, to positive control)"
+      },
+      {
+        "propertyID": "normalization_controls",
+        "name": "Normalization Controls",
+        "unitText": "",
+        "category": "control",
+        "description": "Controls used for normalization (e.g., vehicle control as 100%, positive control as 0%)"
+      },
+      {
+        "propertyID": "statistical_test",
+        "name": "Statistical Test",
+        "unitText": "",
+        "category": "method",
+        "description": "Statistical test applied (e.g., two-way ANOVA, Dunnett's test, t-test)"
+      },
+      {
+        "propertyID": "significance_level",
+        "name": "Significance Level",
+        "unitText": "",
+        "category": "analysis_parameter",
+        "description": "Alpha level for statistical significance (e.g., 0.05)"
+      },
+      {
+        "propertyID": "confidence_interval",
+        "name": "Confidence Interval",
+        "unitText": "%",
+        "category": "analysis_parameter",
+        "description": "Confidence interval for parameter estimates (e.g., 95%)"
+      },
+      {
+        "propertyID": "outlier_handling",
+        "name": "Outlier Handling",
+        "unitText": "",
+        "category": "method",
+        "description": "Method for identifying and handling outliers"
+      }
+    ]
+  },
   "enabledClasses": [
     "Dataset",
     "Person",
@@ -336,7 +620,13 @@
     "Sample",
     "ParameterValue",
     "OntologyAnnotation",
-    "Grant"
+    "Grant",
+    "Investigation",
+    "Study",
+    "Protocol",
+    "Material",
+    "DataFile",
+    "Process"
   ],
   "classes": {
     "Dataset": {
@@ -345,7 +635,7 @@
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "Indicate whether this dataset describes multiple assays (study) or one single assay.",
+          "help": "Root is always a Dataset; choose exactly one ISA role: Investigation, Study, or Assay. Use additional values only if also aligning to a domain profile.",
           "required": true,
           "multiple": true,
           "type": [
@@ -353,11 +643,15 @@
           ],
           "values": [
             {
-              "@id": "http://purl.obolibrary.org/obo/MMO_0000502",
+              "@id": "https://w3id.org/isa/Investigation",
+              "name": "Investigation"
+            },
+            {
+              "@id": "https://w3id.org/isa/Assay",
               "name": "Assay"
             },
             {
-              "@id": "https://w3id.org/tox/profile#CellBasedToxicology",
+              "@id": "https://w3id.org/isa/Study",
               "name": "Study"
             }
           ]
@@ -433,6 +727,16 @@
           ]
         },
         {
+          "id": "http://schema.org/author",
+          "name": "author",
+          "help": "Authors associated with the dataset.",
+          "required": true,
+          "multiple": true,
+          "type": [
+            "Person"
+          ]
+        },
+        {
           "id": "http://schema.org/citation",
           "name": "citation",
           "help": "Citations associated with this dataset (e.g. related publications). Enter a DOI.",
@@ -444,250 +748,69 @@
           ]
         },
         {
-          "id": "http://schema.org/url",
-          "name": "url",
-          "help": "Primary project portal link.",
+          "id": "http://schema.org/funding",
+          "name": "funding",
+          "help": "Funding.",
           "multiple": true,
           "type": [
-            "URL"
+            "Grant"
           ]
         },
         {
-          "id": "https://glossary.vhp4safety.nl/#VHP0000152",
-          "name": "Workflow Step",
-          "help": "Select which VHP4Safety workflow step(s) this dataset contributes to (e.g., Toxicokinetics, Toxicodynamics/AOP, Adverse Outcome).",
-          "multiple": true,
-          "type": ["Select"],
-          "values": [
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000153",
-              "name": "Hazard/Chemical characteristics"
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000154",
-              "name": "External exposure"
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/#VHP0000155",
-              "name": "Toxicokinetics"
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000157",
-              "name": "Internal exposure"
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000156",
-              "name": "Toxicodynamics/AOP"
-            },
-            {
-              "@id": "https://glossary.vhp4safety.nl/VHP0000158",
-              "name": "Adverse Outcome"
-            }
-          ]
-        },
-        { "id": "http://schema.org/additionalProperty",
-          "name": "vhp context",
-          "help": "Additional contextual metadata (e.g., case study, regulatory question). For workflow steps, use the direct 'Workflow Step' field above.",
-          "multiple": true,
-          "type": ["CaseStudy", "RegulatoryQuestion", "PropertyValue"]
-        },
-        {
-          "id": "http://www.bioassayontology.org/bao#BAO_0000445",
-          "name": "Raw data",
-          "help": "Raw experimental input files (e.g. instrumentation outputs).",
+          "id": "http://schema.org/isPartOf",
+          "name": "isPartOf",
+          "help": "Larger collections of datasets(study) that this dataset(assay) is part of.",
           "multiple": true,
           "type": [
-            "File"
+            "Collection",
+            "Investigation",
+            "Study"
           ]
         },
         {
-          "id": "http://www.bioassayontology.org/bao#BAO_0000444",
-          "name": "Preprocessed data",
-          "help": "Processed/derived files generated from the raw data.",
+          "id": "http://schema.org/hasPart",
+          "name": "hasPart",
+          "help": "Folder or File that form part of this dataset.",
           "multiple": true,
           "type": [
-            "File"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#analysisScript",
-          "name": "tox:analysisScript",
-          "help": "Scripts or software used to process/analyze the data.",
-          "multiple": true,
-          "type": [
+            "CreativeWork",
             "File",
-            "SoftwareApplication",
-            "URL"
+            "Dataset",
+            "Assay"
           ]
         },
         {
-          "id": "https://w3id.org/ro/terms/workflow",
-          "name": "tox:workflowDescription",
-          "help": "CWL workflow description (workflow.cwl or tool.cwl).",
+          "id": "https://bioschemas.org/processSequence",
+          "name": "processSequence",
+          "help": "Ordered LabProcess references describing the assay workflow. Create LabProcess entities for key experimental steps (e.g., 'Cell Culture', 'Chemical Exposure', 'Endpoint Measurement', 'Data Analysis'). Each LabProcess should reference a LabProtocol (the method), specify inputs/outputs (Samples, ChemicalSubstances, Files), include parameterValues for this specific execution, and optionally link to bioassayType and measuresAopEvent for semantic enrichment. Link LabProcess instances here in chronological order to document your complete experimental workflow.",
           "multiple": true,
           "type": [
-            "File",
-            "SoftwareApplication",
-            "ComputationalWorkflow"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#workflowMetadata",
-          "name": "tox:workflowMetadata",
-          "help": "Workflow-level metadata (e.g. isa.workflow.xlsx or isa.datamap.xlsx).",
-          "multiple": true,
-          "type": [
-            "File"
-          ]
-        },
-        {
-          "id": "https://w3id.org/ro/terms/run",
-          "name": "tox:runDescription",
-          "help": "Run-specific CWL description (run.cwl) or parameter file (run.yml).",
-          "multiple": true,
-          "type": [
-            "File",
-            "URL"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#runMetadata",
-          "name": "tox:runMetadata",
-          "help": "Run metadata spreadsheets (e.g. isa.run.xlsx or isa.datamap.xlsx).",
-          "multiple": true,
-          "type": [
-            "File"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#differentiationProtocol",
-          "name": "tox:differentiationProtocol",
-          "help": "Protocol for culturing/differentiating the biological model.",
-          "multiple": true,
-          "type": [
-            "LabProtocol"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#assayProtocol",
-          "name": "tox:assayProtocol",
-          "help": "Protocol describing the assay execution/readout.",
-          "multiple": true,
-          "type": [
-            "LabProtocol"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#exposureRoute",
-          "name": "tox:exposureRoute",
-          "help": "Route of exposure (e.g. inhalation, oral, dermal) applied in the assay.",
-          "multiple": false,
-          "type": [
+            "LabProcess",
             "Text"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#exposureDuration",
-          "name": "tox:exposureDuration",
-          "help": "Duration of the exposure including units (e.g. 24 h, 14 days).",
-          "multiple": true,
-          "type": [
-            "PropertyValue"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#exposureConcentration",
-          "name": "tox:exposureConcentration",
-          "help": "Nominal concentration, dose levels, or dosing scheme applied during exposure.",
-          "multiple": true,
-          "type": [
-            "PropertyValue"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#exposureFrequency",
-          "name": "tox:exposureFrequency",
-          "help": "Frequency or schedule of exposure (e.g. single, repeated, 3x per week).",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#vehicle",
-          "name": "tox:vehicle",
-          "help": "Vehicle/solvent or dispersal medium used for dosing.",
-          "multiple": true,
-          "type": [
-            "ChemicalSubstance"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#controlDescription",
-          "name": "tox:controlDescription",
-          "help": "Description of positive/negative/solvent control conditions.",
-          "multiple": true,
-          "type": [
-            "TextArea"
-          ]
-        },
-        {
-          "id": "https://w3id.org/tox/terms#replicateCount",
-          "name": "tox:replicateCount",
-          "help": "Number of biological/technical replicates per concentration or condition.",
-          "multiple": false,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "https://bioschemas.org/LabProtocol",
-          "name": "labProtocol",
-          "help": "Link to a lab protocol relevant to this dataset.",
-          "multiple": true,
-          "type": [
-            "LabProtocol"
           ]
         },
         {
           "id": "http://purl.bioontology.org/ontology/MESH/D000073931",
-          "name": "AOP",
-          "help": "Look up AOP on AOP-wiki by name or identifier.",
+          "name": "AdverseOutcomePathway",
+          "help": "AOP linkage. Look up AOP on AOP-wiki by name or identifier.",
           "multiple": true,
           "type": [
             "AdverseOutcomePathway"
           ]
         },
         {
-          "id": "http://www.bioassayontology.org/bao#BAO_0000551",
-          "name": "Organism",
-          "help": "Organism represented in the assay.",
+          "id": "https://w3id.org/tox/terms#aopEvent",
+          "name": "AopEvent",
+          "label": "AOP event",
+          "help": "Key events from the referenced AOP that are evidenced by this dataset.",
           "multiple": true,
           "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://purl.obolibrary.org/obo/UBERON_0000062",
-          "name": "Organ",
-          "help": "Organ studied or modelled.",
-          "multiple": true,
-          "type": [
-            "Text"
-          ]
-        },
-        {
-          "id": "http://purl.obolibrary.org/obo/UBERON_0000479",
-          "name": "Tissue",
-          "help": "Tissue studied or modelled.",
-          "multiple": true,
-          "type": [
-            "Text"
+            "AopEvent"
           ]
         },
         {
           "id": "https://w3id.org/tox/terms#hasChemical",
-          "name": "Test Chemical",
+          "name": "chemicalInformation",
           "help": "Chemicals tested in this assay. Use the ChemicalSubstance lookup to find a compound by name, CAS number, or other identifier, then add entries for each test chemical, control, or vehicle. You can later select these as inputs in your LabProcess workflow steps.",
           "multiple": true,
           "type": [
@@ -696,7 +819,7 @@
         },
         {
           "id": "https://w3id.org/tox/terms#hasBioSample",
-          "name": "Biological sample",
+          "name": "biologicalModelInformation",
           "help": "Cell line or cellular model used.",
           "multiple": true,
           "type": [
@@ -715,40 +838,12 @@
           ]
         },
         {
-          "id": "https://w3id.org/tox/terms#keyEventRelationship",
-          "name": "Key event relationship",
-          "help": "Key event relationships from AOP-Wiki that are referenced in this dataset.",
-          "multiple": true,
-          "type": [
-            "AopEventRelationship"
-          ]
-        },
-        {
-          "id": "http://schema.org/author",
-          "name": "Author",
-          "help": "Authors associated with the dataset.",
-          "required": true,
-          "multiple": true,
-          "type": [
-            "Person"
-          ]
-        },
-        {
           "id": "http://www.bioassayontology.org/bao#BAO_0002854",
           "name": "BioAssay",
           "help": "Categorization of the general class of bioassay (enyzme activity, gene expression...)",
           "multiple": true,
           "type": [
             "BioAssay"
-          ]
-        },
-        {
-          "id": "http://schema.org/funding",
-          "name": "funding",
-          "help": "Funding.",
-          "multiple": true,
-          "type": [
-            "Grant"
           ]
         },
         {
@@ -759,36 +854,37 @@
           "type": [
             "Organization"
           ]
-        },
-        {
-          "id": "http://schema.org/isPartOf",
-          "name": "isPartOf",
-          "help": "Larger collections of datasets(study) that this dataset(assay) is part of.",
-          "multiple": true,
-          "type": [
-            "Collection"
-          ]
-        },
-        {
-          "id": "http://schema.org/hasPart",
-          "name": "hasPart",
-          "help": "Folder or File that form part of this dataset.",
-          "multiple": true,
-          "type": [
-            "CreativeWork",
-            "File"
-          ]
-        },
-        {
-          "id": "https://bioschemas.org/processSequence",
-          "name": "Process sequence",
-          "help": "Ordered LabProcess references describing the assay workflow. Create LabProcess entities for key experimental steps (e.g., 'Cell Culture', 'Chemical Exposure', 'Endpoint Measurement', 'Data Analysis'). Each LabProcess should reference a LabProtocol (the method), specify inputs/outputs (Samples, ChemicalSubstances, Files), include parameterValues for this specific execution, and optionally link to bioassayType and measuresAopEvent for semantic enrichment. Link LabProcess instances here in chronological order to document your complete experimental workflow.",
-          "multiple": true,
-          "type": [
-            "LabProcess",
-            "Text"
-          ]
         }
+      ]
+    },
+    "Investigation": {
+      "id": "https://w3id.org/isa/Investigation",
+      "inputs": [
+        { "id": "http://schema.org/name", "name": "name", "help": "Investigation title.", "required": true, "type": ["Text"] },
+        { "id": "http://schema.org/description", "name": "description", "help": "Investigation summary.", "required": true, "type": ["TextArea"] },
+        { "id": "http://schema.org/license", "name": "license", "help": "License or terms of reuse.", "required": true, "type": ["URL"] },
+        { "id": "http://schema.org/identifier", "name": "identifier", "help": "Investigation DOI or accession.", "required": true, "type": ["Text","URL"] },
+        { "id": "http://schema.org/author", "name": "author", "help": "Investigation contributors.", "required": true, "multiple": true, "type": ["Person","Organization"] },
+        { "id": "http://schema.org/datePublished", "name": "datePublished", "help": "Publication/release date.", "required": true, "type": ["Date","DateTime"] },
+        { "id": "http://schema.org/dateModified", "name": "dateModified", "help": "Last update timestamp.", "type": ["Date","DateTime"] },
+        { "id": "http://schema.org/hasPart", "name": "hasPart", "help": "Studies or Assays contained in this Investigation.", "multiple": true, "type": ["Study","Assay","Dataset"] },
+        { "id": "http://schema.org/isPartOf", "name": "isPartOf", "help": "Parent Collection if applicable.", "multiple": true, "type": ["Collection"] },
+        { "id": "http://schema.org/conformsTo", "name": "conformsTo", "help": "Profile URI (e.g., ISA-RO-Crate).", "required": true, "multiple": true, "type": ["URL"] }
+      ]
+    },
+    "Study": {
+      "id": "https://w3id.org/isa/Study",
+      "inputs": [
+        { "id": "http://schema.org/name", "name": "name", "help": "Study title.", "required": true, "type": ["Text"] },
+        { "id": "http://schema.org/description", "name": "description", "help": "Study summary.", "required": true, "type": ["TextArea"] },
+        { "id": "http://schema.org/license", "name": "license", "help": "License or terms of reuse.", "required": true, "type": ["URL"] },
+        { "id": "http://schema.org/identifier", "name": "identifier", "help": "Study DOI or accession.", "required": true, "type": ["Text","URL"] },
+        { "id": "http://schema.org/author", "name": "author", "help": "Study contributors.", "required": true, "multiple": true, "type": ["Person","Organization"] },
+        { "id": "http://schema.org/datePublished", "name": "datePublished", "help": "Publication/release date.", "required": true, "type": ["Date","DateTime"] },
+        { "id": "http://schema.org/dateModified", "name": "dateModified", "help": "Last update timestamp.", "type": ["Date","DateTime"] },
+        { "id": "http://schema.org/isPartOf", "name": "isPartOf", "help": "Parent Investigation.", "required": true, "multiple": true, "type": ["Investigation"] },
+        { "id": "http://schema.org/hasPart", "name": "hasPart", "help": "Assays, processes, materials, or data files in this Study.", "multiple": true, "type": ["Assay","Process","LabProcess","Material","DataFile","File","Dataset"] },
+        { "id": "http://schema.org/conformsTo", "name": "conformsTo", "help": "Profile URI (e.g., ISA-RO-Crate).", "required": true, "multiple": true, "type": ["URL"] }
       ]
     },
     "Person": {
@@ -1151,6 +1247,18 @@
           "type": ["TextArea"]
         },
         {
+          "id": "http://schema.org/isPartOf",
+          "name": "isPartOf",
+          "help": "Parent Investigation, Study, Assay, or Dataset this file belongs to.",
+          "multiple": true,
+          "type": [
+            "Investigation",
+            "Study",
+            "Assay",
+            "Dataset"
+          ]
+        },
+        {
           "id": "http://purl.org/dc/terms/conformsTo",
           "name": "conformsTo",
           "help": "Profile or schema this file conforms to (e.g. ISA-Tab, VCF spec).",
@@ -1323,6 +1431,17 @@
         }
       ]
     },
+    "Protocol": {
+      "id": "https://w3id.org/isa/Protocol",
+      "inputs": [
+        { "id": "http://schema.org/name", "name": "name", "help": "Protocol title.", "required": true, "type": ["Text"] },
+        { "id": "http://schema.org/description", "name": "description", "help": "Protocol summary or abstract.", "type": ["TextArea"] },
+        { "id": "http://schema.org/url", "name": "reference", "help": "Public URL for the protocol.", "type": ["URL"] },
+        { "id": "http://schema.org/contentUrl", "name": "contentUrl", "help": "Direct link or File for the protocol content.", "type": ["File","URL"] },
+        { "id": "http://schema.org/version", "name": "version", "help": "Protocol version.", "type": ["Text"] },
+        { "id": "http://schema.org/author", "name": "author", "help": "Protocol authors.", "multiple": true, "type": ["Person","Organization"] }
+      ]
+    },
     "AdverseOutcomePathway": {
       "id": "http://purl.bioontology.org/ontology/MESH/D000073931",
       "inputs": [
@@ -1333,16 +1452,6 @@
           "multiple": false,
           "type": [
             "Text"
-          ]
-        },
-        {
-          "id": "http://schema.org/identifier",
-          "name": "identifier",
-          "help": "Identifier or URL for the AOP.",
-          "multiple": false,
-          "required": false,
-          "type": [
-            "URL"
           ]
         },
         {
@@ -1494,7 +1603,7 @@
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "Preferred chemical name.",
+          "help": "Preferred chemical name. Avoid duplicate entries; reuse an existing ChemicalSubstance when the CAS/InChIKey matches.",
           "multiple": false,
           "type": [
             "Text"
@@ -1835,6 +1944,15 @@
           ]
         },
         {
+          "id": "http://www.bioassayontology.org/bao#BAO_0002628",
+          "name": "detection instrument manufacturer",
+          "help": "Manufacturer of the detection instrument used in this bioassay.",
+          "multiple": true,
+          "type": [
+            "InstrumentManufacturer"
+          ]
+        },
+        {
           "id": "http://www.bioassayontology.org/bao#BAO_0002000",
           "name": "measure entity",
           "help": "The role of a molecular entity of being the output of a biological reaction or process that is quantitated either directly (by the presence of a tag or probe) or indirectly in a coupled reaction.",
@@ -2132,6 +2250,7 @@
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Name of the assay or sub-assay.",
+          "required": true,
           "multiple": false,
           "type": [
             "Text"
@@ -2141,9 +2260,97 @@
           "id": "http://schema.org/description",
           "name": "description",
           "help": "Short description of the assay component.",
+          "required": true,
           "multiple": false,
           "type": [
             "TextArea"
+          ]
+        },
+        {
+          "id": "http://schema.org/license",
+          "name": "license",
+          "help": "License or terms of reuse for this assay dataset.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Assay accession or DOI.",
+          "required": true,
+          "type": [
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/author",
+          "name": "author",
+          "help": "Assay authors or contributors.",
+          "required": true,
+          "multiple": true,
+          "type": [
+            "Person",
+            "Organization"
+          ]
+        },
+        {
+          "id": "http://schema.org/datePublished",
+          "name": "datePublished",
+          "help": "Publication/release date for this assay.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Date",
+            "DateTime"
+          ]
+        },
+        {
+          "id": "http://schema.org/dateModified",
+          "name": "dateModified",
+          "help": "Last update timestamp for this assay.",
+          "multiple": false,
+          "type": [
+            "Date",
+            "DateTime"
+          ]
+        },
+        {
+          "id": "http://schema.org/hasPart",
+          "name": "hasPart",
+          "help": "Processes, materials, or data files that belong to this assay.",
+          "multiple": true,
+          "required":true,
+          "type": [
+            "Process",
+            "LabProcess",
+            "Material",
+            "Sample",
+            "DataFile",
+            "File"
+          ]
+        },
+        {
+          "id": "http://schema.org/isPartOf",
+          "name": "isPartOf",
+          "help": "Parent Study or Investigation containing this assay.",
+          "multiple": true,
+          "type": [
+            "Study",
+            "Investigation",
+            "Dataset"
+          ]
+        },
+        {
+          "id": "http://schema.org/conformsTo",
+          "name": "conformsTo",
+          "help": "Profile this assay adheres to (e.g., ISA-RO-Crate).",
+          "multiple": true,
+          "type": [
+            "URL"
           ]
         }
       ]
@@ -2152,22 +2359,76 @@
       "id": "https://bioschemas.org/PropertyValue",
       "inputs": [
         {
-          "id": "http://schema.org/category",
-          "name": "category",
-          "help": "Parameter category or label.",
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Human-readable label for this parameter (e.g., 'Cell Density', 'Exposure Duration', 'Temperature'). This is the display name users will see.",
           "multiple": false,
           "type": [
-            "OntologyAnnotation",
             "Text"
           ]
         },
         {
           "id": "http://schema.org/propertyID",
           "name": "propertyID",
-          "help": "Identifier or name of the property measured.",
+          "help": "Machine-readable identifier for the property type. BEST PRACTICE: Use ontology URIs (e.g., 'https://w3id.org/tox/terms#cellDensity', 'http://schema.org/temperature') for FAIR compliance. Simple strings (e.g., 'cell_density') are also acceptable but less semantically rich.",
+          "required": true,
           "multiple": false,
           "type": [
+            "Text",
+            "URL"
+          ]
+        },
+        {
+          "id": "http://schema.org/category",
+          "name": "category",
+          "help": "Classification of this parameter for grouping and organization. Choose from: 'experimental_condition' (temp, time, pH), 'reagent' (chemicals, substrates), 'method' (techniques, procedures), 'instrument_setting' (wavelength, gain), 'study_design' (replicates, controls), 'sample_characteristic' (passage, confluency), 'software' (analysis tools), 'analysis_parameter' (statistics, thresholds), 'control' (positive/negative controls). This helps organize parameters in UI and enables filtering.",
+          "required": true,
+          "multiple": false,
+          "type": [
+            "Select",
             "Text"
+          ],
+          "values": [
+            {
+              "@id": "experimental_condition",
+              "name": "Experimental condition"
+            },
+            {
+              "@id": "reagent",
+              "name": "Reagent/Chemical"
+            },
+            {
+              "@id": "method",
+              "name": "Method/Technique"
+            },
+            {
+              "@id": "instrument_setting",
+              "name": "Instrument setting"
+            },
+            {
+              "@id": "instrument",
+              "name": "Instrument/Equipment"
+            },
+            {
+              "@id": "study_design",
+              "name": "Study design"
+            },
+            {
+              "@id": "sample_characteristic",
+              "name": "Sample characteristic"
+            },
+            {
+              "@id": "software",
+              "name": "Software/Tool"
+            },
+            {
+              "@id": "analysis_parameter",
+              "name": "Analysis parameter"
+            },
+            {
+              "@id": "control",
+              "name": "Control"
+            }
           ]
         },
         {
@@ -2312,16 +2573,18 @@
             "Text",
             "URL"
           ]
-        },
-        {
-          "id": "http://schema.org/isBasedOn",
-          "name": "derivesFrom",
-          "help": "Parent sample, if applicable.",
-          "multiple": true,
-          "type": [
-            "Sample"
-          ]
         }
+      ]
+    },
+    "Material": {
+      "id": "https://w3id.org/isa/Material",
+      "inputs": [
+        { "id": "http://schema.org/name", "name": "name", "help": "Material name.", "required": true, "type": ["Text"] },
+        { "id": "http://schema.org/description", "name": "description", "help": "Material description or role.", "type": ["TextArea"] },
+        { "id": "http://schema.org/additionalProperty", "name": "characteristics", "help": "Material characteristics or attributes.", "multiple": true, "type": ["ParameterValue"] },
+        { "id": "http://schema.org/derivesFrom", "name": "derivesFrom", "help": "Parent material/sample.", "multiple": true, "type": ["Material","Sample"] },
+        { "id": "http://bioschemas.org/isControl", "name": "isControl", "help": "Indicates whether the material is used as a control.", "type": ["Boolean"] },
+        { "id": "http://schema.org/isBasedOn", "name": "sourceMaterial", "help": "Source reference for this material.", "multiple": true, "type": ["CellLine","ChemicalSubstance","Sample","Material","Text","URL"] }
       ]
     },
     "LabProcess": {
@@ -2331,6 +2594,7 @@
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Select a common workflow step name or enter a custom label. Recommended 4-step workflow: (1) Sample Preparation: culture/seed cells; inputs=CellLine, outputs=Sample, parameterValues=cell_density/passage_number/culture_medium. (2) Treatment: chemical exposure; inputs=Sample+ChemicalSubstance, outputs=Sample, parameterValues=exposure_duration/concentration/vehicle/replicates. (3) Endpoint Measurement: measure readout; inputs=Sample, outputs=File, parameterValues=substrate/measurement_type/instrument, IMPORTANT: add bioassayType and measuresAopEvent. (4) Data Analysis: process data; inputs=File, outputs=File, parameterValues=normalization_method/software.",
+          "required": true,
           "multiple": false,
           "type": [
             "Text"
@@ -2359,6 +2623,7 @@
           "id": "http://schema.org/input",
           "name": "inputs",
           "help": "Samples or materials entering the process.",
+          "required": true,
           "multiple": true,
           "type": [
             "Sample",
@@ -2371,6 +2636,7 @@
           "id": "https://bioschemas.org/executesProtocol",
           "name": "executesProtocol",
           "help": "Protocol executed by this process.",
+          "required": true,
           "multiple": false,
           "type": [
             "LabProtocol"
@@ -2380,6 +2646,7 @@
           "id": "http://schema.org/output",
           "name": "outputs",
           "help": "Samples, intermediate materials, or data generated.",
+          "required": true,
           "multiple": true,
           "type": [
             "Sample",
@@ -2415,6 +2682,20 @@
         }
       ]
     },
+    "Process": {
+      "id": "https://w3id.org/isa/Process",
+      "inputs": [
+        { "id": "http://schema.org/name", "name": "name", "help": "Process step name.", "required": true, "type": ["Text"] },
+        { "id": "http://schema.org/description", "name": "description", "help": "Process summary and goal.", "type": ["TextArea"] },
+        { "id": "http://schema.org/performer", "name": "performer", "help": "Person or organization performing the process.", "multiple": true, "type": ["Person","Organization"] },
+        { "id": "http://schema.org/input", "name": "inputs", "help": "Materials or files entering the process.", "required": true, "multiple": true, "type": ["Material","Sample","ChemicalSubstance","File","DataFile"] },
+        { "id": "https://bioschemas.org/executesProtocol", "name": "executesProtocol", "help": "Protocol executed by this process.", "required": true, "type": ["Protocol","LabProtocol"] },
+        { "id": "http://schema.org/output", "name": "outputs", "help": "Materials or data generated.", "required": true, "multiple": true, "type": ["Material","Sample","DataFile","File"] },
+        { "id": "https://bioschemas.org/parameterValues", "name": "parameterValues", "help": "Process-specific parameter values.", "multiple": true, "type": ["ParameterValue"] },
+        { "id": "http://schema.org/startTime", "name": "startTime", "help": "Process start time.", "type": ["DateTime"] },
+        { "id": "http://schema.org/endTime", "name": "endTime", "help": "Process end time.", "type": ["DateTime"] }
+      ]
+    },
     "SamplePreparationProcess": {
       "id": "https://bioschemas.org/LabProcess",
       "inputs": [
@@ -2422,6 +2703,7 @@
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Sample preparation workflow step name (e.g., 'Cell seeding, day 0').",
+          "required": true,
           "multiple": false,
           "type": [
             "Text"
@@ -2460,6 +2742,7 @@
           "id": "https://bioschemas.org/executesProtocol",
           "name": "executesProtocol",
           "help": "Seeding or culture protocol applied.",
+          "required": true,
           "multiple": false,
           "type": [
             "LabProtocol"
@@ -2542,6 +2825,7 @@
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Treatment/exposure step name.",
+          "required": true,
           "multiple": false,
           "type": [
             "Text"
@@ -2580,6 +2864,7 @@
           "id": "https://bioschemas.org/executesProtocol",
           "name": "executesProtocol",
           "help": "Exposure protocol followed for dosing.",
+          "required": true,
           "multiple": false,
           "type": [
             "LabProtocol"
@@ -2657,6 +2942,7 @@
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Endpoint measurement step name.",
+          "required": true,
           "multiple": false,
           "type": [
             "Text"
@@ -2704,6 +2990,7 @@
           "id": "https://bioschemas.org/executesProtocol",
           "name": "executesProtocol",
           "help": "Measurement protocol executed.",
+          "required": true,
           "multiple": false,
           "type": [
             "LabProtocol",
@@ -2714,6 +3001,7 @@
           "id": "http://www.bioassayontology.org/bao#BAO_0000015",
           "name": "bioassayType",
           "help": "BioAssay Ontology classification (e.g., uptake assay, viability assay).",
+          "required": true,
           "multiple": false,
           "type": [
             "BioAssay"
@@ -2727,6 +3015,15 @@
           "type": [
             "AopEvent"
           ]
+        },
+        {
+          "id": "https://bioschemas.org/parameterValues",
+          "name": "parameterValues",
+          "help": "ParameterValues capturing instrument settings or assay conditions for this measurement.",
+          "multiple": true,
+          "type": [
+            "ParameterValue"
+          ]
         }
       ]
     },
@@ -2737,6 +3034,7 @@
           "id": "http://schema.org/name",
           "name": "name",
           "help": "Data analysis step name (e.g., 'Normalization and statistics').",
+          "required": true,
           "multiple": false,
           "type": [
             "Text"
@@ -2783,6 +3081,7 @@
           "id": "https://bioschemas.org/executesProtocol",
           "name": "executesProtocol",
           "help": "Analysis protocol, pipeline, or software workflow executed.",
+          "required": true,
           "multiple": false,
           "type": [
             "LabProtocol",
@@ -2831,16 +3130,6 @@
     "Grant": {
       "id": "https://schema.org/Grant",
       "inputs": [
-        {
-          "id": "http://schema.org/identifier",
-          "name": "identifer",
-          "help": "Grant id",
-          "multiple": true,
-          "type": [
-            "URL",
-            "Text"
-          ]
-       },
        {
           "id": "http://schema.org/name",
           "name": "name",
