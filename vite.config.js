@@ -64,7 +64,10 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+    },
+    // Ensure we never load multiple Vue copies (e.g. when linked locally),
+    // otherwise lifecycle hooks like onMounted complain about missing instances.
+    dedupe: ['vue']
   },
   esbuild: {
     drop: mode !== 'development' ? ['console', 'debugger'] : [],
@@ -111,6 +114,12 @@ export default defineConfig(({ mode }) => ({
           Accept: 'application/json'
         },
         rewrite: path => path.replace(/^\/lookup\/orcid/, '')
+      },
+      '/lookup/ror': {
+        target: 'https://api.ror.org',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/lookup\/ror/, '')
       },
       '/lookup/crossref': {
         target: 'https://api.crossref.org',
