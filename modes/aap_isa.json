@@ -2,7 +2,7 @@
   "metadata": {
     "name": "ISA RO-Crate Profile",
     "description": "Crate-O Mode for creating RO-Crates conforming to the ISA (Investigation-Study-Assay) RO-Crate profile. This profile enables representing ISA-JSON as RO-Crate, fully capturing experimental metadata in a FAIR-compliant format.",
-    "version": "0.1",
+    "version": 0.1,
     "author": "J.M. Houweling",
     "license": "GNU Affero General Public License v3.0",
     "profileReference": "https://github.com/nfdi4plants/isa-ro-crate-profile"
@@ -25,7 +25,7 @@
   "inputGroups": [
     {
       "name": "Core Metadata",
-      "help": "Essential metadata for the Investigation/Study/Assay. The root Dataset represents an Investigation.",
+      "help": "Essential metadata for the root Investigation.",
       "inputs": [
         "@id",
         "@type",
@@ -42,7 +42,7 @@
     },
     {
       "name": "Contributors & Publications",
-      "help": "People who created or contributed to the Investigation/Study/Assay, and related publications.",
+      "help": "People who created or contributed to the Investigation, and related publications.",
       "inputs": [
         "http://schema.org/creator",
         "http://schema.org/citation",
@@ -51,20 +51,10 @@
     },
     {
       "name": "Structure",
-      "help": "How the Investigation, Studies, and Assays are organized.",
+      "help": "How the Investigation contains Studies and Assays.",
       "inputs": [
         "http://schema.org/hasPart",
-        "http://schema.org/mentions",
-        "http://schema.org/about"
-      ]
-    },
-    {
-      "name": "Assay Specifics",
-      "help": "Measurement method, technique, and variables for Assays.",
-      "inputs": [
-        "http://schema.org/measurementMethod",
-        "http://schema.org/measurementTechnique",
-        "http://schema.org/variableMeasured"
+        "http://schema.org/mentions"
       ]
     }
   ],
@@ -82,7 +72,6 @@
     }
   },
   "enabledClasses": [
-    "Dataset",
     "Investigation",
     "Study",
     "Assay",
@@ -107,26 +96,22 @@
     "TextArea"
   ],
   "classes": {
-    "Dataset": {
+    "Investigation": {
       "id": "http://schema.org/Dataset",
       "inputs": [
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "MUST specify the ISA type: 'Investigation', 'Study', or 'Assay'.",
+          "help": "MUST be 'Investigation' to identify this Dataset as an ISA Investigation.",
           "required": true,
           "multiple": false,
-          "type": ["Select", "URL", "Text"],
-          "values": [
-            { "@id": "https://w3id.org/isa/Investigation", "@type": "DefinedTerm", "name": "Investigation" },
-            { "@id": "https://w3id.org/isa/Study", "@type": "DefinedTerm", "name": "Study" },
-            { "@id": "https://w3id.org/isa/Assay", "@type": "DefinedTerm", "name": "Assay" }
-          ]
+          "type": ["Text"],
+          "default": "Investigation"
         },
         {
           "id": "http://schema.org/identifier",
           "name": "identifier",
-          "help": "MUST provide an identifying descriptor (e.g., DOI, accession number).",
+          "help": "MUST provide an identifying descriptor of the investigation (e.g., repository name, DOI).",
           "required": true,
           "multiple": true,
           "type": ["Text", "URL", "PropertyValue"]
@@ -134,7 +119,7 @@
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "MUST provide a title for the Investigation/Study/Assay.",
+          "help": "MUST provide a title of the investigation (e.g., a paper title).",
           "required": true,
           "multiple": false,
           "type": ["Text"]
@@ -142,7 +127,7 @@
         {
           "id": "http://schema.org/description",
           "name": "description",
-          "help": "MUST provide a description (e.g., abstract).",
+          "help": "MUST provide a description of the investigation (e.g., an abstract).",
           "required": true,
           "multiple": false,
           "type": ["TextArea"]
@@ -150,7 +135,7 @@
         {
           "id": "http://schema.org/license",
           "name": "license",
-          "help": "MUST specify the license. Default: 'ALL RIGHTS RESERVED BY THE AUTHORS'.",
+          "help": "MUST specify the license. Default: 'ALL RIGHTS RESERVED BY THE AUTHORS' if no license info available.",
           "required": true,
           "multiple": false,
           "type": ["URL", "Text", "CreativeWork"]
@@ -158,7 +143,7 @@
         {
           "id": "http://schema.org/datePublished",
           "name": "datePublished",
-          "help": "MUST specify when published. Use crate creation date if not yet published.",
+          "help": "MUST specify when the Investigation was published. Use crate creation date as default if not yet published.",
           "required": true,
           "multiple": false,
           "type": ["Date", "DateTime"]
@@ -166,42 +151,35 @@
         {
           "id": "http://schema.org/dateCreated",
           "name": "dateCreated",
-          "help": "SHOULD specify when created (ISA submissionDate).",
+          "help": "SHOULD specify when the Investigation was created (ISA submissionDate).",
           "multiple": false,
           "type": ["Date", "DateTime"]
         },
         {
           "id": "http://schema.org/dateModified",
           "name": "dateModified",
-          "help": "COULD specify when last modified.",
+          "help": "COULD specify when the Investigation was last modified.",
           "multiple": false,
           "type": ["Date", "DateTime"]
         },
         {
           "id": "http://schema.org/creator",
           "name": "creator",
-          "help": "SHOULD specify the creator(s)/author(s)/PI(s) (ISA people).",
+          "help": "SHOULD specify the creator(s)/author(s)/PI(s) of the investigation (ISA people).",
           "multiple": true,
           "type": ["Person", "Organization"]
         },
         {
           "id": "http://schema.org/hasPart",
           "name": "hasPart",
-          "help": "SHOULD specify contained Studies/Assays/Files.",
+          "help": "SHOULD contain other datasets representing the Studies of the investigation. MAY also point to Assays directly.",
           "multiple": true,
-          "type": ["Study", "Assay", "File", "Dataset"]
-        },
-        {
-          "id": "http://schema.org/about",
-          "name": "about",
-          "help": "SHOULD specify LabProcess entities (ISA processSequence).",
-          "multiple": true,
-          "type": ["LabProcess"]
+          "type": ["Study", "Assay"]
         },
         {
           "id": "http://schema.org/citation",
           "name": "citation",
-          "help": "COULD specify publications (ISA publications).",
+          "help": "COULD specify publications corresponding to this investigation (ISA publications).",
           "multiple": true,
           "type": ["ScholarlyArticle", "URL"]
         },
@@ -215,37 +193,208 @@
         {
           "id": "http://schema.org/mentions",
           "name": "mentions",
-          "help": "COULD specify referenced ontologies (ISA ontologySourceReferences).",
+          "help": "COULD specify ontologies referenced in this investigation (ISA ontologySourceReferences).",
           "multiple": true,
           "type": ["DefinedTermSet", "URL"]
         },
         {
           "id": "http://schema.org/url",
           "name": "url",
-          "help": "COULD specify metadata file path (ISA fileName).",
+          "help": "COULD specify the filename or path of the metadata file (ISA fileName).",
           "multiple": false,
           "type": ["URL"]
+        }
+      ]
+    },
+    "Study": {
+      "id": "http://schema.org/Dataset",
+      "inputs": [
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "MUST be 'Study' to identify this Dataset as an ISA Study.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"],
+          "default": "Study"
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "MUST provide an identifying descriptor of the study.",
+          "required": true,
+          "multiple": true,
+          "type": ["Text", "URL", "PropertyValue"]
+        },
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide a title of the study.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "SHOULD provide a short description of the study (e.g., an abstract).",
+          "multiple": false,
+          "type": ["TextArea"]
+        },
+        {
+          "id": "http://schema.org/dateCreated",
+          "name": "dateCreated",
+          "help": "SHOULD specify when the Study was created (ISA submissionDate).",
+          "multiple": false,
+          "type": ["Date", "DateTime"]
+        },
+        {
+          "id": "http://schema.org/datePublished",
+          "name": "datePublished",
+          "help": "SHOULD specify when the Study was published (ISA publicReleaseDate).",
+          "multiple": false,
+          "type": ["Date", "DateTime"]
+        },
+        {
+          "id": "http://schema.org/dateModified",
+          "name": "dateModified",
+          "help": "COULD specify when the Study was last modified.",
+          "multiple": false,
+          "type": ["Date", "DateTime"]
+        },
+        {
+          "id": "http://schema.org/creator",
+          "name": "creator",
+          "help": "SHOULD specify the performer(s) of the study (ISA people).",
+          "multiple": true,
+          "type": ["Person", "Organization"]
+        },
+        {
+          "id": "https://bioschemas.org/processSequence",
+          "name": "processSequence",
+          "help": "SHOULD specify the LabProcess entities describing the experimental workflow (ISA processSequence).",
+          "multiple": true,
+          "type": ["LabProcess"]
+        },
+        {
+          "id": "http://schema.org/hasPart",
+          "name": "hasPart",
+          "help": "SHOULD specify Assays contained in this study OR data files resulting from the process sequence.",
+          "multiple": true,
+          "type": ["Assay", "File"]
+        },
+        {
+          "id": "http://schema.org/citation",
+          "name": "citation",
+          "help": "COULD specify a publication corresponding to the study (ISA publications).",
+          "multiple": true,
+          "type": ["ScholarlyArticle", "URL"]
+        },
+        {
+          "id": "http://schema.org/comment",
+          "name": "comment",
+          "help": "COULD specify comments (ISA comments).",
+          "multiple": true,
+          "type": ["Comment", "Text"]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "COULD specify the filename or path of the metadata file (ISA fileName).",
+          "multiple": false,
+          "type": ["URL"]
+        }
+      ]
+    },
+    "Assay": {
+      "id": "http://schema.org/Dataset",
+      "inputs": [
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "MUST be 'Assay' to identify this Dataset as an ISA Assay.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"],
+          "default": "Assay"
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "MUST provide an identifying descriptor of the assay (ISA-XLSX: Assay Identifier).",
+          "required": true,
+          "multiple": true,
+          "type": ["Text", "URL", "PropertyValue"]
+        },
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "SHOULD provide a title of the assay (ISA-XLSX: Assay Title).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "SHOULD provide a short description of the assay (ISA-XLSX: Assay Description).",
+          "multiple": false,
+          "type": ["TextArea"]
+        },
+        {
+          "id": "http://schema.org/creator",
+          "name": "creator",
+          "help": "SHOULD specify the performer(s) of the experiments (ISA-XLSX: Assay Performers).",
+          "multiple": true,
+          "type": ["Person", "Organization"]
+        },
+        {
+          "id": "https://bioschemas.org/processSequence",
+          "name": "processSequence",
+          "help": "SHOULD specify the LabProcess entities describing the experimental workflow (ISA processSequence).",
+          "multiple": true,
+          "type": ["LabProcess"]
+        },
+        {
+          "id": "http://schema.org/hasPart",
+          "name": "hasPart",
+          "help": "SHOULD specify data files resulting from the process sequence. MUST NOT point directly to data fragments.",
+          "multiple": true,
+          "type": ["File"]
         },
         {
           "id": "http://schema.org/measurementMethod",
           "name": "measurementMethod",
-          "help": "For Assay: SHOULD describe measurement type (ISA technologyType).",
+          "help": "SHOULD describe the measurement type as an ontology term (e.g., Complexomics, Transcriptomics) (ISA technologyType).",
           "multiple": false,
           "type": ["DefinedTerm", "URL", "Text"]
         },
         {
           "id": "http://schema.org/measurementTechnique",
           "name": "measurementTechnique",
-          "help": "For Assay: SHOULD describe technology used (ISA technologyPlatform).",
+          "help": "SHOULD describe the technology used (e.g., mass spectrometry, deep sequencing) (ISA technologyPlatform).",
           "multiple": false,
           "type": ["DefinedTerm", "URL", "Text"]
         },
         {
           "id": "http://schema.org/variableMeasured",
           "name": "variableMeasured",
-          "help": "For Assay: COULD specify target variable (ISA measurementType).",
+          "help": "COULD specify the target variable being measured (e.g., protein concentration) (ISA measurementType).",
           "multiple": true,
           "type": ["Text", "PropertyValue", "DefinedTerm"]
+        },
+        {
+          "id": "http://schema.org/comment",
+          "name": "comment",
+          "help": "COULD specify comments (ISA comments).",
+          "multiple": true,
+          "type": ["Comment", "Text"]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "COULD specify the filename or path of the metadata file (ISA fileName).",
+          "multiple": false,
+          "type": ["URL"]
         }
       ]
     },
@@ -263,21 +412,21 @@
         {
           "id": "http://schema.org/object",
           "name": "object",
-          "help": "SHOULD specify input(s) of the process (ISA inputs).",
+          "help": "SHOULD specify the input(s) of the process (ISA inputs). For multiple inputs, store as sorted list to match outputs.",
           "multiple": true,
           "type": ["Sample", "File"]
         },
         {
           "id": "http://schema.org/result",
           "name": "result",
-          "help": "SHOULD specify output(s) of the process (ISA outputs).",
+          "help": "SHOULD specify the output(s) of the process (ISA outputs). For multiple outputs, store as sorted list to match inputs.",
           "multiple": true,
           "type": ["Sample", "File"]
         },
         {
           "id": "http://schema.org/agent",
           "name": "agent",
-          "help": "SHOULD specify performer(s) (ISA performer).",
+          "help": "SHOULD specify the performer(s) (ISA performer).",
           "multiple": true,
           "type": ["Person", "Organization"]
         },
@@ -291,7 +440,7 @@
         {
           "id": "https://bioschemas.org/parameterValue",
           "name": "parameterValue",
-          "help": "SHOULD specify parameter values (ISA parameterValues).",
+          "help": "SHOULD specify parameter values as key-value pairs (ISA parameterValues).",
           "multiple": true,
           "type": ["ParameterValue", "PropertyValue"]
         },
@@ -305,7 +454,7 @@
         {
           "id": "http://schema.org/disambiguatingDescription",
           "name": "disambiguatingDescription",
-          "help": "COULD specify comments as 'Comment {Name = \"Key\", Value = \"Value\"}'.",
+          "help": "COULD specify comments encoded as 'Comment {Name = \"Key\", Value = \"Value\"}'.",
           "multiple": true,
           "type": ["Text"]
         }
@@ -331,7 +480,7 @@
         {
           "id": "http://schema.org/intendedUse",
           "name": "intendedUse",
-          "help": "SHOULD specify protocol type (ISA protocolType).",
+          "help": "SHOULD specify protocol type as ontology term (ISA protocolType).",
           "multiple": false,
           "type": ["DefinedTerm", "Text", "URL"]
         },
@@ -347,21 +496,21 @@
           "name": "computationalTool",
           "help": "COULD specify software/tools (ISA components - software).",
           "multiple": true,
-          "type": ["DefinedTerm", "ComponentValue", "PropertyValue", "URL"]
+          "type": ["DefinedTerm", "ComponentValue", "URL"]
         },
         {
           "id": "https://bioschemas.org/labEquipment",
           "name": "labEquipment",
-          "help": "COULD specify lab equipment (ISA components - equipment).",
+          "help": "COULD specify lab equipment (ISA components - equipment, default type).",
           "multiple": true,
-          "type": ["DefinedTerm", "ComponentValue", "PropertyValue", "Text", "URL"]
+          "type": ["DefinedTerm", "ComponentValue", "Text", "URL"]
         },
         {
           "id": "https://bioschemas.org/reagent",
           "name": "reagent",
           "help": "COULD specify reagents (ISA components - reagent).",
           "multiple": true,
-          "type": ["DefinedTerm", "ComponentValue", "PropertyValue", "Text", "URL"]
+          "type": ["DefinedTerm", "ComponentValue", "Text", "URL"]
         },
         {
           "id": "http://schema.org/url",
@@ -373,7 +522,7 @@
         {
           "id": "http://schema.org/version",
           "name": "version",
-          "help": "COULD specify version (ISA version).",
+          "help": "COULD specify version for protocol tracking (ISA version).",
           "multiple": false,
           "type": ["Text", "Number"]
         }
@@ -385,7 +534,7 @@
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "MUST provide a name identifying the sample (ISA name). Represents Sample, Source, and Material.",
+          "help": "MUST provide a name identifying the sample (ISA name). Represents ISA Sample, Source, and Material.",
           "required": true,
           "multiple": false,
           "type": ["Text"]
@@ -393,9 +542,16 @@
         {
           "id": "http://schema.org/additionalProperty",
           "name": "additionalProperty",
-          "help": "SHOULD specify characteristics or factors (ISA characteristics/factorValues).",
+          "help": "SHOULD specify characteristics or factors as PropertyValue with additionalType (CharacteristicValue or FactorValue).",
           "multiple": true,
           "type": ["CharacteristicValue", "FactorValue", "PropertyValue"]
+        },
+        {
+          "id": "https://bioschemas.org/derivesFrom",
+          "name": "derivesFrom",
+          "help": "Links to parent Sample(s) this sample was derived from (e.g., treated sample derives from source sample).",
+          "multiple": true,
+          "type": ["Sample"]
         }
       ]
     },
@@ -434,14 +590,14 @@
         {
           "id": "http://schema.org/hasPart",
           "name": "hasPart",
-          "help": "COULD specify data fragments using W3C data fragment selectors. SHOULD NOT be used on fragments.",
+          "help": "COULD specify data fragments via W3C fragment selectors. SHOULD NOT be used on fragments.",
           "multiple": true,
           "type": ["Text", "URL"]
         },
         {
           "id": "http://schema.org/usageInfo",
           "name": "usageInfo",
-          "help": "COULD describe fragment selector specification. SHOULD only be used on data fragments.",
+          "help": "COULD describe fragment selector spec. SHOULD only be used on data fragments.",
           "multiple": false,
           "type": ["Text", "URL"]
         }
@@ -468,7 +624,7 @@
         {
           "id": "http://schema.org/email",
           "name": "email",
-          "help": "SHOULD provide email address (ISA email).",
+          "help": "SHOULD provide email (ISA email).",
           "multiple": false,
           "type": ["Text"]
         },
@@ -482,7 +638,7 @@
         {
           "id": "http://schema.org/identifier",
           "name": "identifier",
-          "help": "SHOULD provide identifier(s) like ORCID. Can use PropertyValue for typed references.",
+          "help": "SHOULD provide identifier(s) like ORCID.",
           "multiple": true,
           "type": ["Text", "URL", "PropertyValue"]
         },
@@ -510,21 +666,21 @@
         {
           "id": "http://schema.org/telephone",
           "name": "telephone",
-          "help": "COULD provide phone number (ISA phone).",
+          "help": "COULD provide phone (ISA phone).",
           "multiple": false,
           "type": ["Text"]
         },
         {
           "id": "http://schema.org/faxNumber",
           "name": "faxNumber",
-          "help": "COULD provide fax number (ISA fax).",
+          "help": "COULD provide fax (ISA fax).",
           "multiple": false,
           "type": ["Text"]
         },
         {
           "id": "http://schema.org/disambiguatingDescription",
           "name": "disambiguatingDescription",
-          "help": "COULD specify comments as 'Comment {Name = \"Key\", Value = \"Value\"}' (ISA comments).",
+          "help": "COULD specify comments as 'Comment {Name = \"Key\", Value = \"Value\"}'.",
           "multiple": true,
           "type": ["Text"]
         }
@@ -605,7 +761,7 @@
         {
           "id": "http://schema.org/name",
           "name": "name",
-          "help": "SHOULD provide comment name/key (ISA name).",
+          "help": "SHOULD provide comment key (ISA name).",
           "multiple": false,
           "type": ["Text"]
         },
@@ -646,7 +802,7 @@
         {
           "id": "http://schema.org/disambiguatingDescription",
           "name": "disambiguatingDescription",
-          "help": "COULD specify comments as 'Comment {Name = \"Key\", Value = \"Value\"}' (ISA comments).",
+          "help": "COULD specify comments.",
           "multiple": true,
           "type": ["Text"]
         }
@@ -705,13 +861,6 @@
           "type": ["URL"]
         },
         {
-          "id": "http://schema.org/additionalType",
-          "name": "additionalType",
-          "help": "COULD clarify the type of this property.",
-          "multiple": false,
-          "type": ["Text", "URL"]
-        },
-        {
           "id": "http://schema.org/unitCode",
           "name": "unitCode",
           "help": "COULD provide unit ontology reference URL.",
@@ -748,7 +897,7 @@
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "MUST be 'ParameterValue' to identify as a process parameter.",
+          "help": "MUST be 'ParameterValue'.",
           "required": true,
           "multiple": false,
           "type": ["Text"],
@@ -757,21 +906,21 @@
         {
           "id": "http://schema.org/value",
           "name": "value",
-          "help": "SHOULD provide value text or number.",
+          "help": "SHOULD provide value.",
           "multiple": false,
           "type": ["Text", "Number"]
         },
         {
           "id": "http://schema.org/propertyID",
           "name": "propertyID",
-          "help": "SHOULD provide key ontology reference URL.",
+          "help": "SHOULD provide key ontology URL.",
           "multiple": false,
           "type": ["URL"]
         },
         {
           "id": "http://schema.org/unitCode",
           "name": "unitCode",
-          "help": "COULD provide unit ontology reference URL.",
+          "help": "COULD provide unit ontology URL.",
           "multiple": false,
           "type": ["URL"]
         },
@@ -785,7 +934,7 @@
         {
           "id": "http://schema.org/valueReference",
           "name": "valueReference",
-          "help": "COULD provide value ontology reference URL.",
+          "help": "COULD provide value ontology URL.",
           "multiple": false,
           "type": ["URL", "DefinedTerm"]
         }
@@ -805,7 +954,7 @@
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "MUST be 'CharacteristicValue' to identify as a sample characteristic.",
+          "help": "MUST be 'CharacteristicValue'.",
           "required": true,
           "multiple": false,
           "type": ["Text"],
@@ -814,21 +963,21 @@
         {
           "id": "http://schema.org/value",
           "name": "value",
-          "help": "SHOULD provide value text or number.",
+          "help": "SHOULD provide value.",
           "multiple": false,
           "type": ["Text", "Number"]
         },
         {
           "id": "http://schema.org/propertyID",
           "name": "propertyID",
-          "help": "SHOULD provide key ontology reference URL.",
+          "help": "SHOULD provide key ontology URL.",
           "multiple": false,
           "type": ["URL"]
         },
         {
           "id": "http://schema.org/unitCode",
           "name": "unitCode",
-          "help": "COULD provide unit ontology reference URL.",
+          "help": "COULD provide unit ontology URL.",
           "multiple": false,
           "type": ["URL"]
         },
@@ -842,7 +991,7 @@
         {
           "id": "http://schema.org/valueReference",
           "name": "valueReference",
-          "help": "COULD provide value ontology reference URL.",
+          "help": "COULD provide value ontology URL.",
           "multiple": false,
           "type": ["URL", "DefinedTerm"]
         }
@@ -862,7 +1011,7 @@
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "MUST be 'FactorValue' to identify as an experimental factor.",
+          "help": "MUST be 'FactorValue'.",
           "required": true,
           "multiple": false,
           "type": ["Text"],
@@ -871,21 +1020,21 @@
         {
           "id": "http://schema.org/value",
           "name": "value",
-          "help": "SHOULD provide value text or number.",
+          "help": "SHOULD provide value.",
           "multiple": false,
           "type": ["Text", "Number"]
         },
         {
           "id": "http://schema.org/propertyID",
           "name": "propertyID",
-          "help": "SHOULD provide key ontology reference URL.",
+          "help": "SHOULD provide key ontology URL.",
           "multiple": false,
           "type": ["URL"]
         },
         {
           "id": "http://schema.org/unitCode",
           "name": "unitCode",
-          "help": "COULD provide unit ontology reference URL.",
+          "help": "COULD provide unit ontology URL.",
           "multiple": false,
           "type": ["URL"]
         },
@@ -899,7 +1048,7 @@
         {
           "id": "http://schema.org/valueReference",
           "name": "valueReference",
-          "help": "COULD provide value ontology reference URL.",
+          "help": "COULD provide value ontology URL.",
           "multiple": false,
           "type": ["URL", "DefinedTerm"]
         }
@@ -919,7 +1068,7 @@
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
-          "help": "MUST be 'Component' to identify as a protocol component.",
+          "help": "MUST be 'Component'.",
           "required": true,
           "multiple": false,
           "type": ["Text"],
@@ -928,21 +1077,21 @@
         {
           "id": "http://schema.org/value",
           "name": "value",
-          "help": "SHOULD provide value text or number.",
+          "help": "SHOULD provide value.",
           "multiple": false,
           "type": ["Text", "Number"]
         },
         {
           "id": "http://schema.org/propertyID",
           "name": "propertyID",
-          "help": "SHOULD provide key ontology reference URL.",
+          "help": "SHOULD provide key ontology URL.",
           "multiple": false,
           "type": ["URL"]
         },
         {
           "id": "http://schema.org/valueReference",
           "name": "valueReference",
-          "help": "COULD provide value ontology reference URL.",
+          "help": "COULD provide value ontology URL.",
           "multiple": false,
           "type": ["URL", "DefinedTerm"]
         }
