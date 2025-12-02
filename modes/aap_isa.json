@@ -1,0 +1,971 @@
+{
+  "metadata": {
+    "name": "ISA RO-Crate Profile",
+    "description": "Crate-O Mode for creating RO-Crates conforming to the ISA (Investigation-Study-Assay) RO-Crate profile. This profile enables representing ISA-JSON as RO-Crate, fully capturing experimental metadata in a FAIR-compliant format.",
+    "version": "0.1",
+    "author": "J.M. Houweling",
+    "license": "GNU Affero General Public License v3.0",
+    "profileReference": "https://github.com/nfdi4plants/isa-ro-crate-profile"
+  },
+  "contextPrefixes": {
+    "schema": "http://schema.org/",
+    "bioschemas": "https://bioschemas.org/",
+    "dct": "http://purl.org/dc/terms/",
+    "isa": "https://w3id.org/isa/",
+    "obo": "http://purl.obolibrary.org/obo/"
+  },
+  "context": [],
+  "conformsToUri": [
+    "https://w3id.org/ro/crate/1.1",
+    "https://github.com/nfdi4plants/isa-ro-crate-profile"
+  ],
+  "rootDataset": {
+    "type": ["Dataset"]
+  },
+  "inputGroups": [
+    {
+      "name": "Core Metadata",
+      "help": "Essential metadata for the Investigation/Study/Assay. The root Dataset represents an Investigation.",
+      "inputs": [
+        "@id",
+        "@type",
+        "http://schema.org/additionalType",
+        "http://schema.org/identifier",
+        "http://schema.org/name",
+        "http://schema.org/description",
+        "http://schema.org/license",
+        "http://schema.org/datePublished",
+        "http://schema.org/dateCreated",
+        "http://schema.org/dateModified",
+        "http://schema.org/url"
+      ]
+    },
+    {
+      "name": "Contributors & Publications",
+      "help": "People who created or contributed to the Investigation/Study/Assay, and related publications.",
+      "inputs": [
+        "http://schema.org/creator",
+        "http://schema.org/citation",
+        "http://schema.org/comment"
+      ]
+    },
+    {
+      "name": "Structure",
+      "help": "How the Investigation, Studies, and Assays are organized.",
+      "inputs": [
+        "http://schema.org/hasPart",
+        "http://schema.org/mentions",
+        "http://schema.org/about"
+      ]
+    },
+    {
+      "name": "Assay Specifics",
+      "help": "Measurement method, technique, and variables for Assays.",
+      "inputs": [
+        "http://schema.org/measurementMethod",
+        "http://schema.org/measurementTechnique",
+        "http://schema.org/variableMeasured"
+      ]
+    }
+  ],
+  "lookup": {
+    "Person": {
+      "module": "orcid",
+      "fields": ["@id", "name", "givenName", "familyName", "affiliation"]
+    },
+    "Organization": {
+      "module": "ror"
+    },
+    "ScholarlyArticle": {
+      "module": "crossref",
+      "fields": ["@id", "name", "author", "identifier", "issn", "journal", "datePublished", "creditText"]
+    }
+  },
+  "enabledClasses": [
+    "Dataset",
+    "Investigation",
+    "Study",
+    "Assay",
+    "LabProcess",
+    "LabProtocol",
+    "Sample",
+    "File",
+    "Person",
+    "Organization",
+    "ScholarlyArticle",
+    "Comment",
+    "DefinedTerm",
+    "DefinedTermSet",
+    "PropertyValue",
+    "ParameterValue",
+    "CharacteristicValue",
+    "FactorValue",
+    "ComponentValue",
+    "CreativeWork",
+    "URL",
+    "Text",
+    "TextArea"
+  ],
+  "classes": {
+    "Dataset": {
+      "id": "http://schema.org/Dataset",
+      "inputs": [
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "MUST specify the ISA type: 'Investigation', 'Study', or 'Assay'.",
+          "required": true,
+          "multiple": false,
+          "type": ["Select", "URL", "Text"],
+          "values": [
+            { "@id": "https://w3id.org/isa/Investigation", "@type": "DefinedTerm", "name": "Investigation" },
+            { "@id": "https://w3id.org/isa/Study", "@type": "DefinedTerm", "name": "Study" },
+            { "@id": "https://w3id.org/isa/Assay", "@type": "DefinedTerm", "name": "Assay" }
+          ]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "MUST provide an identifying descriptor (e.g., DOI, accession number).",
+          "required": true,
+          "multiple": true,
+          "type": ["Text", "URL", "PropertyValue"]
+        },
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide a title for the Investigation/Study/Assay.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "MUST provide a description (e.g., abstract).",
+          "required": true,
+          "multiple": false,
+          "type": ["TextArea"]
+        },
+        {
+          "id": "http://schema.org/license",
+          "name": "license",
+          "help": "MUST specify the license. Default: 'ALL RIGHTS RESERVED BY THE AUTHORS'.",
+          "required": true,
+          "multiple": false,
+          "type": ["URL", "Text", "CreativeWork"]
+        },
+        {
+          "id": "http://schema.org/datePublished",
+          "name": "datePublished",
+          "help": "MUST specify when published. Use crate creation date if not yet published.",
+          "required": true,
+          "multiple": false,
+          "type": ["Date", "DateTime"]
+        },
+        {
+          "id": "http://schema.org/dateCreated",
+          "name": "dateCreated",
+          "help": "SHOULD specify when created (ISA submissionDate).",
+          "multiple": false,
+          "type": ["Date", "DateTime"]
+        },
+        {
+          "id": "http://schema.org/dateModified",
+          "name": "dateModified",
+          "help": "COULD specify when last modified.",
+          "multiple": false,
+          "type": ["Date", "DateTime"]
+        },
+        {
+          "id": "http://schema.org/creator",
+          "name": "creator",
+          "help": "SHOULD specify the creator(s)/author(s)/PI(s) (ISA people).",
+          "multiple": true,
+          "type": ["Person", "Organization"]
+        },
+        {
+          "id": "http://schema.org/hasPart",
+          "name": "hasPart",
+          "help": "SHOULD specify contained Studies/Assays/Files.",
+          "multiple": true,
+          "type": ["Study", "Assay", "File", "Dataset"]
+        },
+        {
+          "id": "http://schema.org/about",
+          "name": "about",
+          "help": "SHOULD specify LabProcess entities (ISA processSequence).",
+          "multiple": true,
+          "type": ["LabProcess"]
+        },
+        {
+          "id": "http://schema.org/citation",
+          "name": "citation",
+          "help": "COULD specify publications (ISA publications).",
+          "multiple": true,
+          "type": ["ScholarlyArticle", "URL"]
+        },
+        {
+          "id": "http://schema.org/comment",
+          "name": "comment",
+          "help": "COULD specify comments (ISA comments).",
+          "multiple": true,
+          "type": ["Comment", "Text"]
+        },
+        {
+          "id": "http://schema.org/mentions",
+          "name": "mentions",
+          "help": "COULD specify referenced ontologies (ISA ontologySourceReferences).",
+          "multiple": true,
+          "type": ["DefinedTermSet", "URL"]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "COULD specify metadata file path (ISA fileName).",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/measurementMethod",
+          "name": "measurementMethod",
+          "help": "For Assay: SHOULD describe measurement type (ISA technologyType).",
+          "multiple": false,
+          "type": ["DefinedTerm", "URL", "Text"]
+        },
+        {
+          "id": "http://schema.org/measurementTechnique",
+          "name": "measurementTechnique",
+          "help": "For Assay: SHOULD describe technology used (ISA technologyPlatform).",
+          "multiple": false,
+          "type": ["DefinedTerm", "URL", "Text"]
+        },
+        {
+          "id": "http://schema.org/variableMeasured",
+          "name": "variableMeasured",
+          "help": "For Assay: COULD specify target variable (ISA measurementType).",
+          "multiple": true,
+          "type": ["Text", "PropertyValue", "DefinedTerm"]
+        }
+      ]
+    },
+    "LabProcess": {
+      "id": "https://bioschemas.org/LabProcess",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide a name for this process step.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/object",
+          "name": "object",
+          "help": "SHOULD specify input(s) of the process (ISA inputs).",
+          "multiple": true,
+          "type": ["Sample", "File"]
+        },
+        {
+          "id": "http://schema.org/result",
+          "name": "result",
+          "help": "SHOULD specify output(s) of the process (ISA outputs).",
+          "multiple": true,
+          "type": ["Sample", "File"]
+        },
+        {
+          "id": "http://schema.org/agent",
+          "name": "agent",
+          "help": "SHOULD specify performer(s) (ISA performer).",
+          "multiple": true,
+          "type": ["Person", "Organization"]
+        },
+        {
+          "id": "https://bioschemas.org/executesLabProtocol",
+          "name": "executesLabProtocol",
+          "help": "SHOULD specify the protocol executed (ISA executesProtocol).",
+          "multiple": false,
+          "type": ["LabProtocol"]
+        },
+        {
+          "id": "https://bioschemas.org/parameterValue",
+          "name": "parameterValue",
+          "help": "SHOULD specify parameter values (ISA parameterValues).",
+          "multiple": true,
+          "type": ["ParameterValue", "PropertyValue"]
+        },
+        {
+          "id": "http://schema.org/endTime",
+          "name": "endTime",
+          "help": "SHOULD specify when process was performed (ISA date).",
+          "multiple": false,
+          "type": ["DateTime", "Date"]
+        },
+        {
+          "id": "http://schema.org/disambiguatingDescription",
+          "name": "disambiguatingDescription",
+          "help": "COULD specify comments as 'Comment {Name = \"Key\", Value = \"Value\"}'.",
+          "multiple": true,
+          "type": ["Text"]
+        }
+      ]
+    },
+    "LabProtocol": {
+      "id": "https://bioschemas.org/LabProtocol",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "SHOULD provide the protocol title (ISA name).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "SHOULD provide a description (ISA description).",
+          "multiple": false,
+          "type": ["TextArea"]
+        },
+        {
+          "id": "http://schema.org/intendedUse",
+          "name": "intendedUse",
+          "help": "SHOULD specify protocol type (ISA protocolType).",
+          "multiple": false,
+          "type": ["DefinedTerm", "Text", "URL"]
+        },
+        {
+          "id": "http://schema.org/comment",
+          "name": "comment",
+          "help": "COULD specify comments (ISA comments).",
+          "multiple": true,
+          "type": ["Comment", "Text"]
+        },
+        {
+          "id": "https://bioschemas.org/computationalTool",
+          "name": "computationalTool",
+          "help": "COULD specify software/tools (ISA components - software).",
+          "multiple": true,
+          "type": ["DefinedTerm", "ComponentValue", "PropertyValue", "URL"]
+        },
+        {
+          "id": "https://bioschemas.org/labEquipment",
+          "name": "labEquipment",
+          "help": "COULD specify lab equipment (ISA components - equipment).",
+          "multiple": true,
+          "type": ["DefinedTerm", "ComponentValue", "PropertyValue", "Text", "URL"]
+        },
+        {
+          "id": "https://bioschemas.org/reagent",
+          "name": "reagent",
+          "help": "COULD specify reagents (ISA components - reagent).",
+          "multiple": true,
+          "type": ["DefinedTerm", "ComponentValue", "PropertyValue", "Text", "URL"]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "COULD provide external protocol URL (ISA uri).",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/version",
+          "name": "version",
+          "help": "COULD specify version (ISA version).",
+          "multiple": false,
+          "type": ["Text", "Number"]
+        }
+      ]
+    },
+    "Sample": {
+      "id": "https://bioschemas.org/Sample",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide a name identifying the sample (ISA name). Represents Sample, Source, and Material.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/additionalProperty",
+          "name": "additionalProperty",
+          "help": "SHOULD specify characteristics or factors (ISA characteristics/factorValues).",
+          "multiple": true,
+          "type": ["CharacteristicValue", "FactorValue", "PropertyValue"]
+        }
+      ]
+    },
+    "File": {
+      "id": "http://schema.org/MediaObject",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide the file name (ISA name).",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/comment",
+          "name": "comment",
+          "help": "COULD specify comments (ISA comments).",
+          "multiple": true,
+          "type": ["Comment", "Text"]
+        },
+        {
+          "id": "http://schema.org/disambiguatingDescription",
+          "name": "disambiguatingDescription",
+          "help": "COULD specify file type: 'Raw Data File', 'Derived Data File', or 'Image File' (ISA type).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/encodingFormat",
+          "name": "encodingFormat",
+          "help": "COULD specify media format as MIME type (ISA-XLSX: Data Format).",
+          "multiple": false,
+          "type": ["Text", "URL"]
+        },
+        {
+          "id": "http://schema.org/hasPart",
+          "name": "hasPart",
+          "help": "COULD specify data fragments using W3C data fragment selectors. SHOULD NOT be used on fragments.",
+          "multiple": true,
+          "type": ["Text", "URL"]
+        },
+        {
+          "id": "http://schema.org/usageInfo",
+          "name": "usageInfo",
+          "help": "COULD describe fragment selector specification. SHOULD only be used on data fragments.",
+          "multiple": false,
+          "type": ["Text", "URL"]
+        }
+      ]
+    },
+    "Person": {
+      "id": "http://schema.org/Person",
+      "inputs": [
+        {
+          "id": "http://schema.org/givenName",
+          "name": "givenName",
+          "help": "MUST provide given name (ISA firstName).",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/familyName",
+          "name": "familyName",
+          "help": "SHOULD provide family name (ISA lastName).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/email",
+          "name": "email",
+          "help": "SHOULD provide email address (ISA email).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/affiliation",
+          "name": "affiliation",
+          "help": "SHOULD provide affiliation as Organization (ISA affiliation).",
+          "multiple": true,
+          "type": ["Organization"]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "SHOULD provide identifier(s) like ORCID. Can use PropertyValue for typed references.",
+          "multiple": true,
+          "type": ["Text", "URL", "PropertyValue"]
+        },
+        {
+          "id": "http://schema.org/jobTitle",
+          "name": "jobTitle",
+          "help": "SHOULD provide role/job title (ISA roles).",
+          "multiple": true,
+          "type": ["DefinedTerm", "Text"]
+        },
+        {
+          "id": "http://schema.org/additionalName",
+          "name": "additionalName",
+          "help": "COULD provide middle initials (ISA midInitials).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/address",
+          "name": "address",
+          "help": "COULD provide address (ISA address).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/telephone",
+          "name": "telephone",
+          "help": "COULD provide phone number (ISA phone).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/faxNumber",
+          "name": "faxNumber",
+          "help": "COULD provide fax number (ISA fax).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/disambiguatingDescription",
+          "name": "disambiguatingDescription",
+          "help": "COULD specify comments as 'Comment {Name = \"Key\", Value = \"Value\"}' (ISA comments).",
+          "multiple": true,
+          "type": ["Text"]
+        }
+      ]
+    },
+    "Organization": {
+      "id": "http://schema.org/Organization",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Organization name.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "Organization website.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "Identifier such as ROR ID.",
+          "multiple": true,
+          "type": ["PropertyValue", "URL", "Text"]
+        }
+      ]
+    },
+    "ScholarlyArticle": {
+      "id": "http://schema.org/ScholarlyArticle",
+      "inputs": [
+        {
+          "id": "http://schema.org/headline",
+          "name": "headline",
+          "help": "MUST provide article title (ISA title).",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/identifier",
+          "name": "identifier",
+          "help": "MUST provide identifier(s) - DOI or PubMedID. Use PropertyValue for typed references.",
+          "required": true,
+          "multiple": true,
+          "type": ["Text", "URL", "PropertyValue"]
+        },
+        {
+          "id": "http://schema.org/author",
+          "name": "author",
+          "help": "SHOULD provide author(s) (ISA authorList).",
+          "multiple": true,
+          "type": ["Person", "Text"]
+        },
+        {
+          "id": "http://schema.org/creativeWorkStatus",
+          "name": "creativeWorkStatus",
+          "help": "COULD provide publication status (ISA status).",
+          "multiple": false,
+          "type": ["DefinedTerm", "Text"]
+        },
+        {
+          "id": "http://schema.org/comment",
+          "name": "comment",
+          "help": "COULD specify comments (ISA comments).",
+          "multiple": true,
+          "type": ["Comment", "Text"]
+        }
+      ]
+    },
+    "Comment": {
+      "id": "http://schema.org/Comment",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "SHOULD provide comment name/key (ISA name).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/text",
+          "name": "text",
+          "help": "SHOULD provide comment value (ISA value).",
+          "multiple": false,
+          "type": ["Text", "TextArea"]
+        }
+      ]
+    },
+    "DefinedTerm": {
+      "id": "http://schema.org/DefinedTerm",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide the term name (ISA annotationValue).",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/termCode",
+          "name": "termCode",
+          "help": "SHOULD provide the identifier within the ontology (ISA termAccession).",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/inDefinedTermSet",
+          "name": "inDefinedTermSet",
+          "help": "COULD link to the ontology (ISA termSource).",
+          "multiple": false,
+          "type": ["URL", "DefinedTermSet"]
+        },
+        {
+          "id": "http://schema.org/disambiguatingDescription",
+          "name": "disambiguatingDescription",
+          "help": "COULD specify comments as 'Comment {Name = \"Key\", Value = \"Value\"}' (ISA comments).",
+          "multiple": true,
+          "type": ["Text"]
+        }
+      ]
+    },
+    "DefinedTermSet": {
+      "id": "http://schema.org/DefinedTermSet",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Ontology/vocabulary name.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "URL to the ontology.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/hasDefinedTerm",
+          "name": "hasDefinedTerm",
+          "help": "Terms defined in this set.",
+          "multiple": true,
+          "type": ["DefinedTerm"]
+        }
+      ]
+    },
+    "PropertyValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide the key name.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "SHOULD provide value text or number.",
+          "multiple": false,
+          "type": ["Text", "Number"]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "SHOULD provide key ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "COULD clarify the type of this property.",
+          "multiple": false,
+          "type": ["Text", "URL"]
+        },
+        {
+          "id": "http://schema.org/unitCode",
+          "name": "unitCode",
+          "help": "COULD provide unit ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/unitText",
+          "name": "unitText",
+          "help": "COULD provide unit name.",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "COULD provide value ontology reference URL.",
+          "multiple": false,
+          "type": ["URL", "DefinedTerm"]
+        }
+      ]
+    },
+    "ParameterValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide the key name.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "MUST be 'ParameterValue' to identify as a process parameter.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"],
+          "default": "ParameterValue"
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "SHOULD provide value text or number.",
+          "multiple": false,
+          "type": ["Text", "Number"]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "SHOULD provide key ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/unitCode",
+          "name": "unitCode",
+          "help": "COULD provide unit ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/unitText",
+          "name": "unitText",
+          "help": "COULD provide unit name.",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "COULD provide value ontology reference URL.",
+          "multiple": false,
+          "type": ["URL", "DefinedTerm"]
+        }
+      ]
+    },
+    "CharacteristicValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide the key name.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "MUST be 'CharacteristicValue' to identify as a sample characteristic.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"],
+          "default": "CharacteristicValue"
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "SHOULD provide value text or number.",
+          "multiple": false,
+          "type": ["Text", "Number"]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "SHOULD provide key ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/unitCode",
+          "name": "unitCode",
+          "help": "COULD provide unit ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/unitText",
+          "name": "unitText",
+          "help": "COULD provide unit name.",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "COULD provide value ontology reference URL.",
+          "multiple": false,
+          "type": ["URL", "DefinedTerm"]
+        }
+      ]
+    },
+    "FactorValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide the key name.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "MUST be 'FactorValue' to identify as an experimental factor.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"],
+          "default": "FactorValue"
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "SHOULD provide value text or number.",
+          "multiple": false,
+          "type": ["Text", "Number"]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "SHOULD provide key ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/unitCode",
+          "name": "unitCode",
+          "help": "COULD provide unit ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/unitText",
+          "name": "unitText",
+          "help": "COULD provide unit name.",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "COULD provide value ontology reference URL.",
+          "multiple": false,
+          "type": ["URL", "DefinedTerm"]
+        }
+      ]
+    },
+    "ComponentValue": {
+      "id": "http://schema.org/PropertyValue",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "MUST provide the key name.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/additionalType",
+          "name": "additionalType",
+          "help": "MUST be 'Component' to identify as a protocol component.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text"],
+          "default": "Component"
+        },
+        {
+          "id": "http://schema.org/value",
+          "name": "value",
+          "help": "SHOULD provide value text or number.",
+          "multiple": false,
+          "type": ["Text", "Number"]
+        },
+        {
+          "id": "http://schema.org/propertyID",
+          "name": "propertyID",
+          "help": "SHOULD provide key ontology reference URL.",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/valueReference",
+          "name": "valueReference",
+          "help": "COULD provide value ontology reference URL.",
+          "multiple": false,
+          "type": ["URL", "DefinedTerm"]
+        }
+      ]
+    },
+    "CreativeWork": {
+      "id": "http://schema.org/CreativeWork",
+      "inputs": [
+        {
+          "id": "http://schema.org/name",
+          "name": "name",
+          "help": "Title of the work.",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/url",
+          "name": "url",
+          "help": "URL to the work.",
+          "multiple": false,
+          "type": ["URL"]
+        }
+      ]
+    }
+  }
+}
