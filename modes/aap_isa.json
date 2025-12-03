@@ -271,7 +271,7 @@
         },
         {
           "id": "https://bioschemas.org/processSequence",
-          "name": "processSequence",
+          "name": "Process Sequence (about)",
           "help": "SHOULD specify the LabProcess entities describing the experimental workflow (ISA processSequence).",
           "multiple": true,
           "type": ["LabProcess"]
@@ -349,7 +349,7 @@
         },
         {
           "id": "https://bioschemas.org/processSequence",
-          "name": "processSequence",
+          "name": "Process Sequence (about)",
           "help": "SHOULD specify the LabProcess entities describing the experimental workflow (ISA processSequence).",
           "multiple": true,
           "type": ["LabProcess"]
