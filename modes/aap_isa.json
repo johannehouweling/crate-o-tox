@@ -16,11 +16,33 @@
   },
   "context": [],
   "conformsToUri": [
-    "https://w3id.org/ro/crate/1.1",
+    "https://w3id.org/ro/crate/1.2",
     "https://github.com/nfdi4plants/isa-ro-crate-profile"
   ],
   "rootDataset": {
-    "type": ["Dataset"]
+    "type": ["Dataset"],
+    "conformsTo": [
+      {"@id": "https://w3id.org/ro/crate/1.2"},
+      {"@id": "https://github.com/nfdi4plants/isa-ro-crate-profile"}
+    ],
+    "inputs": [
+      "@id",
+      "@type",
+      "http://schema.org/additionalType",
+      "http://schema.org/identifier",
+      "http://schema.org/name",
+      "http://schema.org/description",
+      "http://schema.org/license",
+      "http://schema.org/datePublished",
+      "http://schema.org/dateCreated",
+      "http://schema.org/dateModified",
+      "http://schema.org/creator",
+      "http://schema.org/hasPart",
+      "http://schema.org/citation",
+      "http://schema.org/comment",
+      "http://schema.org/mentions",
+      "http://schema.org/url"
+    ]
   },
   "inputGroups": [
     {
@@ -93,7 +115,8 @@
     "CreativeWork",
     "URL",
     "Text",
-    "TextArea"
+    "TextArea", 
+    "Dataset"
   ],
   "classes": {
     "Investigation": {
@@ -242,6 +265,14 @@
           "type": ["TextArea"]
         },
         {
+          "id": "http://schema.org/license",
+          "name": "license",
+          "help": "MUST specify the license. Default: 'ALL RIGHTS RESERVED BY THE AUTHORS' if no license info available.",
+          "required": true,
+          "multiple": false,
+          "type": ["URL", "Text", "CreativeWork"]
+        },
+        {
           "id": "http://schema.org/dateCreated",
           "name": "dateCreated",
           "help": "SHOULD specify when the Study was created (ISA submissionDate).",
@@ -282,6 +313,13 @@
           "help": "SHOULD specify Assays contained in this study OR data files resulting from the process sequence.",
           "multiple": true,
           "type": ["Assay", "File"]
+        },
+        {
+          "id": "http://schema.org/mentions",
+          "name": "mentions",
+          "help": "COULD specify a mention (ISA-XLSX: Assay Measurements).",
+          "multiple": true,
+          "type": ["Text"]
         },
         {
           "id": "http://schema.org/citation",
