@@ -173,9 +173,9 @@ export class EditorState {
     if (!defByType[typesId]) {
       let definitions = common;
       definitions['@id'].required = true;
-      definitions['@id'].help = 'Persistent, managed unique ID in URL format (if available), for example a DOI for a collection or an ORCID, personal home page URL or email address for a person';
+      definitions['@id'].help = "The unique identifier for this entity. Use './' for the root dataset. For other entities, use relative paths (e.g., 'file.txt', 'studies/study-001/') or absolute URIs only if the entity has a persistent identifier like a DOI or ORCID.";
       definitions['@type'].required = true;
-      definitions['@type'].help = 'The type of the entity.';
+      definitions['@type'].help = 'The type(s) of this entity';
       const classes = types.map(t => profile.classes[t]).filter(e => e);
       for (const c of classes) {
         for (const input of (c.inputs || [])) {
