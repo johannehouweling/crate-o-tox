@@ -123,6 +123,15 @@
       "id": "http://schema.org/Dataset",
       "inputs": [
         {
+          "id": "@id",
+          "name": "@id",
+          "help": "MUST be './' to indicate this directory is the RO-Crate Root. Only use an absolute URI (e.g., DOI) if this crate has a persistent identifier.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text", "URL"],
+          "default": "./"
+        },
+        {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
           "help": "MUST be 'Investigation' to identify this Dataset as an ISA Investigation.",
@@ -233,6 +242,14 @@
       "id": "http://schema.org/Dataset",
       "inputs": [
         {
+          "id": "@id",
+          "name": "@id",
+          "help": "MUST be a relative path to the subdirectory for this study (e.g., 'studies/study-001/'). Path should end with '/' and correspond to an actual directory in the RO-Crate. Use './' ONLY if this Study IS the root dataset.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text", "URL"]
+        },
+        {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
           "help": "MUST be 'Study' to identify this Dataset as an ISA Study.",
@@ -268,7 +285,7 @@
           "id": "http://schema.org/license",
           "name": "license",
           "help": "MUST specify the license. Default: 'ALL RIGHTS RESERVED BY THE AUTHORS' if no license info available.",
-          "required": true,
+          "required": false,
           "multiple": false,
           "type": ["URL", "Text", "CreativeWork"]
         },
@@ -347,6 +364,14 @@
     "Assay": {
       "id": "http://schema.org/Dataset",
       "inputs": [
+        {
+          "id": "@id",
+          "name": "@id",
+          "help": "MUST be a relative path to the subdirectory for this assay (e.g., 'assays/assay-001/' or 'studies/study-001/assays/assay-001/'). Path should end with '/' and correspond to an actual directory. Use './' ONLY if this Assay IS the root dataset.",
+          "required": true,
+          "multiple": false,
+          "type": ["Text", "URL"]
+        },
         {
           "id": "http://schema.org/additionalType",
           "name": "additionalType",
