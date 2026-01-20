@@ -605,6 +605,13 @@
           "type": ["Text"]
         },
         {
+          "id": "http://schema.org/isPartOf",
+          "name": "isPartOf",
+          "help": "COULD specify the parent Assay or Study that contains this file.",
+          "multiple": true,
+          "type": ["Assay", "Study"]
+        },
+        {
           "id": "http://schema.org/comment",
           "name": "comment",
           "help": "COULD specify comments (ISA comments).",
