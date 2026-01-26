@@ -46,7 +46,7 @@
   },
   "inputGroups": [
     {
-      "name": "Core Metadata",
+      "name": "General information",
       "help": "Essential metadata for the root Investigation.",
       "inputs": [
         "@id",
