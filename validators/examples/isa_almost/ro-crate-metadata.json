@@ -1,0 +1,126 @@
+{
+  "@context": [
+    "https://w3id.org/ro/crate/1.1/context",
+    {
+      "@vocab": "https://schema.org/",
+      "bioschemas": "https://bioschemas.org/",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "Dataset": "https://schema.org/Dataset",
+      "CreativeWork": "https://schema.org/CreativeWork",
+      "Person": "https://schema.org/Person",
+      "Organization": "https://schema.org/Organization",
+      "File": "https://schema.org/File",
+      "Sample": "https://schema.org/Sample",
+      "additionalType": "https://schema.org/additionalType",
+      "identifier": "https://schema.org/identifier",
+      "name": "https://schema.org/name",
+      "description": "https://schema.org/description",
+      "license": "https://schema.org/license",
+      "datePublished": "https://schema.org/datePublished",
+      "creator": "https://schema.org/creator",
+      "hasPart": "https://schema.org/hasPart",
+      "object": "https://schema.org/object",
+      "result": "https://schema.org/result",
+      "agent": "https://schema.org/agent",
+      "encodingFormat": "https://schema.org/encodingFormat",
+      "affiliation": "https://schema.org/affiliation",
+      "givenName": "https://schema.org/givenName",
+      "familyName": "https://schema.org/familyName",
+      "measurementMethod": "https://schema.org/measurementMethod",
+      "measurementTechnique": "https://schema.org/measurementTechnique",
+      "LabProcess": "https://bioschemas.org/LabProcess",
+      "LabProtocol": "https://bioschemas.org/LabProtocol",
+      "executesLabProtocol": "https://bioschemas.org/executesLabProtocol",
+      "parameterValue": "https://bioschemas.org/parameterValue"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "ro-crate-metadata.json",
+      "@type": ["CreativeWork", "http://schema.org/CreativeWork"],
+      "conformsTo": { "@id": "https://w3id.org/ro/crate/1.1" },
+      "about": { "@id": "./" }
+    },
+    {
+      "@id": "./",
+      "@type": ["Dataset", "http://schema.org/Dataset"],
+      "additionalType": ["Investigation", "Study", "Assay"],
+      "identifier": "INV-2025-ALMOST",
+      "name": "Almost ISA Investigation",
+      "http://schema.org/name": "Almost ISA Investigation",
+      "description": "An almost-valid ISA RO-Crate with a small LabProcess issue.",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "datePublished": { "@value": "2025-11-10", "@type": "xsd:date" },
+      "creator": { "@id": "#person1" },
+      "hasPart": [
+        { "@id": "#study1" }
+      ]
+    },
+    {
+      "@id": "#study1",
+      "@type": ["Dataset", "http://schema.org/Dataset"],
+      "additionalType": ["Investigation", "Study", "Assay"],
+      "identifier": "STUDY-ALMOST-001",
+      "name": "Almost Study",
+      "description": "A study within the investigation.",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "datePublished": { "@value": "2025-11-10", "@type": "xsd:date" },
+      "creator": { "@id": "#person1" },
+      "hasPart": [
+        { "@id": "#assay1" }
+      ]
+    },
+    {
+      "@id": "#assay1",
+      "@type": ["Dataset", "http://schema.org/Dataset"],
+      "additionalType": ["Investigation", "Study", "Assay"],
+      "identifier": "ASSAY-ALMOST-001",
+      "name": "Almost Assay",
+      "description": "An assay missing a LabProcess name.",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "datePublished": { "@value": "2025-11-10", "@type": "xsd:date" },
+      "creator": { "@id": "#person1" },
+      "measurementMethod": "qPCR",
+      "hasPart": [
+        { "@id": "data/results.csv" }
+      ]
+    },
+    {
+      "@id": "#labprocess1",
+      "@type": "LabProcess",
+      "executesLabProtocol": { "@id": "#labprotocol1" },
+      "object": { "@id": "#sample1" },
+      "result": { "@id": "data/results.csv" },
+      "agent": { "@id": "#person1" }
+    },
+    {
+      "@id": "#labprotocol1",
+      "@type": "LabProtocol",
+      "name": "qPCR protocol"
+    },
+    {
+      "@id": "#sample1",
+      "@type": "Sample",
+      "name": "Sample B"
+    },
+    {
+      "@id": "data/results.csv",
+      "@type": "File",
+      "name": "Assay results",
+      "encodingFormat": "text/csv"
+    },
+    {
+      "@id": "#person1",
+      "@type": "Person",
+      "name": "Taylor Example",
+      "givenName": "Taylor",
+      "familyName": "Example",
+      "affiliation": { "@id": "#org1" }
+    },
+    {
+      "@id": "#org1",
+      "@type": "Organization",
+      "name": "Example Institute"
+    }
+  ]
+}

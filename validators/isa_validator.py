@@ -171,73 +171,59 @@ def format_output_text(result: Dict[str, Any], crate_path: str, verbose: bool = 
     lines.append("ISA RO-Crate Validation Report")
     lines.append("=" * 70)
     lines.append(f"Crate: {crate_path}")
-    lines.append(f"Profile: ISA (Investigation-Study-Assay)")
     lines.append("")
     
     if "error" in result:
-        lines.append(f"❌ ERROR: {result['error']}")
-        lines.append("")
+        lines.append(f"Status: ERROR")
+        lines.append(f"Error: {result['error']}")
         return "\n".join(lines)
     
-    if result["valid"]:
-        lines.append("✅ Status: VALID ISA CRATE")
+    status = "VALID" if result.get("valid") else "INVALID"
+    lines.append(f"Status: {status}")
+    lines.append("")
+
+    # ISA section
+    isa = result.get("isa", {})
+    isa_status = "PASS" if isa.get("valid") else "FAIL"
+    isa_violations = isa.get("violations", [])
+    isa_warnings = isa.get("warnings", [])
+    lines.append("ISA Profile (SHACL)")
+    lines.append("-" * 70)
+    lines.append(f"Result: {isa_status} | Violations: {len(isa_violations)} | Warnings: {len(isa_warnings)}")
+    if isa_violations:
+        for i, violation in enumerate(isa_violations, 1):
+            lines.append(f"{i}. {violation.get('severity', 'Violation')}: {violation['message']}")
+            if violation.get('focusNode'):
+                lines.append(f"   Focus Node: {violation['focusNode']}")
+            if violation.get('path'):
+                lines.append(f"   Property: {violation['path']}")
+    if verbose and isa_warnings:
         lines.append("")
-        lines.append("The RO-Crate conforms to the ISA profile!")
-        
-        if verbose and result.get("warnings"):
-            lines.append("")
-            lines.append(f"Warnings ({len(result['warnings'])}):")
-            lines.append("-" * 70)
-            for i, warning in enumerate(result["warnings"], 1):
-                lines.append(f"{i}. {warning['message']}")
-                if warning.get('focusNode'):
-                    lines.append(f"   Focus Node: {warning['focusNode']}")
-                if warning.get('path'):
-                    lines.append(f"   Property: {warning['path']}")
-                lines.append("")
-    else:
-        lines.append("❌ Status: INVALID ISA CRATE")
-        lines.append("")
-        
-        violations = result.get("violations", [])
-        if violations:
-            lines.append(f"Violations ({len(violations)}):")
-            lines.append("-" * 70)
-            for i, violation in enumerate(violations, 1):
-                lines.append(f"{i}. {violation.get('severity', 'Error')}: {violation['message']}")
-                if violation.get('focusNode'):
-                    lines.append(f"   Focus Node: {violation['focusNode']}")
-                if violation.get('path'):
-                    lines.append(f"   Property: {violation['path']}")
-                lines.append("")
-        
-        if verbose and result.get("warnings"):
-            lines.append(f"Warnings ({len(result['warnings'])}):")
-            lines.append("-" * 70)
-            for i, warning in enumerate(result["warnings"], 1):
-                lines.append(f"{i}. {warning['message']}")
-                if warning.get('focusNode'):
-                    lines.append(f"   Focus Node: {warning['focusNode']}")
-                if warning.get('path'):
-                    lines.append(f"   Property: {warning['path']}")
-                lines.append("")
-    
+        lines.append("Warnings:")
+        for i, warning in enumerate(isa_warnings, 1):
+            lines.append(f"{i}. {warning.get('severity', 'Warning')}: {warning['message']}")
+            if warning.get('focusNode'):
+                lines.append(f"   Focus Node: {warning['focusNode']}")
+            if warning.get('path'):
+                lines.append(f"   Property: {warning['path']}")
+
+    # RO-Crate section
     rocrate = result.get("rocrate")
     if rocrate:
+        rocrate_status = "PASS" if rocrate.get("valid") else "FAIL"
+        rocrate_issues = rocrate.get("issues", [])
         lines.append("")
-        lines.append("RO-Crate Profile Check (ro-crate-1.1):")
+        lines.append("RO-Crate Profile (ro-crate-1.1)")
         lines.append("-" * 70)
-        lines.append(f"Status: {'PASS' if rocrate.get('valid') else 'FAIL'}")
-        if verbose and rocrate.get("issues"):
-            lines.append(f"Issues ({len(rocrate['issues'])}):")
-            for i, issue in enumerate(rocrate["issues"], 1):
-                lines.append(f"{i}. {issue['severity']}: {issue['message']}")
+        lines.append(f"Result: {rocrate_status} | Issues: {len(rocrate_issues)}")
+        if rocrate_issues:
+            for i, issue in enumerate(rocrate_issues, 1):
+                lines.append(f"{i}. {issue.get('severity', 'Issue')}: {issue['message']}")
                 if issue.get("focusNode"):
                     lines.append(f"   Focus Node: {issue['focusNode']}")
                 if issue.get("path"):
                     lines.append(f"   Property: {issue['path']}")
-                lines.append("")
-
+    
     lines.append("=" * 70)
     return "\n".join(lines)
 
