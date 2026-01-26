@@ -15,11 +15,14 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, List
 
 try:
     from rocrate_validator.services import validate
     from rocrate_validator.models import ValidationSettings
+    from rdflib import Graph, Namespace
+    from rdflib.namespace import RDF
+    from pyshacl import validate as shacl_validate
 except ImportError:
     print("Error: roc-validator package not installed.")
     print("Please install it using: pip install roc-validator")
@@ -62,79 +65,103 @@ class ISAValidator:
             }
         
         try:
-            # Create validation settings for roc-validator
-            # The package uses a custom profile system, so we'll validate using
-            # the built-in profiles and note that custom SHACL profiles may require
-            # integration with the roc-validator profile system
-            settings = ValidationSettings(
-                rocrate_uri=str(crate_path.parent),
-                profile_identifier="ro-crate-1.1",
-                verbose=True
-            )
-            
-            # Validate the crate
-            result = validate(settings)
-            
-            return self._parse_results(result)
-            
+            rocrate_result = self._validate_rocrate(crate_path.parent)
+            isa_result = self._validate_isa(crate_path, self.profile_path)
+
+            overall_valid = rocrate_result["valid"] and isa_result["valid"]
+
+            return {
+                "valid": overall_valid,
+                "rocrate": rocrate_result,
+                "isa": isa_result,
+                "violations": isa_result.get("violations", []),
+                "warnings": isa_result.get("warnings", [])
+            }
+
         except Exception as e:
             return {
                 "valid": False,
                 "error": f"Validation error: {str(e)}",
                 "violations": []
             }
-    
-    def _parse_results(self, result: Any) -> Dict[str, Any]:
-        """Parse roc-validator results into a structured format"""
-        # The exact structure depends on roc-validator's output format
-        # This is a general structure that should work
-        
-        if hasattr(result, 'conforms'):
-            # SHACL validation result
-            return {
-                "valid": result.conforms,
-                "violations": self._extract_violations(result) if not result.conforms else [],
-                "warnings": self._extract_warnings(result)
+
+    def _validate_rocrate(self, crate_dir: Path) -> Dict[str, Any]:
+        """Validate the RO-Crate structure using roc-validator"""
+        settings = ValidationSettings(
+            data_path=crate_dir,
+            profile_identifier="ro-crate-1.1"
+        )
+        result = validate(settings)
+
+        issues = []
+        for issue in result.issues:
+            issues.append({
+                "severity": issue.severity.name,
+                "message": issue.message,
+                "focusNode": issue.focusNode,
+                "path": issue.resultPath
+            })
+
+        return {
+            "valid": result.passed(),
+            "issues": issues
+        }
+
+    def _validate_isa(self, crate_path: Path, profile_path: Path) -> Dict[str, Any]:
+        """Validate the metadata graph against ISA SHACL shapes"""
+        data_graph = Graph()
+        data_graph.parse(str(crate_path), format="json-ld")
+
+        shacl_graph = Graph()
+        shacl_graph.parse(str(profile_path), format="turtle")
+
+        conforms, results_graph, _ = shacl_validate(
+            data_graph=data_graph,
+            shacl_graph=shacl_graph,
+            inference="rdfs",
+            abort_on_first=False,
+            allow_infos=True,
+            allow_warnings=True
+        )
+
+        violations, warnings = self._parse_shacl_results(results_graph)
+
+        return {
+            "valid": bool(conforms),
+            "violations": violations,
+            "warnings": warnings
+        }
+
+    def _parse_shacl_results(self, results_graph: Graph) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+        """Parse SHACL validation results into violations and warnings"""
+        sh = Namespace("http://www.w3.org/ns/shacl#")
+        violations: List[Dict[str, Any]] = []
+        warnings: List[Dict[str, Any]] = []
+
+        for result_node in results_graph.subjects(RDF.type, sh.ValidationResult):
+            severity_node = results_graph.value(result_node, sh.resultSeverity)
+            message_node = results_graph.value(result_node, sh.resultMessage)
+            focus_node = results_graph.value(result_node, sh.focusNode)
+            path_node = results_graph.value(result_node, sh.resultPath)
+
+            severity = str(severity_node) if severity_node else "Violation"
+            message = str(message_node) if message_node else "Validation failed"
+
+            item = {
+                "severity": severity,
+                "message": message,
+                "focusNode": str(focus_node) if focus_node else None,
+                "path": str(path_node) if path_node else None
             }
-        else:
-            # Fallback for different result format
-            return {
-                "valid": bool(result),
-                "violations": [],
-                "warnings": []
-            }
-    
-    def _extract_violations(self, result: Any) -> list:
-        """Extract violations from validation result"""
-        violations = []
-        
-        if hasattr(result, 'results'):
-            for r in result.results:
-                violation = {
-                    "severity": str(r.severity) if hasattr(r, 'severity') else "Violation",
-                    "message": str(r.message) if hasattr(r, 'message') else "Validation failed",
-                    "focusNode": str(r.focusNode) if hasattr(r, 'focusNode') else None,
-                    "path": str(r.path) if hasattr(r, 'path') else None,
-                }
-                violations.append(violation)
-        
-        return violations
-    
-    def _extract_warnings(self, result: Any) -> list:
-        """Extract warnings from validation result"""
-        warnings = []
-        
-        if hasattr(result, 'results'):
-            for r in result.results:
-                if hasattr(r, 'severity') and 'Warning' in str(r.severity):
-                    warning = {
-                        "message": str(r.message) if hasattr(r, 'message') else "Warning",
-                        "focusNode": str(r.focusNode) if hasattr(r, 'focusNode') else None,
-                        "path": str(r.path) if hasattr(r, 'path') else None,
-                    }
-                    warnings.append(warning)
-        
-        return warnings
+
+            if severity.endswith("Warning"):
+                warnings.append(item)
+            elif severity.endswith("Info"):
+                warnings.append(item)
+            else:
+                violations.append(item)
+
+        return violations, warnings
 
 
 def format_output_text(result: Dict[str, Any], crate_path: str, verbose: bool = False) -> str:
@@ -195,6 +222,22 @@ def format_output_text(result: Dict[str, Any], crate_path: str, verbose: bool = 
                     lines.append(f"   Property: {warning['path']}")
                 lines.append("")
     
+    rocrate = result.get("rocrate")
+    if rocrate:
+        lines.append("")
+        lines.append("RO-Crate Profile Check (ro-crate-1.1):")
+        lines.append("-" * 70)
+        lines.append(f"Status: {'PASS' if rocrate.get('valid') else 'FAIL'}")
+        if verbose and rocrate.get("issues"):
+            lines.append(f"Issues ({len(rocrate['issues'])}):")
+            for i, issue in enumerate(rocrate["issues"], 1):
+                lines.append(f"{i}. {issue['severity']}: {issue['message']}")
+                if issue.get("focusNode"):
+                    lines.append(f"   Focus Node: {issue['focusNode']}")
+                if issue.get("path"):
+                    lines.append(f"   Property: {issue['path']}")
+                lines.append("")
+
     lines.append("=" * 70)
     return "\n".join(lines)
 

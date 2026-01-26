@@ -4,9 +4,15 @@ A standards-based validator for ISA (Investigation-Study-Assay) RO-Crates using 
 
 ## Overview
 
-This validator checks RO-Crate metadata files against the **ISA profile** to ensure they conform to the Investigation-Study-Assay data model. It uses:
+This validator runs two checks:
+
+1) **RO-Crate 1.1 profile** validation using `roc-validator`  
+2) **ISA profile** validation using SHACL shapes (`profiles/isa_profile.ttl`)
+
+It uses:
 
 - **[roc-validator](https://pypi.org/project/roc-validator/)**: Official RO-Crate validation package from PyPI
+- **pySHACL**: SHACL validator used to apply the ISA shapes to the metadata graph
 - **SHACL**: W3C standard for defining validation rules
 - **ISA Profile**: Based on the [ISA RO-Crate Profile v1.0.0-draft.1](https://github.com/nfdi4plants/isa-ro-crate-profile)
 
@@ -26,7 +32,7 @@ pip install -r requirements.txt
 ```
 
 This will install:
-- `roc-validator>=0.9.0` - The official RO-Crate validator
+- `roc-validator==0.4.2` - The official RO-Crate validator
 
 ## Usage
 
