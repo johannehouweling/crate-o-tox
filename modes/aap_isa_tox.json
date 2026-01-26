@@ -45,6 +45,7 @@
       "http://schema.org/comment",
       "http://schema.org/mentions",
       "http://schema.org/url"
+      
     ]
   },
   "inputGroups": [
