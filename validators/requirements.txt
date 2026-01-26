@@ -1,0 +1,2 @@
+# Python dependencies for ISA RO-Crate validation
+roc-validator>=0.8.0

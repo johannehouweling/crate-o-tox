@@ -1,0 +1,38 @@
+======================================================================
+ISA RO-Crate Validation Report
+======================================================================
+Crate: test-data/sydney/ro-crate-metadata.json
+Profile: ISA (Investigation-Study-Assay)
+
+❌ Status: INVALID ISA CRATE
+
+Violations (6):
+----------------------------------------------------------------------
+1. Violation: Investigation must have additionalType 'Investigation'
+   Focus Node: ./
+   Property: https://schema.org/additionalType
+
+2. Violation: Investigation MUST have a license
+   Focus Node: ./
+   Property: https://schema.org/license
+
+3. Violation: Investigation MUST have a datePublished
+   Focus Node: ./
+   Property: https://schema.org/datePublished
+
+4. Warning: Investigation SHOULD have creator(s) (Person or Organization)
+   Focus Node: ./
+   Property: https://schema.org/creator
+
+5. Warning: Investigation SHOULD have hasPart linking to Study datasets
+   Focus Node: ./
+   Property: https://schema.org/hasPart
+
+6. Warning: Person SHOULD have a familyName
+   Focus Node: #person1
+   Property: https://schema.org/familyName
+
+======================================================================
+
+Note: This is an example output showing what validation results would look like.
+The ISA validator checks RO-Crate metadata against the ISA profile requirements.

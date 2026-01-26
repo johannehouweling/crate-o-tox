@@ -1,0 +1,552 @@
+# ISA RO-Crate Profile - SHACL Shapes
+# Version: 1.0.0-draft.1
+# Based on: https://github.com/nfdi4plants/isa-ro-crate-profile
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix schema: <https://schema.org/> .
+@prefix bioschemas: <https://bioschemas.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix isa: <http://purl.org/isaterms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# ============================================================================
+# Investigation Shape
+# ============================================================================
+isa:InvestigationShape
+    a sh:NodeShape ;
+    sh:targetClass schema:Dataset ;
+    sh:name "Investigation" ;
+    sh:description "An ISA Investigation represents the root data entity" ;
+    
+    # Must have additionalType "Investigation"
+    sh:property [
+        sh:path schema:additionalType ;
+        sh:hasValue "Investigation" ;
+        sh:minCount 1 ;
+        sh:message "Investigation must have additionalType 'Investigation'" ;
+    ] ;
+    
+    # @type must be Dataset
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:Dataset ;
+        sh:minCount 1 ;
+        sh:message "Investigation @type must be 'Dataset'" ;
+    ] ;
+    
+    # MUST properties
+    sh:property [
+        sh:path schema:identifier ;
+        sh:minCount 1 ;
+        sh:message "Investigation MUST have an identifier" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:name ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Investigation MUST have a name (title)" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:description ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Investigation MUST have a description" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:license ;
+        sh:minCount 1 ;
+        sh:message "Investigation MUST have a license" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:datePublished ;
+        sh:minCount 1 ;
+        sh:or (
+            [ sh:datatype xsd:date ]
+            [ sh:datatype xsd:dateTime ]
+        ) ;
+        sh:message "Investigation MUST have a datePublished" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:creator ;
+        sh:or (
+            [ sh:class schema:Person ]
+            [ sh:class schema:Organization ]
+        ) ;
+        sh:severity sh:Warning ;
+        sh:message "Investigation SHOULD have creator(s) (Person or Organization)" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:hasPart ;
+        sh:class schema:Dataset ;
+        sh:severity sh:Warning ;
+        sh:message "Investigation SHOULD have hasPart linking to Study datasets" ;
+    ] .
+
+# ============================================================================
+# Study Shape
+# ============================================================================
+isa:StudyShape
+    a sh:NodeShape ;
+    sh:targetClass schema:Dataset ;
+    sh:name "Study" ;
+    sh:description "An ISA Study within an Investigation" ;
+    
+    # Must have additionalType "Study"
+    sh:property [
+        sh:path schema:additionalType ;
+        sh:hasValue "Study" ;
+        sh:minCount 1 ;
+        sh:message "Study must have additionalType 'Study'" ;
+    ] ;
+    
+    # @type must be Dataset
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:Dataset ;
+        sh:minCount 1 ;
+        sh:message "Study @type must be 'Dataset'" ;
+    ] ;
+    
+    # MUST properties
+    sh:property [
+        sh:path schema:identifier ;
+        sh:minCount 1 ;
+        sh:message "Study MUST have an identifier" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:name ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Study MUST have a name" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:creator ;
+        sh:class schema:Person ;
+        sh:severity sh:Warning ;
+        sh:message "Study SHOULD have creator(s)" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:description ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "Study SHOULD have a description" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:hasPart ;
+        sh:or (
+            [ sh:class schema:Dataset ]
+            [ sh:class schema:MediaObject ]
+        ) ;
+        sh:severity sh:Warning ;
+        sh:message "Study SHOULD have hasPart linking to Assays or Files" ;
+    ] .
+
+# ============================================================================
+# Assay Shape
+# ============================================================================
+isa:AssayShape
+    a sh:NodeShape ;
+    sh:targetClass schema:Dataset ;
+    sh:name "Assay" ;
+    sh:description "An ISA Assay within a Study" ;
+    
+    # Must have additionalType "Assay"
+    sh:property [
+        sh:path schema:additionalType ;
+        sh:hasValue "Assay" ;
+        sh:minCount 1 ;
+        sh:message "Assay must have additionalType 'Assay'" ;
+    ] ;
+    
+    # @type must be Dataset
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:Dataset ;
+        sh:minCount 1 ;
+        sh:message "Assay @type must be 'Dataset'" ;
+    ] ;
+    
+    # MUST properties
+    sh:property [
+        sh:path schema:identifier ;
+        sh:minCount 1 ;
+        sh:message "Assay MUST have an identifier" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:name ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "Assay SHOULD have a name" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:description ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "Assay SHOULD have a description" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:creator ;
+        sh:class schema:Person ;
+        sh:severity sh:Warning ;
+        sh:message "Assay SHOULD have creator(s)" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:hasPart ;
+        sh:class schema:MediaObject ;
+        sh:severity sh:Warning ;
+        sh:message "Assay SHOULD have hasPart linking to data Files" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:measurementMethod ;
+        sh:or (
+            [ sh:nodeKind sh:IRI ]
+            [ sh:class schema:DefinedTerm ]
+        ) ;
+        sh:severity sh:Warning ;
+        sh:message "Assay SHOULD have measurementMethod" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:measurementTechnique ;
+        sh:or (
+            [ sh:nodeKind sh:IRI ]
+            [ sh:class schema:DefinedTerm ]
+        ) ;
+        sh:severity sh:Warning ;
+        sh:message "Assay SHOULD have measurementTechnique" ;
+    ] .
+
+# ============================================================================
+# LabProcess Shape
+# ============================================================================
+isa:LabProcessShape
+    a sh:NodeShape ;
+    sh:targetClass bioschemas:LabProcess ;
+    sh:name "LabProcess" ;
+    sh:description "An experimental process in ISA" ;
+    
+    # MUST properties
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue bioschemas:LabProcess ;
+        sh:minCount 1 ;
+        sh:message "LabProcess @type must be 'LabProcess'" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:name ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "LabProcess MUST have a name" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:object ;
+        sh:or (
+            [ sh:class bioschemas:Sample ]
+            [ sh:class schema:MediaObject ]
+        ) ;
+        sh:severity sh:Warning ;
+        sh:message "LabProcess SHOULD have object (input)" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:result ;
+        sh:or (
+            [ sh:class bioschemas:Sample ]
+            [ sh:class schema:MediaObject ]
+        ) ;
+        sh:severity sh:Warning ;
+        sh:message "LabProcess SHOULD have result (output)" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:agent ;
+        sh:class schema:Person ;
+        sh:severity sh:Warning ;
+        sh:message "LabProcess SHOULD have agent (performer)" ;
+    ] ;
+    
+    sh:property [
+        sh:path bioschemas:executesLabProtocol ;
+        sh:class bioschemas:LabProtocol ;
+        sh:severity sh:Warning ;
+        sh:message "LabProcess SHOULD reference executesLabProtocol" ;
+    ] .
+
+# ============================================================================
+# LabProtocol Shape
+# ============================================================================
+isa:LabProtocolShape
+    a sh:NodeShape ;
+    sh:targetClass bioschemas:LabProtocol ;
+    sh:name "LabProtocol" ;
+    sh:description "A lab protocol in ISA" ;
+    
+    # MUST properties
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue bioschemas:LabProtocol ;
+        sh:minCount 1 ;
+        sh:message "LabProtocol @type must be 'LabProtocol'" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:name ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "LabProtocol SHOULD have a name" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:description ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "LabProtocol SHOULD have a description" ;
+    ] .
+
+# ============================================================================
+# Sample Shape
+# ============================================================================
+isa:SampleShape
+    a sh:NodeShape ;
+    sh:targetClass bioschemas:Sample ;
+    sh:name "Sample" ;
+    sh:description "A biological sample, source, or material in ISA" ;
+    
+    # MUST properties
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue bioschemas:Sample ;
+        sh:minCount 1 ;
+        sh:message "Sample @type must be 'Sample'" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:name ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Sample MUST have a name" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:additionalProperty ;
+        sh:class schema:PropertyValue ;
+        sh:severity sh:Warning ;
+        sh:message "Sample SHOULD have additionalProperty for characteristics/factors" ;
+    ] .
+
+# ============================================================================
+# Person Shape
+# ============================================================================
+isa:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass schema:Person ;
+    sh:name "Person" ;
+    sh:description "A person in ISA" ;
+    
+    # MUST properties
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:Person ;
+        sh:minCount 1 ;
+        sh:message "Person @type must be 'Person'" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:givenName ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Person MUST have a givenName" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:familyName ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "Person SHOULD have a familyName" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:email ;
+        sh:severity sh:Warning ;
+        sh:message "Person SHOULD have an email" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:affiliation ;
+        sh:class schema:Organization ;
+        sh:severity sh:Warning ;
+        sh:message "Person SHOULD have an affiliation" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:identifier ;
+        sh:severity sh:Warning ;
+        sh:message "Person SHOULD have an identifier (e.g., ORCID)" ;
+    ] .
+
+# ============================================================================
+# ScholarlyArticle Shape
+# ============================================================================
+isa:ScholarlyArticleShape
+    a sh:NodeShape ;
+    sh:targetClass schema:ScholarlyArticle ;
+    sh:name "ScholarlyArticle" ;
+    sh:description "A publication in ISA" ;
+    
+    # MUST properties
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:ScholarlyArticle ;
+        sh:minCount 1 ;
+        sh:message "ScholarlyArticle @type must be 'ScholarlyArticle'" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:headline ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "ScholarlyArticle MUST have a headline" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:identifier ;
+        sh:minCount 1 ;
+        sh:message "ScholarlyArticle MUST have an identifier (DOI, PubMedID, etc.)" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:author ;
+        sh:class schema:Person ;
+        sh:severity sh:Warning ;
+        sh:message "ScholarlyArticle SHOULD have author(s)" ;
+    ] .
+
+# ============================================================================
+# DefinedTerm Shape (Ontology Annotation)
+# ============================================================================
+isa:DefinedTermShape
+    a sh:NodeShape ;
+    sh:targetClass schema:DefinedTerm ;
+    sh:name "DefinedTerm" ;
+    sh:description "An ontology term in ISA" ;
+    
+    # MUST properties
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:DefinedTerm ;
+        sh:minCount 1 ;
+        sh:message "DefinedTerm @type must be 'DefinedTerm'" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:name ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "DefinedTerm MUST have a name (term name)" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:termCode ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "DefinedTerm SHOULD have a termCode (identifier within ontology)" ;
+    ] .
+
+# ============================================================================
+# PropertyValue Shapes
+# ============================================================================
+isa:PropertyValueShape
+    a sh:NodeShape ;
+    sh:targetClass schema:PropertyValue ;
+    sh:name "PropertyValue" ;
+    sh:description "A key-value pair in ISA" ;
+    
+    # MUST properties
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:PropertyValue ;
+        sh:minCount 1 ;
+        sh:message "PropertyValue @type must be 'PropertyValue'" ;
+    ] ;
+    
+    sh:property [
+        sh:path schema:name ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "PropertyValue MUST have a name (key)" ;
+    ] ;
+    
+    # SHOULD properties
+    sh:property [
+        sh:path schema:value ;
+        sh:severity sh:Warning ;
+        sh:message "PropertyValue SHOULD have a value" ;
+    ] .
+
+# Parameter Value (used in LabProcess)
+isa:ParameterValueShape
+    a sh:NodeShape ;
+    sh:targetClass schema:PropertyValue ;
+    sh:name "ParameterValue" ;
+    sh:description "A parameter value in a LabProcess" ;
+    
+    sh:property [
+        sh:path schema:additionalType ;
+        sh:hasValue "ParameterValue" ;
+        sh:minCount 1 ;
+        sh:message "ParameterValue must have additionalType 'ParameterValue'" ;
+    ] .
+
+# Characteristic Value (used in Sample)
+isa:CharacteristicValueShape
+    a sh:NodeShape ;
+    sh:targetClass schema:PropertyValue ;
+    sh:name "CharacteristicValue" ;
+    sh:description "A characteristic value in a Sample" ;
+    
+    sh:property [
+        sh:path schema:additionalType ;
+        sh:hasValue "CharacteristicValue" ;
+        sh:minCount 1 ;
+        sh:message "CharacteristicValue must have additionalType 'CharacteristicValue'" ;
+    ] .
+
+# Factor Value (used in Sample)
+isa:FactorValueShape
+    a sh:NodeShape ;
+    sh:targetClass schema:PropertyValue ;
+    sh:name "FactorValue" ;
+    sh:description "A factor value in a Sample" ;
+    
+    sh:property [
+        sh:path schema:additionalType ;
+        sh:hasValue "FactorValue" ;
+        sh:minCount 1 ;
+        sh:message "FactorValue must have additionalType 'FactorValue'" ;
+    ] .
