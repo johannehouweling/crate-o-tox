@@ -1,0 +1,297 @@
+{
+  "Sample Preparation": [
+    {
+      "propertyID": "cell_density",
+      "name": "Cell Density",
+      "unitText": "cells/well",
+      "category": "experimental_condition",
+      "description": "Number of cells seeded per well"
+    },
+    {
+      "propertyID": "passage_number",
+      "name": "Passage Number",
+      "unitText": "",
+      "category": "sample_characteristic",
+      "description": "Passage number of the cell culture"
+    },
+    {
+      "propertyID": "culture_medium",
+      "name": "Culture Medium",
+      "unitText": "",
+      "category": "reagent",
+      "description": "Culture medium composition and supplements"
+    },
+    {
+      "propertyID": "seeding_volume",
+      "name": "Seeding Volume",
+      "unitText": "μL",
+      "category": "experimental_condition",
+      "description": "Volume of cell suspension added per well"
+    },
+    {
+      "propertyID": "plate_format",
+      "name": "Plate Format",
+      "unitText": "",
+      "category": "experimental_condition",
+      "description": "Plate type and well configuration (e.g., 96-well, 384-well)"
+    },
+    {
+      "propertyID": "incubation_time",
+      "name": "Pre-incubation Time",
+      "unitText": "hours",
+      "category": "experimental_condition",
+      "description": "Time cells were incubated before treatment"
+    },
+    {
+      "propertyID": "incubation_temperature",
+      "name": "Incubation Temperature",
+      "unitText": "°C",
+      "category": "experimental_condition",
+      "description": "Temperature during pre-incubation"
+    },
+    {
+      "propertyID": "co2_concentration",
+      "name": "CO₂ Concentration",
+      "unitText": "%",
+      "category": "experimental_condition",
+      "description": "CO₂ saturation during incubation"
+    }
+  ],
+  "Treatment": [
+    {
+      "propertyID": "substrate",
+      "name": "Substrate",
+      "unitText": "",
+      "category": "reagent",
+      "description": "Primary substrate or assay reagent (e.g., T3, MTT)"
+    },
+    {
+      "propertyID": "substrate_concentration",
+      "name": "Substrate Concentration",
+      "unitText": "μM",
+      "category": "experimental_condition",
+      "description": "Concentration of the primary substrate"
+    },
+    {
+      "propertyID": "test_chemical_concentration",
+      "name": "Test Chemical Concentration",
+      "unitText": "μM",
+      "category": "experimental_condition",
+      "description": "Concentration range or specific concentration of test chemical"
+    },
+    {
+      "propertyID": "exposure_duration",
+      "name": "Exposure Duration",
+      "unitText": "minutes",
+      "category": "experimental_condition",
+      "description": "Duration of chemical exposure"
+    },
+    {
+      "propertyID": "temperature",
+      "name": "Temperature",
+      "unitText": "°C",
+      "category": "experimental_condition",
+      "description": "Temperature during exposure"
+    },
+    {
+      "propertyID": "vehicle",
+      "name": "Vehicle",
+      "unitText": "%",
+      "category": "reagent",
+      "description": "Vehicle/solvent used and its final concentration"
+    },
+    {
+      "propertyID": "biological_replicates",
+      "name": "Biological Replicates",
+      "unitText": "",
+      "category": "study_design",
+      "description": "Number of independent biological experiments"
+    },
+    {
+      "propertyID": "technical_replicates",
+      "name": "Technical Replicates",
+      "unitText": "",
+      "category": "study_design",
+      "description": "Number of technical replicates per condition"
+    },
+    {
+      "propertyID": "positive_control",
+      "name": "Positive Control",
+      "unitText": "",
+      "category": "control",
+      "description": "Identity and concentration of positive control"
+    },
+    {
+      "propertyID": "negative_control",
+      "name": "Negative Control",
+      "unitText": "",
+      "category": "control",
+      "description": "Identity of negative control (e.g., vehicle only)"
+    }
+  ],
+  "Endpoint Measurement": [
+    {
+      "propertyID": "detection_method",
+      "name": "Detection Method",
+      "unitText": "",
+      "category": "method",
+      "description": "Detection or readout method (e.g., Sandell-Kolthoff reaction, fluorescence)"
+    },
+    {
+      "propertyID": "substrate",
+      "name": "Substrate",
+      "unitText": "",
+      "category": "reagent",
+      "description": "Substrate or reagent for detection (e.g., T3, MTT, resazurin)"
+    },
+    {
+      "propertyID": "substrate_incubation_time",
+      "name": "Substrate Incubation Time",
+      "unitText": "minutes",
+      "category": "experimental_condition",
+      "description": "Incubation time with detection substrate"
+    },
+    {
+      "propertyID": "measurement_type",
+      "name": "Measurement Type",
+      "unitText": "",
+      "category": "method",
+      "description": "Type of measurement (Absorbance, Fluorescence, Luminescence)"
+    },
+    {
+      "propertyID": "wavelength",
+      "name": "Wavelength",
+      "unitText": "nm",
+      "category": "instrument_setting",
+      "description": "Measurement wavelength"
+    },
+    {
+      "propertyID": "excitation_wavelength",
+      "name": "Excitation Wavelength",
+      "unitText": "nm",
+      "category": "instrument_setting",
+      "description": "Excitation wavelength for fluorescence measurements"
+    },
+    {
+      "propertyID": "emission_wavelength",
+      "name": "Emission Wavelength",
+      "unitText": "nm",
+      "category": "instrument_setting",
+      "description": "Emission wavelength for fluorescence measurements"
+    },
+    {
+      "propertyID": "measurement_interval",
+      "name": "Measurement Interval",
+      "unitText": "seconds",
+      "category": "instrument_setting",
+      "description": "Time between successive measurements"
+    },
+    {
+      "propertyID": "measurement_duration",
+      "name": "Measurement Duration",
+      "unitText": "minutes",
+      "category": "instrument_setting",
+      "description": "Total duration of kinetic measurements"
+    },
+    {
+      "propertyID": "instrument_model",
+      "name": "Instrument Model",
+      "unitText": "",
+      "category": "instrument",
+      "description": "Model and manufacturer of detection instrument"
+    },
+    {
+      "propertyID": "digestion_method",
+      "name": "Digestion Method",
+      "unitText": "",
+      "category": "method",
+      "description": "Method for sample digestion if applicable (e.g., UV-light, APS)"
+    },
+    {
+      "propertyID": "digestion_duration",
+      "name": "Digestion Duration",
+      "unitText": "minutes",
+      "category": "experimental_condition",
+      "description": "Duration of digestion step"
+    }
+  ],
+  "Data Analysis": [
+    {
+      "propertyID": "analysis_software",
+      "name": "Analysis Software",
+      "unitText": "",
+      "category": "software",
+      "description": "Software used for data analysis (e.g., GraphPad Prism, R, Python)"
+    },
+    {
+      "propertyID": "software_version",
+      "name": "Software Version",
+      "unitText": "",
+      "category": "software",
+      "description": "Version number of analysis software"
+    },
+    {
+      "propertyID": "regression_model",
+      "name": "Regression Model",
+      "unitText": "",
+      "category": "method",
+      "description": "Mathematical model used for curve fitting (e.g., first-order kinetic, four-parameter logistic)"
+    },
+    {
+      "propertyID": "effect_metric",
+      "name": "Effect Metric",
+      "unitText": "",
+      "category": "analysis_parameter",
+      "description": "Primary effect metric calculated (e.g., BMC20, IC50, EC50)"
+    },
+    {
+      "propertyID": "benchmark_response",
+      "name": "Benchmark Response Level",
+      "unitText": "%",
+      "category": "analysis_parameter",
+      "description": "Benchmark response level for BMC calculation"
+    },
+    {
+      "propertyID": "normalization_method",
+      "name": "Normalization Method",
+      "unitText": "",
+      "category": "method",
+      "description": "Method for normalizing data (e.g., to vehicle control, to positive control)"
+    },
+    {
+      "propertyID": "normalization_controls",
+      "name": "Normalization Controls",
+      "unitText": "",
+      "category": "control",
+      "description": "Controls used for normalization (e.g., vehicle control as 100%, positive control as 0%)"
+    },
+    {
+      "propertyID": "statistical_test",
+      "name": "Statistical Test",
+      "unitText": "",
+      "category": "method",
+      "description": "Statistical test applied (e.g., two-way ANOVA, Dunnett's test, t-test)"
+    },
+    {
+      "propertyID": "significance_level",
+      "name": "Significance Level",
+      "unitText": "",
+      "category": "analysis_parameter",
+      "description": "Alpha level for statistical significance (e.g., 0.05)"
+    },
+    {
+      "propertyID": "confidence_interval",
+      "name": "Confidence Interval",
+      "unitText": "%",
+      "category": "analysis_parameter",
+      "description": "Confidence interval for parameter estimates (e.g., 95%)"
+    },
+    {
+      "propertyID": "outlier_handling",
+      "name": "Outlier Handling",
+      "unitText": "",
+      "category": "method",
+      "description": "Method for identifying and handling outliers"
+    }
+  ]
+}
