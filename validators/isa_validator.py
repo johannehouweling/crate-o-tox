@@ -13,6 +13,7 @@ Usage:
 
 import argparse
 import json
+import inspect
 import sys
 from pathlib import Path
 from typing import Dict, Any, Tuple, List
@@ -87,19 +88,34 @@ class ISAValidator:
 
     def _validate_rocrate(self, crate_dir: Path) -> Dict[str, Any]:
         """Validate the RO-Crate structure using roc-validator"""
-        settings = ValidationSettings(
-            data_path=crate_dir,
-            profile_identifier="ro-crate-1.1"
-        )
-        result = validate(settings)
+        settings_kwargs = {"profile_identifier": "ro-crate-1.1"}
+        settings_params = inspect.signature(ValidationSettings).parameters
+        if "rocrate_uri" in settings_params:
+            settings_kwargs["rocrate_uri"] = str(crate_dir)
+        elif "data_path" in settings_params:
+            settings_kwargs["data_path"] = crate_dir
+        settings = ValidationSettings(**settings_kwargs)
+        try:
+            result = validate(settings)
+        except Exception as e:
+            return {
+                "valid": False,
+                "issues": [{
+                    "severity": "ERROR",
+                    "message": str(e),
+                    "focusNode": None,
+                    "path": None
+                }]
+            }
 
         issues = []
         for issue in result.issues:
+            issue_dict = issue.to_dict() if hasattr(issue, "to_dict") else {}
             issues.append({
-                "severity": issue.severity.name,
+                "severity": issue.severity.name if hasattr(issue.severity, "name") else str(issue.severity),
                 "message": issue.message,
-                "focusNode": issue.focusNode,
-                "path": issue.resultPath
+                "focusNode": issue_dict.get("violatingEntity") or getattr(issue, "violatingEntity", None),
+                "path": issue_dict.get("violatingProperty") or getattr(issue, "violatingProperty", None)
             })
 
         return {
@@ -109,20 +125,51 @@ class ISAValidator:
 
     def _validate_isa(self, crate_path: Path, profile_path: Path) -> Dict[str, Any]:
         """Validate the metadata graph against ISA SHACL shapes"""
-        data_graph = Graph()
-        data_graph.parse(str(crate_path), format="json-ld")
+        try:
+            data = json.loads(crate_path.read_text(encoding="utf-8"))
+            context = data.get("@context")
+            if context:
+                context_path = Path(__file__).parent / "profiles" / "ro-crate-1.2-context.jsonld"
+                if context_path.exists():
+                    context_data = json.loads(context_path.read_text(encoding="utf-8")).get("@context")
+                    if isinstance(context_data, dict):
+                        # Override explicit schema.org mappings to https://
+                        context_data["name"] = "https://schema.org/name"
+                        context_data["@vocab"] = "https://schema.org/"
+                    if isinstance(context, list):
+                        context = [
+                            context_data if item == "https://w3id.org/ro/crate/1.2/context" else item
+                            for item in context
+                        ]
+                    elif context == "https://w3id.org/ro/crate/1.2/context":
+                        context = context_data
+                    data["@context"] = context
 
-        shacl_graph = Graph()
-        shacl_graph.parse(str(profile_path), format="turtle")
+            data_graph = Graph()
+            data_graph.parse(data=json.dumps(data), format="json-ld")
 
-        conforms, results_graph, _ = shacl_validate(
-            data_graph=data_graph,
-            shacl_graph=shacl_graph,
-            inference="rdfs",
-            abort_on_first=False,
-            allow_infos=True,
-            allow_warnings=True
-        )
+            shacl_graph = Graph()
+            shacl_graph.parse(str(profile_path), format="turtle")
+
+            conforms, results_graph, _ = shacl_validate(
+                data_graph=data_graph,
+                shacl_graph=shacl_graph,
+                inference="rdfs",
+                abort_on_first=False,
+                allow_infos=True,
+                allow_warnings=True
+            )
+        except Exception as e:
+            return {
+                "valid": False,
+                "violations": [{
+                    "severity": "ERROR",
+                    "message": str(e),
+                    "focusNode": None,
+                    "path": None
+                }],
+                "warnings": []
+            }
 
         violations, warnings = self._parse_shacl_results(results_graph)
 

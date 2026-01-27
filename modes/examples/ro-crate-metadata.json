@@ -2,7 +2,7 @@
   "@context": [
     "https://w3id.org/ro/crate/1.2/context",
     {
-      "@vocab": "http://schema.org/",
+      "@vocab": "https://schema.org/",
       "Process Sequence (about)": "https://bioschemas.org/processSequence",
       "measurementMethod": "http://schema.org/measurementMethod",
       "LabProcess": "https://bioschemas.org/LabProcess",
@@ -36,7 +36,8 @@
       "bioassay": "http://www.bioassayontology.org/bao#BAO_0000015",
       "measuresAopEvent": "https://w3id.org/tox/terms#measuresAopEvent",
       "additionalProperty": "http://schema.org/additionalProperty",
-      "PropertyValue": "http://schema.org/PropertyValue"
+      "PropertyValue": "http://schema.org/PropertyValue",
+      "version": "http://schema.org/version"
     }
   ],
   "@graph": [
@@ -68,6 +69,9 @@
       "datePublished": [
         "2026-06-01"
       ],
+      "version": [
+        "1.0.0"
+      ],
       "creator": [
         {
           "@id": "https://orcid.org/0009-0000-5074-6239"
@@ -92,12 +96,6 @@
         },
         {
           "@id": "https://orcid.org/0000-0002-5392-0519"
-        },
-        {
-          "@id": "https://ror.org/01cesdt21"
-        },
-        {
-          "@id": "https://ror.org/018906e22"
         }
       ],
       "hasPart": [
@@ -837,7 +835,6 @@
       "short_name": "Decreased TH levels leading to developmental neurotoxicity",
       "alternative": "Decreased TH levels leading to developmental neurotoxicity",
       "identifier": "https://aopwiki.org/aops/610",
-      "page": "https://aopwiki.org/aops/610",
       "creator": 20469,
       "created": "2025-10-08T05:42:02.000-04:00",
       "modified": "2025-10-08T08:04:23.000-04:00",
@@ -7342,6 +7339,11 @@
       "@id": "ro-crate-metadata.json",
       "@type": "CreativeWork",
       "identifier": "ro-crate-metadata.json",
+      "conformsTo": [
+        {
+          "@id": "https://w3id.org/ro/crate/1.2"
+        }
+      ],
       "about": {
         "@id": "./"
       }
@@ -7581,7 +7583,7 @@
       ]
     },
     {
-      "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx/",
+      "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx",
       "@type": "LabProtocol",
       "name": [
         "RNA isolation protocol (RNeasy mini kit)"
@@ -7597,7 +7599,7 @@
       ]
     },
     {
-      "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx/",
+      "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx",
       "@type": "LabProtocol",
       "name": [
         "cDNA and qPCR protocol"
@@ -7649,7 +7651,7 @@
       ]
     },
     {
-      "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx/",
+      "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx",
       "@type": "LabProtocol",
       "name": [
         "Protocol T3 responsive genes dose response"
@@ -11085,7 +11087,7 @@
       ]
     },
     {
-      "@id": "assay_03_metabolism/EDCs/Metabolism paper calculation.xlsx/",
+      "@id": "assay_03_metabolism/EDCs/Metabolism paper calculation.xlsx",
       "@type": "LabProtocol",
       "name": [
         "Metabolism paper calculation"
@@ -12760,7 +12762,7 @@
       ]
     },
     {
-      "@id": "assay_03_metabolism/4.3 Protocol UPLC runnen.docx/",
+      "@id": "assay_03_metabolism/4.3 Protocol UPLC runnen.docx",
       "@type": "LabProtocol",
       "name": [
         "Protocol UPLC runnen"
@@ -12776,7 +12778,7 @@
       ]
     },
     {
-      "@id": "assay_03_metabolism/4.2 Protocol for metabolism assay in neural culture.docx/",
+      "@id": "assay_03_metabolism/4.2 Protocol for metabolism assay in neural culture.docx",
       "@type": "LabProtocol",
       "name": [
         "Protocol for metabolism assay in neural culture"
@@ -14119,7 +14121,7 @@
       ]
     },
     {
-      "@id": "Assay4_TRactivation/5.1 Protocol T3 responsive genes dose response.docx/",
+      "@id": "Assay4_TRactivation/5.1 Protocol T3 responsive genes dose response.docx",
       "@type": "LabProtocol",
       "name": [
         "Protocol T3 responsive genes dose response"
@@ -14158,7 +14160,7 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "cell_line_protocols/20251114_cell culture protocol H4.docx/"
+          "@id": "cell_line_protocols/20251114_cell culture protocol H4.docx"
         }
       ]
     },
@@ -14175,7 +14177,7 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "cell_line_protocols/20251114_cell culture protocol MO3.13.docx/"
+          "@id": "cell_line_protocols/20251114_cell culture protocol MO3.13.docx"
         }
       ]
     },
@@ -14192,12 +14194,12 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "cell_line_protocols/20251114_cell culture protocol SK-N-AS.docx/"
+          "@id": "cell_line_protocols/20251114_cell culture protocol SK-N-AS.docx"
         }
       ]
     },
     {
-      "@id": "cell_line_protocols/20251114_cell culture protocol H4.docx/",
+      "@id": "cell_line_protocols/20251114_cell culture protocol H4.docx",
       "@type": "LabProtocol",
       "name": [
         "Cell culture protocol H4"
@@ -14244,17 +14246,7 @@
       "@type": "CellLine"
     },
     {
-      "@id": "#LabProcess-1",
-      "@type": "LabProcess",
-      "name": "LabProcess-1"
-    },
-    {
-      "@id": "#AopEvent-1",
-      "@type": "AopEvent",
-      "name": "AopEvent"
-    },
-    {
-      "@id": "cell_line_protocols/20251114_cell culture protocol MO3.13.docx/",
+      "@id": "cell_line_protocols/20251114_cell culture protocol MO3.13.docx",
       "@type": "LabProtocol",
       "name": [
         "Cell culture protocol MO3.13"
@@ -14269,7 +14261,7 @@
       ]
     },
     {
-      "@id": "cell_line_protocols/20251114_cell culture protocol SK-N-AS.docx/",
+      "@id": "cell_line_protocols/20251114_cell culture protocol SK-N-AS.docx",
       "@type": "LabProtocol",
       "name": [
         "Cell culture protocol SK-N-AS"
@@ -14284,7 +14276,7 @@
       ]
     },
     {
-      "@id": "assay_01_TH_uptake/3.2 Protocol transporter assay radioactive T3 T4_EN.docx/",
+      "@id": "assay_01_TH_uptake/3.2 Protocol transporter assay radioactive T3 T4_EN.docx",
       "@type": "File",
       "isPartOf": [
         {
@@ -14667,7 +14659,7 @@
     {
       "@id": "#th-uptake-2",
       "@type": "LabProcess",
-      "name": "TH uptake processing. Raw data and results per experiment",
+      "name": "Raw data and results per experiment",
       "object": [
         {
           "@id": "assay_01_TH_uptake/characterisation uptake/assay1_rawdata/003648.csv"
@@ -14718,7 +14710,7 @@
     {
       "@id": "#th-uptake-3",
       "@type": "LabProcess",
-      "name": "TH uptake EDC processing. Raw data and results per EDC experiment",
+      "name": "Raw data and results per EDC experiment",
       "object": [
         {
           "@id": "assay_01_TH_uptake/EDCs/20231110_uptake PBDE-99 en Amiodarone/raw data"
@@ -15920,10 +15912,10 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "assay_03_metabolism/4.2 Protocol for metabolism assay in neural culture.docx/"
+          "@id": "assay_03_metabolism/4.2 Protocol for metabolism assay in neural culture.docx"
         },
         {
-          "@id": "assay_03_metabolism/4.3 Protocol UPLC runnen.docx/"
+          "@id": "assay_03_metabolism/4.3 Protocol UPLC runnen.docx"
         }
       ]
     },
@@ -16469,10 +16461,10 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "assay_03_metabolism/4.2 Protocol for metabolism assay in neural culture.docx/"
+          "@id": "assay_03_metabolism/4.2 Protocol for metabolism assay in neural culture.docx"
         },
         {
-          "@id": "assay_03_metabolism/4.3 Protocol UPLC runnen.docx/"
+          "@id": "assay_03_metabolism/4.3 Protocol UPLC runnen.docx"
         }
       ]
     },
@@ -16581,25 +16573,10 @@
     {
       "@id": "#metabolism-4",
       "@type": "LabProcess",
-      "name": "Metabolism EDC processing (Prism)",
-      "object": [
-        {
-          "@id": "assay_03_metabolism/EDCs/20240327_Metabolism EDCs HC/raw data"
-        }
-      ],
-      "result": [
-        {
-          "@id": "assay_03_metabolism/EDCs/20240327_Metabolism EDCs HC/Metabolism data HC n-1.pzfx"
-        }
-      ]
-    },
-    {
-      "@id": "#metabolism-5",
-      "@type": "LabProcess",
       "name": "Metabolism paper calculation",
       "executesLabProtocol": [
         {
-          "@id": "assay_03_metabolism/EDCs/Metabolism paper calculation.xlsx/"
+          "@id": "assay_03_metabolism/EDCs/Metabolism paper calculation.xlsx"
         }
       ],
       "object": [
@@ -16609,7 +16586,7 @@
       ],
       "result": [
         {
-          "@id": "assay_03_metabolism/EDCs/Metabolism paper calculation.xlsx"
+          "@id": "assay_03_metabolism/EDCs/20240327_Metabolism EDCs HC/Metabolism data HC n-1.pzfx"
         }
       ]
     },
@@ -16639,13 +16616,13 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx/"
+          "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx"
         },
         {
-          "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx/"
+          "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx"
         },
         {
-          "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx/"
+          "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx"
         }
       ]
     },
@@ -16666,13 +16643,13 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx/"
+          "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx"
         },
         {
-          "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx/"
+          "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx"
         },
         {
-          "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx/"
+          "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx"
         }
       ]
     },
@@ -16704,13 +16681,13 @@
       ],
       "executesLabProtocol": [
         {
-          "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx/"
+          "@id": "assay_04_TRactivation/5.2 RNA isolation_Protocol RNeasy mini kit.docx"
         },
         {
-          "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx/"
+          "@id": "assay_04_TRactivation/5.1 Protocol T3 responsive genes dose response.docx"
         },
         {
-          "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx/"
+          "@id": "assay_04_TRactivation/5.3 cDNA and qPCR protocol.xlsx"
         }
       ]
     },
@@ -18943,7 +18920,7 @@
       ]
     },
     {
-      "@id": "#deiodinase-51",
+      "@id": "#deiodinase-5a",
       "@type": "LabProcess",
       "name": "Deiodinase characterisation (Prism): D3 activity EDC in MO3.13 cells",
       "object": [
@@ -18958,7 +18935,7 @@
       ]
     },
     {
-      "@id": "#deiodinase-52",
+      "@id": "#deiodinase-5b",
       "@type": "LabProcess",
       "name": "Deiodinase characterisation (Prism): D3 activity EDC in SKNAS cells",
       "object": [
@@ -18988,7 +18965,7 @@
       ]
     },
     {
-      "@id": "#deiodinase-61",
+      "@id": "#deiodinase-6a",
       "@type": "LabProcess",
       "name": "Deiodinase characterisation figure: MO3.13 EDC D3 activity",
       "object": [
@@ -19003,7 +18980,7 @@
       ]
     },
     {
-      "@id": "#deiodinase-62",
+      "@id": "#deiodinase-6b",
       "@type": "LabProcess",
       "name": "Deiodinase characterisation figure: SKNAS EDC D3 activity",
       "object": [
