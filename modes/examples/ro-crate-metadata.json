@@ -34,15 +34,16 @@
       "CellLine": "https://bioschemas.org/CellLine",
       "hasSpecifiedInput": "http://purl.obolibrary.org/obo/OBI_0000293",
       "bioassay": "http://www.bioassayontology.org/bao#BAO_0000015",
-      "measuresAopEvent": "https://w3id.org/tox/terms#measuresAopEvent"
+      "measuresAopEvent": "https://w3id.org/tox/terms#measuresAopEvent",
+      "additionalProperty": "http://schema.org/additionalProperty",
+      "PropertyValue": "http://schema.org/PropertyValue"
     }
   ],
   "@graph": [
     {
       "@id": "./",
       "@type": [
-        "Dataset",
-        "Study"
+        "Dataset"
       ],
       "conformsTo": [
         {
@@ -50,12 +51,6 @@
         },
         {
           "@id": "https://github.com/nfdi4plants/isa-ro-crate-profile"
-        },
-        {
-          "@id": "https://w3id.org/tox/profile#CellBasedToxicology"
-        },
-        {
-          "@id": "https://github.com/johannehouweling/tox-ro-crate-profile"
         }
       ],
       "additionalType": [
@@ -131,24 +126,56 @@
       "license": [
         "https://creativecommons.org/licenses/by/4.0/"
       ],
-      "url": [],
+      "url": [
+        "https://platform.vhp4safety.nl/casestudies/thyroid"
+      ],
       "dateModified": [
         "2026-01-26"
       ],
       "dateCreated": [
         "2026-01-26"
       ],
-      "mentions": [
-        ""
-      ],
       "citation": [
         {
-          "@id": "https://doi.org/10.1080/10408444.2025.2461076"
+          "@id": "X"
         }
       ],
-      "adverseOutcomePathway": [
+      "additionalProperty": [
         {
-          "@id": "https://aopwiki.org/aops/610"
+          "@id": "#study-case-study"
+        },
+        {
+          "@id": "#study-regulatory-question"
+        },
+        {
+          "@id": "#study-process-flow-step"
+        }
+      ],
+      "hasBioSample": [
+        {
+          "@id": "https://www.cellosaurus.org/CVCL_1239"
+        },
+        {
+          "@id": "https://www.cellosaurus.org/CVCL_1700"
+        },
+        {
+          "@id": "https://www.cellosaurus.org/CVCL_D357"
+        }
+      ],
+      "about": [
+        {
+          "@id": "#cell-culture-H4"
+        },
+        {
+          "@id": "#cell-culture-MO3-13"
+        },
+        {
+          "@id": "#cell-culture-SK-N-AS"
+        }
+      ],
+      "funder": [
+        {
+          "@id": "https://ror.org/04jsz6e67"
         }
       ],
       "hasSpecifiedInput": [
@@ -189,26 +216,9 @@
           "@id": "https://compoundcloud.wikibase.cloud/entity/Q4744"
         }
       ],
-      "hasBioSample": [
+      "adverseOutcomePathway": [
         {
-          "@id": "https://www.cellosaurus.org/CVCL_1239"
-        },
-        {
-          "@id": "https://www.cellosaurus.org/CVCL_1700"
-        },
-        {
-          "@id": "https://www.cellosaurus.org/CVCL_D357"
-        }
-      ],
-      "processSequence": [
-        {
-          "@id": "#cell-culture-H4"
-        },
-        {
-          "@id": "#cell-culture-MO3-13"
-        },
-        {
-          "@id": "#cell-culture-SK-N-AS"
+          "@id": "https://aopwiki.org/aops/610"
         }
       ]
     },
@@ -290,16 +300,6 @@
       "@type": "Person"
     },
     {
-      "@id": "https://ror.org/01cesdt21",
-      "@type": "Organization",
-      "name": "National Institute for Public Health and the Environment"
-    },
-    {
-      "@id": "https://ror.org/018906e22",
-      "@type": "Organization",
-      "name": "Erasmus MC"
-    },
-    {
       "@id": "cell_line_protocols/20251114_cell culture protocol MO3.13.docx",
       "@type": "File",
       "isPartOf": [
@@ -370,24 +370,22 @@
       "description": [
         "Thyroid hormone uptake was assessed for all cell lines using radioactive [125-I]T3 or [125-I]T4. Compounds were added to the incubation medium together with [125-I]t3 or [125-I]T4 at the indicated concentrations. cells were incubated for 10 minutes. Radioactivity in the cell lysates was measured using a γ-counter."
       ],
-      "measurementMethod": {
-        "@type": "DefinedTerm",
-        "name": "transporter inhibition assay",
-        "@id": "https://example.org/definedTerms/transporter-inhibition-assay"
-      },
-      "measurementTechnique": {
-        "@type": "DefinedTerm",
-        "name": "Gamma Counter",
-        "termCode": "BAO_0000697",
-        "inDefinedTermSet": "http://www.bioassayontology.org/bao",
-        "@id": "http://www.bioassayontology.org/bao#BAO_0000697"
-      },
+      "measurementMethod": [
+        {
+          "@id": "http://www.bioassayontology.org/bao#BAO_0010196"
+        }
+      ],
+      "measurementTechnique": [
+        {
+          "@id": "http://www.bioassayontology.org/bao#BAO_0000697"
+        }
+      ],
       "creator": [
         {
           "@id": "https://orcid.org/0009-0000-5074-6239"
         }
       ],
-      "processSequence": [
+      "about": [
         {
           "@id": "#th-uptake-1"
         },
@@ -425,20 +423,10 @@
         "assay_03_metabolism"
       ],
       "measurementMethod": {
-        "@type": "DefinedTerm",
-        "name": "In vitro whole-cell metabolism assay",
-        "inDefinedTermSet": {
-          "@id": "https://example.org/definedTerms/labMethods"
-        },
-        "@id": "https://example.org/definedTerms/in-vitro-whole-cell-metabolism-assay"
+        "@id": "X"
       },
       "measurementTechnique": {
-        "@type": "DefinedTerm",
-        "name": "Ultra Performance Liquid Chromatography coupled to Radiometric Detection",
-        "inDefinedTermSet": {
-          "@id": "https://example.org/definedTerms/labTechniques"
-        },
-        "@id": "https://example.org/definedTerms/uplc-radiometric-detection"
+        "@id": "X"
       },
       "additionalType": [
         "Assay"
@@ -446,7 +434,7 @@
       "description": [
         "Deiodinase activity (D3) in intact MO3.13 and SK-N-AS cells was determined in the whole-cell metabolism assay to characterize endogenous D3 activity. Cells were exposed for 24 hours to CT-medium, 1 nM T3, 2,000,000 cpm/mL [125I]T3 and EDCs. Samples were analysed by UPLC coupled to a RAMONA star; percentage conversion was based on %T1 and %T2 formed (T1 counted double), and data are expressed relative to solvent controls. Reference compounds tested: iopanoic acid, xanthohumol. EDCs tested: silychristin, sulfobromophthalein, chlorpyrifos, tetrabromobisphenol A. File organization: characterisation contains raw/processed data for cell-line characterization; EDCs contains raw/processed data for endocrine disrupting chemicals. Notes: 'Combined metabolism data EDCs' are percentages per experiment; 'metabolism paper calculation' contains calculations for the paper graphs."
       ],
-      "processSequence": [
+      "about": [
         {
           "@id": "#metabolism-1"
         },
@@ -470,7 +458,7 @@
     {
       "@id": "assay_04_TRactivation/",
       "@type": [
-        "Assay"
+        "Dataset"
       ],
       "name": [
         "T3-dependent Gene Expression Assay"
@@ -484,7 +472,7 @@
       "additionalType": [
         "Assay"
       ],
-      "processSequence": [
+      "about": [
         {
           "@id": "#tractivation-1"
         },
@@ -526,7 +514,6 @@
     {
       "@id": "assay_02_deiodinase/",
       "@type": [
-        "Assay",
         "Dataset"
       ],
       "name": [
@@ -534,6 +521,9 @@
       ],
       "additionalType": [
         "Assay"
+      ],
+      "identifier": [
+        "assay_02_deiodinase"
       ],
       "description": [
         "Deiodinase activity (D3) was determined in cell lysate for MO3.13 and SK-N-AS cells. Cell lysates were incubated with 1 nM T3 and 200.000 cpm [125I]T3 for D3, \\nand the indicated concentrations of EDCs or vehicle in PED10 for 120 minutes. Samples were analysed on UPLC (Acquity premier, Waters Chromatography B.V., Netherlands) coupled to a RAMONA star (Elisia Raytest, Belgium) detector.\\nD3 activity was expressed as fmol/min/mg protein."
@@ -543,7 +533,14 @@
           "@id": "https://orcid.org/0009-0000-5074-6239"
         }
       ],
-      "processSequence": [
+      "measurementMethod": {
+        "@id": "http://www.bioassayontology.org/bao#BAO_0050009"
+      },
+      "measurementTechnique": [
+        {"@id": "http://purl.obolibrary.org/obo/MS_1003706"},
+        {"@id": "https://www.elysia-raytest.com/en/cataloglight/ramona-star~6f7c398c-84cb-4ec0-86c3-89dfe9431fe9"}
+      ],
+      "about": [
         {
           "@id": "#deiodinase-1"
         },
@@ -19019,6 +19016,39 @@
           "@id": "assay_02_deiodinase/characterisation/SKNAS EDC D3 activity.png"
         }
       ]
+    },
+    {
+      "@id": "https://ror.org/04jsz6e67",
+      "@type": "Organization",
+      "name": "Dutch Research Council (NWO)",
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "grant_id",
+          "value": "1292.19.272"
+        }
+      ]
+    },
+    {
+      "@id": "#study-case-study",
+      "@type": "PropertyValue",
+      "name": "Case study",
+      "value": "Thyroid",
+      "url": "https://platform.vhp4safety.nl/casestudies/thyroid"
+    },
+    {
+      "@id": "#study-regulatory-question",
+      "@type": "PropertyValue",
+      "name": "Regulatory Question",
+      "value": "Q2",
+      "url": "https://platform.vhp4safety.nl/casestudies/thyroid"
+    },
+    {
+      "@id": "#study-process-flow-step",
+      "@type": "PropertyValue",
+      "name": "Process Flow Step",
+      "value": "Toxicodynamics/AOP",
+      "url": "https://glossary.vhp4safety.nl/#VHP0000156"
     }
   ]
 }
