@@ -88,6 +88,12 @@ export default defineConfig(({ mode }) => ({
         secure: true,
         rewrite: path => path.replace(/^\/lookup\/compoundcloud/, '')
       },
+      '/lookup/chembl': {
+        target: process.env.CHEMBL_PROXY_ORIGIN || 'https://www.ebi.ac.uk/chembl/api/data',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/lookup\/chembl/, '')
+      },
       '/lookup/bao': {
         target: 'https://www.ebi.ac.uk/ols4',
         changeOrigin: true,

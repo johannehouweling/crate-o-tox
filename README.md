@@ -72,6 +72,29 @@ When deploying the proxy, set `VITE_COMPOUND_CLOUD_BASE` to its public origin (f
 
 Once the proxy is deployed, configure your hosting platform so `/query/sparql` and `/wiki/Special:EntityData` requests hit it (or simply point `VITE_COMPOUND_CLOUD_BASE` at the proxy URL). This keeps CompoundCloud traffic under an IP and user-agent you control while the browser only ever talks to your proxy.
 
+# ChEMBL proxy
+
+If you run into CORS issues with the ChEMBL API, you can run the bundled proxy and point the app at it.
+
+```bash
+# start the proxy (defaults to http://127.0.0.1:8790)
+npm run proxy:chembl
+
+# run the app pointing Vite's dev proxy to the local service
+CHEMBL_PROXY_ORIGIN=http://127.0.0.1:8790 npm run dev
+```
+
+When deploying the proxy, set `VITE_CHEMBL_BASE` to its public origin (for example `https://proxy.example.org`) so the compiled app uses it instead of the default ChEMBL host. Additional environment variables supported by the proxy script:
+
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `CHEMBL_PROXY_TARGET` | Upstream origin to forward to | `https://www.ebi.ac.uk/chembl/api/data` |
+| `CHEMBL_PROXY_PORT` / `PORT` | Local listen port | `8790` |
+| `CHEMBL_PROXY_USER_AGENT` | User-Agent header sent upstream | `crate-o-chembl-proxy (+https://github.com/Language-Research-Technology/crate-o)` |
+| `CHEMBL_PROXY_ALLOW_ORIGIN` | CORS allow-origin value | `*` |
+
+Once the proxy is deployed, configure your hosting platform so `/molecule/*` and other ChEMBL API requests hit it (or simply point `VITE_CHEMBL_BASE` at the proxy URL).
+
 # Roadmap / Backlog
 
 The following is an overview of the major goals / functions for Crate-O over 2023-2024 and when we expect to be working on the various aspects of the tool.

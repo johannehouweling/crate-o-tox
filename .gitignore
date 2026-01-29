@@ -38,3 +38,6 @@ crate-o/
 *.njsproj
 *.sln
 *.sw?
+modes/aap_tox.json
+src/lib/lookups/index.js
+modes/examples/assay_metadata.xlsx

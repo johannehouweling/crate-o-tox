@@ -1,3 +1,5 @@
+import ChemblLookup from './chembl.js';
+
 const BASE_OVERRIDE = import.meta.env?.VITE_COMPOUND_CLOUD_BASE?.replace(/\/$/, '');
 const DEV_BASE = '/lookup/compoundcloud';
 const DEFAULT_BASE = 'https://compoundcloud.wikibase.cloud';
@@ -177,6 +179,7 @@ export default class Lookup {
   constructor(opt = {}) {
     this.fields = opt.fields;
     this.type = opt.type || 'ChemicalSubstance';
+    this.chemblFallback = new ChemblLookup({ type: this.type, fields: this.fields });
   }
 
   async search({ query, limit = 10 }) {
@@ -185,11 +188,15 @@ export default class Lookup {
       return [];
     }
     const candidates = await this.fetchViaSparql(normalized, limit);
-    if (!candidates.length) return [];
+    if (!candidates.length) {
+      return this.chemblFallback?.search({ query: normalized, limit }) || [];
+    }
     const ids = candidates
       .map((candidate) => candidate.id?.replace(`${ENTITY_BASE}/`, '').trim())
       .filter(Boolean);
-    if (!ids.length) return [];
+    if (!ids.length) {
+      return this.chemblFallback?.search({ query: normalized, limit }) || [];
+    }
     const entities = await this.fetchEntities(ids);
     const records = [];
     for (const candidate of candidates) {
@@ -202,7 +209,8 @@ export default class Lookup {
         records.push(this.pickFields(record));
       }
     }
-    return records;
+    if (records.length) return records;
+    return this.chemblFallback?.search({ query: normalized, limit }) || [];
   }
 
   async fetchViaSparql(searchTerm, limit) {

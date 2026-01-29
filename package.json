@@ -48,6 +48,7 @@
     "build:library": "vite build --mode library",
     "preview": "vite preview --port 5173",
     "proxy:compoundcloud": "node proxy/compoundcloud-proxy.js",
+    "proxy:chembl": "node proxy/chembl-proxy.js",
     "test": "cypress run --component --headless",
     "test:ui": "cypress run --component --browser chrome",
     "test:unit": "npm test -- --record --spec ",

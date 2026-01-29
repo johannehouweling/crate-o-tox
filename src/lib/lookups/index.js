@@ -2,6 +2,7 @@ import datapack from './datapack.js'
 import ror from './ror.js'
 import cellosaurus from './cellosaurus.js'
 import compoundcloud from './compoundcloud.js'
+import chembl from './chembl.js'
 import pubchem from './pubchem.js'
 import bao from './bao.js'
 import aopwiki from './aopwiki.js'
@@ -16,6 +17,7 @@ const lookups = {
   ror,
   cellosaurus,
   compoundcloud,
+  chembl,
   compoundwiki: compoundcloud,
   pubchem,
   bao,
