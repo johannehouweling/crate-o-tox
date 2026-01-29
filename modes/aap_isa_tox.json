@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "name": "ISA+Toxicology RO-Crate Profile",
+    "name": "ISA+Toxicology RO-Crate Mode",
     "description": "Crate-O Mode for creating ISA-compliant RO-Crates with toxicology-specific extensions. Combines the ISA (Investigation-Study-Assay) framework with domain-specific metadata for cell-based toxicology experiments, including chemical information, biological models, bioassay classifications, and AOP linkage.",
     "version": 0.1,
     "author": "J.M. Houweling",
     "license": "GNU Affero General Public License v3.0",
-    "profileReference": "https://github.com/nfdi4plants/isa-ro-crate-profile"
+    "profileReference": "https://github.com/johannehouweling/tox-ro-crate-profile"
   },
   "contextPrefixes": {
     "schema": "http://schema.org/",
@@ -20,13 +20,13 @@
   "context": [],
   "conformsToUri": [
     "https://w3id.org/ro/crate/1.2",
-    "https://github.com/nfdi4plants/isa-ro-crate-profile"
+    "https://github.com/johannehouweling/tox-ro-crate-profile"
   ],
   "rootDataset": {
     "type": ["Dataset"],
     "conformsTo": [
       {"@id": "https://w3id.org/ro/crate/1.2"},
-      {"@id": "https://github.com/nfdi4plants/isa-ro-crate-profile"}
+      {"@id": "https://github.com/johannehouweling/tox-ro-crate-profile"}
     ],
     "inputs": [
       "@id",
@@ -81,14 +81,14 @@
       "name": "Chemical Information",
       "help": "Test substances associated with this study (added at Study level).",
       "inputs": [
-        "https://purl.obolibrary.org/obo/OBI_0000293"
+        "https://w3id.org/tox/terms#hasChemicalSubstance"
       ]
     },
     {
       "name": "Biological Model Information",
       "help": "Biological models and derived samples exposed to chemicals (added at Study level).",
       "inputs": [
-        "https://purl.obolibrary.org/obo/OBI_0000293"
+        "https://w3id.org/tox/terms#hasBioSample"
       ]
     },
     {
@@ -114,7 +114,6 @@
       "help": "Files, software, and data analysis workflows.",
       "inputs": [
         "http://schema.org/hasPart",
-        "http://schema.org/SoftwareApplication",
         "https://bioschemas.org/processSequence"
       ]
     }
@@ -401,7 +400,7 @@
         },
         {
           "id": "https://bioschemas.org/processSequence",
-          "name": "Process Sequence (about)",
+          "name": "processSequence",
           "help": "SHOULD specify the LabProcess entities describing the experimental workflow (ISA processSequence).",
           "multiple": true,
           "type": ["LabProcess"]
@@ -442,15 +441,15 @@
           "type": ["URL"]
         },
         {
-          "id": "https://purl.obolibrary.org/obo/OBI_0000293",
-          "name": "usesChemical",
+          "id": "https://w3id.org/tox/terms#hasChemicalSubstance",
+          "name": "hasChemicalSubstance",
           "help": "Test chemicals and controls. Use ChemicalSubstance lookup to search by name or CAS number.",
           "multiple": true,
           "type": ["ChemicalSubstance"]
         },
         {
-          "id": "https://purl.obolibrary.org/obo/OBI_0000293",
-          "name": "usesBioSample",
+          "id": "https://w3id.org/tox/terms#hasBioSample",
+          "name": "hasBioSample",
           "help": "Cell lines and biological models. Use CellLine lookup to search catalogued cell lines.",
           "multiple": true,
           "type": ["CellLine"]
@@ -507,7 +506,7 @@
         },
         {
           "id": "https://bioschemas.org/processSequence",
-          "name": "Process Sequence (about)",
+          "name": "processSequence",
           "help": "SHOULD specify the LabProcess entities describing the experimental workflow (ISA processSequence).",
           "multiple": true,
           "type": ["LabProcess"]
@@ -568,6 +567,20 @@
           "type": ["Text"]
         },
         {
+          "id": "http://schema.org/description",
+          "name": "description",
+          "help": "SHOULD provide a short description of the process step (e.g., plate layout, randomization/blinding notes, deviations).",
+          "multiple": false,
+          "type": ["TextArea", "Text"]
+        },
+        {
+          "id": "http://schema.org/instrument",
+          "name": "instrument",
+          "help": "COULD specify the key instrument used for this step (e.g., reader model) as a DetectionInstrument entity.",
+          "multiple": true,
+          "type": ["DetectionInstrument", "Text", "URL"]
+        },
+        {
           "id": "http://schema.org/object",
           "name": "object",
           "help": "SHOULD specify the input(s) of the process (ISA inputs). For multiple inputs, store as sorted list to match outputs.",
@@ -625,7 +638,7 @@
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0000015",
-          "name": "bioassayType",
+          "name": "bioassay",
           "help": "Type of bioassay being performed in this process (e.g., cell viability assay, enzyme activity assay). Use BAO lookup to find assay types.",
           "multiple": false,
           "type": ["BioAssay"]
@@ -772,6 +785,20 @@
           "help": "COULD specify media format as MIME type (ISA-XLSX: Data Format).",
           "multiple": false,
           "type": ["Text", "URL"]
+        },
+        {
+          "id": "http://schema.org/contentUrl",
+          "name": "contentUrl",
+          "help": "COULD provide a resolvable URL to the file bytes (e.g., an object-store presigned URL or repository URL).",
+          "multiple": false,
+          "type": ["URL"]
+        },
+        {
+          "id": "http://schema.org/sha256",
+          "name": "sha256",
+          "help": "COULD provide a SHA-256 checksum of the file content for integrity and exact identification.",
+          "multiple": false,
+          "type": ["Text"]
         },
         {
           "id": "http://schema.org/hasPart",
@@ -1341,6 +1368,20 @@
           "type": ["Text"]
         },
         {
+          "id": "http://schema.org/inChI",
+          "name": "inchi",
+          "help": "InChI string describing the molecule.",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
+          "id": "http://schema.org/inChIKey",
+          "name": "inchikey",
+          "help": "InChIKey (hashed InChI) describing the molecule.",
+          "multiple": false,
+          "type": ["Text"]
+        },
+        {
           "id": "http://schema.org/molecularFormula",
           "name": "formula",
           "help": "Chemical formula as returned by CompoundCloud.",
@@ -1540,14 +1581,14 @@
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0002663",
-          "name": "assay kit",
+          "name": "assayKit",
           "help": "Assay kit used in this bioassay.",
           "multiple": true,
           "type": ["AssayKit"]
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0002846",
-          "name": "assay protocol",
+          "name": "assayProtocol",
           "help": "The methodology used to perform a particular bioassay.",
           "multiple": true,
           "type": ["LabProtocol", "URL", "ScholarlyArticle"]
@@ -1561,28 +1602,28 @@
         },
         {
           "id": "https://w3id.org/tox/terms#incubationTime",
-          "name": "incubation_time",
+          "name": "incubationTime",
           "help": "Incubation time with substrate or reagent.",
           "multiple": true,
           "type": ["ParameterValue"]
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0002865",
-          "name": "detection instrument",
+          "name": "detectionInstrument",
           "help": "Detection instrument used in this bioassay.",
           "multiple": true,
           "type": ["DetectionInstrument"]
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0002628",
-          "name": "detection instrument manufacturer",
+          "name": "detectionInstrumentManufacturer",
           "help": "Manufacturer of the detection instrument used in this bioassay.",
           "multiple": true,
           "type": ["InstrumentManufacturer"]
         },
         {
           "id": "http://www.bioassayontology.org/bao#BAO_0002000",
-          "name": "measure entity",
+          "name": "measureEntity",
           "help": "The molecular entity being quantitated.",
           "multiple": true,
           "type": ["MeasuredEntity"]
@@ -1755,7 +1796,7 @@
         },
         {
           "id": "http://schema.org/alternateName",
-          "name": "short_name",
+          "name": "shortName",
           "help": "Short label or abbreviation for the event.",
           "multiple": false,
           "type": ["Text"]
@@ -1809,14 +1850,14 @@
         },
         {
           "id": "http://schema.org/about",
-          "name": "upstream_event",
+          "name": "upstreamEvent",
           "help": "Name of the upstream key event.",
           "multiple": false,
           "type": ["Text"]
         },
         {
           "id": "http://schema.org/result",
-          "name": "downstream_event",
+          "name": "downstreamEvent",
           "help": "Name of the downstream key event.",
           "multiple": false,
           "type": ["Text"]
